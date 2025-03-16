@@ -144,4 +144,8 @@ public class Drivetrain extends SubsystemBase{
     public Pose2d getPose(){
         return inputs.Pose;
     }
+
+    public void seedFieldCentric() {
+        io.seedFieldCentric();
+    }
 }

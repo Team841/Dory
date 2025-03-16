@@ -67,9 +67,7 @@ public class DriveIOReal extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> im
     @Override
     public Pose2d getPose() {
         return this.getState().Pose;
-    }
-
-   
+    } 
 
     @Override
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier, Subsystem subsystemRequired) {
