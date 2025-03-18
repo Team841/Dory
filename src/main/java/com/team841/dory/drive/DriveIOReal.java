@@ -19,14 +19,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
-public class DriveIOReal extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> implements DriveIO{
+public class DriveIOReal extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> implements DriveIO {
 
     AtomicReference<SwerveDriveState> telemetryCache_ = new AtomicReference<>();
 
     public DriveIOReal(SwerveDrivetrainConstants drivetrainConstants, SwerveModuleConstants<?, ?, ?>... modules) {
         super(TalonFX::new, TalonFX::new, CANcoder::new, drivetrainConstants, modules);
-        
-        this.registerTelemetry(telemetryConsumer_); 
+
+        this.registerTelemetry(telemetryConsumer_);
     }
 
     Consumer<SwerveDriveState> telemetryConsumer_ = swerveDriveState -> {
@@ -41,7 +41,7 @@ public class DriveIOReal extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> im
 
     @Override
     public void logModules(SwerveDriveState state) {
-        final String[] moduleNames = { "Drive/FL", "Drive/FR", "Drive/BL", "Drive/BR" };
+        final String[] moduleNames = {"Drive/FL", "Drive/FR", "Drive/BL", "Drive/BR"};
         for (int i = 0; i < 4; i++) {
             Logger.recordOutput(moduleNames[i] + " Absolute Encoder Angle", getModule(i).getEncoder().getAbsolutePosition().getValueAsDouble() * 360);
             Logger.recordOutput(moduleNames[i] + " Steering Angle", state.ModuleStates[i].angle);
@@ -67,7 +67,7 @@ public class DriveIOReal extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> im
     @Override
     public Pose2d getPose() {
         return this.getState().Pose;
-    } 
+    }
 
     @Override
     public Command applyRequest(Supplier<SwerveRequest> requestSupplier, Subsystem subsystemRequired) {
@@ -80,11 +80,9 @@ public class DriveIOReal extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> im
             addVisionMeasurement(visionFieldPoseEstimate.getVisionRobotPoseMeters(), visionFieldPoseEstimate.getTimestampSeconds());
         } else {
             addVisionMeasurement(
-                    visionFieldPoseEstimate.getVisionRobotPoseMeters(),
-                    visionFieldPoseEstimate.getTimestampSeconds(),
-                    visionFieldPoseEstimate.getVisionMeasurementStdDevs());
+                    visionFieldPoseEstimate.getVisionRobotPoseMeters(), visionFieldPoseEstimate.getTimestampSeconds(), visionFieldPoseEstimate.getVisionMeasurementStdDevs());
         }
     }
-    
-    
+
+
 }

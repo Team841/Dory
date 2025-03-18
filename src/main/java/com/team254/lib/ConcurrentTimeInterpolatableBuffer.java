@@ -32,12 +32,12 @@ public final class ConcurrentTimeInterpolatableBuffer<T> {
      * Create a new TimeInterpolatableBuffer.
      *
      * @param interpolateFunction The function used to interpolate between values.
-     * @param historySizeSeconds The history size of the buffer.
-     * @param <T> The type of data to store in the buffer.
+     * @param historySizeSeconds  The history size of the buffer.
+     * @param <T>                 The type of data to store in the buffer.
      * @return The new TimeInterpolatableBuffer.
      */
     public static <T> ConcurrentTimeInterpolatableBuffer<T> createBuffer(
-            Interpolator<T> interpolateFunction, double historySizeSeconds) {
+                                                                         Interpolator<T> interpolateFunction, double historySizeSeconds) {
         return new ConcurrentTimeInterpolatableBuffer<>(interpolateFunction, historySizeSeconds);
     }
 
@@ -45,11 +45,11 @@ public final class ConcurrentTimeInterpolatableBuffer<T> {
      * Create a new TimeInterpolatableBuffer that stores a given subclass of {@link Interpolatable}.
      *
      * @param historySizeSeconds The history size of the buffer.
-     * @param <T> The type of {@link Interpolatable} to store in the buffer.
+     * @param <T>                The type of {@link Interpolatable} to store in the buffer.
      * @return The new TimeInterpolatableBuffer.
      */
     public static <T extends Interpolatable<T>> ConcurrentTimeInterpolatableBuffer<T> createBuffer(
-            double historySizeSeconds) {
+                                                                                                   double historySizeSeconds) {
         return new ConcurrentTimeInterpolatableBuffer<>(Interpolatable::interpolate, historySizeSeconds);
     }
 
@@ -67,7 +67,7 @@ public final class ConcurrentTimeInterpolatableBuffer<T> {
      * Add a sample to the buffer.
      *
      * @param timeSeconds The timestamp of the sample.
-     * @param sample The sample object.
+     * @param sample      The sample object.
      */
     public void addSample(double timeSeconds, T sample) {
         m_pastSnapshots.put(timeSeconds, sample);
@@ -123,9 +123,7 @@ public final class ConcurrentTimeInterpolatableBuffer<T> {
             // and bottom
             // bounds).
             return Optional.of(m_interpolatingFunc.interpolate(
-                    bottomBound.getValue(),
-                    topBound.getValue(),
-                    (timeSeconds - bottomBound.getKey()) / (topBound.getKey() - bottomBound.getKey())));
+                    bottomBound.getValue(), topBound.getValue(), (timeSeconds - bottomBound.getKey()) / (topBound.getKey() - bottomBound.getKey())));
         }
     }
 

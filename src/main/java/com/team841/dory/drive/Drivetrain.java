@@ -23,9 +23,9 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static edu.wpi.first.units.Units.*;
 
-public class Drivetrain extends SubsystemBase{
+public class Drivetrain extends SubsystemBase {
     DriveIO io;
-    
+
     DriveIOInputsAutoLogged inputs = new DriveIOInputsAutoLogged();
 
     Telemetry telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
@@ -34,7 +34,7 @@ public class Drivetrain extends SubsystemBase{
     public final SwerveRequest.ApplyRobotSpeeds m_robotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
     private boolean m_hasAppliedOperatorPerspective = false;
-    
+
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
     /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
@@ -42,14 +42,14 @@ public class Drivetrain extends SubsystemBase{
 
     public PIDController controller = new PIDController(0.5, 0, 0);
 
-    public Drivetrain(DriveIO io){
+    public Drivetrain(DriveIO io) {
         this.io = io;
 
         configureAutoBuilder();
     }
 
     @Override
-    public void periodic(){
+    public void periodic() {
         double timestamp = Timer.getTimestamp();
         io.updateInputs(inputs);
         telemetry.telemeterize(inputs);
@@ -60,9 +60,7 @@ public class Drivetrain extends SubsystemBase{
             if (!m_hasAppliedOperatorPerspective) {
                 DriverStation.getAlliance().ifPresent(allianceColor -> {
                     io.setOperatorPerspectiveForward(
-                            allianceColor == Alliance.Red
-                                    ? kRedAlliancePerspectiveRotation
-                                    : kBlueAlliancePerspectiveRotation);
+                            allianceColor == Alliance.Red ? kRedAlliancePerspectiveRotation : kBlueAlliancePerspectiveRotation);
                     m_hasAppliedOperatorPerspective = true;
                 });
             }
@@ -104,7 +102,7 @@ public class Drivetrain extends SubsystemBase{
     public void addVisionMeasurement(VisionFieldPoseEstimate visionFieldPoseEstimate) {
         io.addVisionMeasurement(visionFieldPoseEstimate);
     }
-    
+
     private void configureAutoBuilder() {
         try {
             var config = RobotConfig.fromGUISettings();
@@ -113,27 +111,21 @@ public class Drivetrain extends SubsystemBase{
                     io::seedFieldRelative, // Consumer for seeding pose against auto
                     () -> inputs.Speeds, // Supplier of current robot speeds
                     // Consumer of ChassisSpeeds and feedforwards to drive the robot
-                    (speeds, feedforwards) -> io.setControl(m_pathApplyRobotSpeeds
-                            .withSpeeds(speeds)
-                            .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
-                            .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
-                    new PPHolonomicDriveController(
+                    (speeds, feedforwards) -> io.setControl(m_pathApplyRobotSpeeds.withSpeeds(speeds).withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons()).withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())), new PPHolonomicDriveController(
                             // PID constants for translation
                             new PIDConstants(10, 0, 0),
                             // PID constants for rotation
-                            new PIDConstants(7, 0, 0)),
-                    config,
+                            new PIDConstants(7, 0, 0)), config,
                     // Assume the path needs to be flipped for Red vs Blue, this is normally the case
-                    () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
-                    this // Subsystem for requirements
-                    );
+                    () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, this // Subsystem for requirements
+            );
         } catch (Exception ex) {
             DriverStation.reportError(
                     "Failed to load PathPlanner config and configure AutoBuilder", ex.getStackTrace());
         }
     }
 
-    public void setControl(SwerveRequest request){
+    public void setControl(SwerveRequest request) {
         io.setControl(request);
     }
 
@@ -141,7 +133,7 @@ public class Drivetrain extends SubsystemBase{
         return inputs.Speeds;
     }
 
-    public Pose2d getPose(){
+    public Pose2d getPose() {
         return inputs.Pose;
     }
 

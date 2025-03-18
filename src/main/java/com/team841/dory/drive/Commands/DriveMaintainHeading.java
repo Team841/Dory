@@ -17,8 +17,7 @@ import org.littletonrobotics.junction.Logger;
 public class DriveMaintainHeading extends Command {
 
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate =
-            RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     Drivetrain drivetrain;
     DoubleSupplier controlXSupplier, controlYSupplier, controlAngularVelocitySupplier;
@@ -28,7 +27,7 @@ public class DriveMaintainHeading extends Command {
     double mJoystickLastTouched = -1;
 
     public DriveMaintainHeading(
-            Drivetrain drivetrain, DoubleSupplier velocityX, DoubleSupplier velocityY, DoubleSupplier angularVelocity) {
+                                Drivetrain drivetrain, DoubleSupplier velocityX, DoubleSupplier velocityY, DoubleSupplier angularVelocity) {
         this.drivetrain = drivetrain;
         this.controlXSupplier = velocityX;
         this.controlYSupplier = velocityY;
@@ -41,14 +40,10 @@ public class DriveMaintainHeading extends Command {
         setName("DriveMaintainHeading");
     }
 
-    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1)
-            .withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric().withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
 
-    private final SwerveRequest.FieldCentricFacingAngle driveHeading = new SwerveRequest.FieldCentricFacingAngle()
-            .withDeadband(MaxSpeed * 0.1)
-            .withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+    private final SwerveRequest.FieldCentricFacingAngle driveHeading = new SwerveRequest.FieldCentricFacingAngle().withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
 
     @Override
@@ -69,27 +64,18 @@ public class DriveMaintainHeading extends Command {
         if (Math.abs(controlAngularVelocity) > this.kSteerJoystickDeadband) {
             mJoystickLastTouched = Timer.getFPGATimestamp();
         }
-        if (Math.abs(controlAngularVelocity) > kSteerJoystickDeadband
-                || (epsilonEquals(mJoystickLastTouched, Timer.getFPGATimestamp(), 0.25)
-                        && Math.abs(drivetrain.getCurrentRobotSpeeds().omegaRadiansPerSecond) > Math.toRadians(10))) {
-            drivetrain.setControl(drive.withVelocityX(throttleFieldFrame)
-                    .withVelocityY(strafeFieldFrame)
-                    .withRotationalRate(angularVelocity));
+        if (Math.abs(controlAngularVelocity) > kSteerJoystickDeadband || (epsilonEquals(mJoystickLastTouched, Timer.getFPGATimestamp(), 0.25) && Math.abs(drivetrain.getCurrentRobotSpeeds().omegaRadiansPerSecond) > Math.toRadians(10))) {
+            drivetrain.setControl(drive.withVelocityX(throttleFieldFrame).withVelocityY(strafeFieldFrame).withRotationalRate(angularVelocity));
             mHeadingSetpoint = Optional.empty();
             Logger.recordOutput("DriveMaintainHeading/Mode", "NoHeading");
         } else {
             if (mHeadingSetpoint.isEmpty()) {
-                mHeadingSetpoint =
-                        Optional.of(drivetrain.getPose().getRotation().rotateBy(Rotation2d.k180deg));
+                mHeadingSetpoint = Optional.of(drivetrain.getPose().getRotation().rotateBy(Rotation2d.k180deg));
             }
-            drivetrain.setControl(driveHeading
-                    .withVelocityX(throttleFieldFrame)
-                    .withVelocityY(strafeFieldFrame)
-                    .withTargetDirection(mHeadingSetpoint.get()));
+            drivetrain.setControl(driveHeading.withVelocityX(throttleFieldFrame).withVelocityY(strafeFieldFrame).withTargetDirection(mHeadingSetpoint.get()));
             Logger.recordOutput("DriveMaintainHeading/Mode", "Heading");
             Logger.recordOutput(
-                    "DriveMaintainHeading/HeadingSetpoint",
-                    mHeadingSetpoint.get().getDegrees());
+                    "DriveMaintainHeading/HeadingSetpoint", mHeadingSetpoint.get().getDegrees());
         }
     }
 

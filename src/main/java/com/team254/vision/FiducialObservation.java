@@ -56,7 +56,8 @@ public class FiducialObservation implements StructSerializable {
     public double tync;
     public double ambiguity;
 
-    public FiducialObservation() {}
+    public FiducialObservation() {
+    }
 
     public static FiducialObservation fromLimelight(LimelightHelpers.RawFiducial fiducial) {
         FiducialObservation rv = new FiducialObservation();

@@ -19,7 +19,7 @@ public class RC {
             case REPLAY -> Mode.REPLAY;
         };
     }
-    
+
     public static final double LOOKBACK_TIME = 1.0;
 
     public static Supplier<Boolean> isRedAlliance = () -> {

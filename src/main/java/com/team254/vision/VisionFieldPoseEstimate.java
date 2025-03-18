@@ -12,7 +12,7 @@ public class VisionFieldPoseEstimate {
     private final Matrix<N3, N1> visionMeasurementStdDevs;
 
     public VisionFieldPoseEstimate(
-            Pose2d visionRobotPoseMeters, double timestampSeconds, Matrix<N3, N1> visionMeasurementStdDevs) {
+                                   Pose2d visionRobotPoseMeters, double timestampSeconds, Matrix<N3, N1> visionMeasurementStdDevs) {
         this.visionRobotPoseMeters = visionRobotPoseMeters;
         this.timestampSeconds = timestampSeconds;
         this.visionMeasurementStdDevs = visionMeasurementStdDevs;

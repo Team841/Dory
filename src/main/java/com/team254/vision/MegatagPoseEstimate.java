@@ -35,7 +35,7 @@ public class MegatagPoseEstimate implements StructSerializable {
 
         @Override
         public Struct<?>[] getNested() {
-            return new Struct<?>[] {Pose2d.struct};
+            return new Struct<?>[]{Pose2d.struct};
         }
 
         @Override
@@ -64,7 +64,8 @@ public class MegatagPoseEstimate implements StructSerializable {
     public double avgTagArea;
     public int[] fiducialIds;
 
-    public MegatagPoseEstimate() {}
+    public MegatagPoseEstimate() {
+    }
 
     public static MegatagPoseEstimate fromLimelight(LimelightHelpers.PoseEstimate poseEstimate) {
         MegatagPoseEstimate rv = new MegatagPoseEstimate();
