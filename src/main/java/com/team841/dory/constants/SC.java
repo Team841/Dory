@@ -49,7 +49,14 @@ public class SC {
                                         .withMotionMagicJerk(800))
                         .withMotorOutput(
                                 new MotorOutputConfigs()
-                                        .withNeutralMode(NeutralModeValue.Brake));
+                                        .withNeutralMode(NeutralModeValue.Brake))
+                        .withSoftwareLimitSwitch(
+                                new SoftwareLimitSwitchConfigs()
+                                        .withForwardSoftLimitEnable(true)
+                                        .withReverseSoftLimitEnable(true)
+                                        .withForwardSoftLimitThreshold(23)
+                                        .withReverseSoftLimitThreshold(0)
+                        );
         public static final TalonFXConfiguration leftConfigs = configs;
         public static final TalonFXConfiguration rightConfigs = configs.withMotorOutput(
                 configs.MotorOutput.withInverted(InvertedValue.Clockwise_Positive)
@@ -72,8 +79,8 @@ public class SC {
 
         private static final FovParamsConfigs fovParamsConfigs =
                 new FovParamsConfigs()
-                        .withFOVCenterX(0)
-                        .withFOVCenterY(0)
+                        .withFOVCenterX(-6.75)
+                        .withFOVCenterY(6.75)
                         .withFOVRangeX(6.75)
                         .withFOVRangeY(6.75);
 

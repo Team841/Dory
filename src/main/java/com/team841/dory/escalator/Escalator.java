@@ -2,6 +2,7 @@ package com.team841.dory.escalator;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
+import com.team841.dory.SM;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -17,6 +18,8 @@ public class Escalator extends SubsystemBase{
     MotionMagicTorqueCurrentFOC withCoralControl = new MotionMagicTorqueCurrentFOC(0).withSlot(1);
 
     StatusCode[] latestStatus;
+
+    Position targetPosition;
     
     public Escalator(EscalatorIO io) {
         this.io = io;
@@ -36,6 +39,8 @@ public class Escalator extends SubsystemBase{
         } else {
             this.latestStatus = io.setControl(withOutCoralControl.withPosition(position.getPosition()));
         }
+
+        this.targetPosition = position;
     }
 
     public void zero(){
@@ -46,13 +51,33 @@ public class Escalator extends SubsystemBase{
         return latestStatus[0].isOK() && latestStatus[1].isOK();
     }
 
+    public boolean atPosition(Position position){
+        return Math.abs(inputs.rightMotorPosition.magnitude() - position.getPosition()) < 0.1;
+    }
+
+    public SM.SuperstructureStates getWhichSuperstructureState(){
+        for (Position state : Position.values()) {
+            SM.SuperstructureStates output = SM.SuperstructureStates.getSuperstructureStates(state);
+            if (atPosition(state) && output != null){
+                return output;
+            }
+        }
+
+        return SM.SuperstructureStates.travel;
+    }
+
+    public Position getTarget(){
+        return this.targetPosition;
+    }
+
     public enum Position {
-        HomeAndIntake(5.9),
-        L1(15.25),
-        L2(23.57),
-        L3(36.02),
-        L4(57.95),
-        Hold(2.0);
+        HomeAndIntake(0),
+        L1(1),
+        L2(5.118 - 0.26123),
+        L3(11.5463 - 0.26123),
+        L4(22.0844 - 0.26123),
+        Hold(2.0),
+        Other(-1);
 
         private final double position;
 

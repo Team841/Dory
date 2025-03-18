@@ -42,6 +42,8 @@ public class EscalatorIOKraken implements EscalatorIO {
         this.leftMotor.getConfigurator().apply(SC.Escalator.leftConfigs);    
         this.rightMotor.getConfigurator().apply(SC.Escalator.rightConfigs);
 
+        resetPositions();
+
         this.rightPosition = this.rightMotor.getPosition();
         this.leftPosition = this.leftMotor.getPosition();
 

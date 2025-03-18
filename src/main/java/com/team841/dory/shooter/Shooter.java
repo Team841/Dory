@@ -3,6 +3,8 @@ package com.team841.dory.shooter;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
@@ -43,8 +45,28 @@ public class Shooter extends SubsystemBase {
        this.latestStatusCode =  io.setControl(dutyCycle.withOutput(speed.getDutyCyle()));
     }
 
+    public void stop(){
+        io.stopMotor();
+    }
+
+    public boolean escalatorClear(){
+        return inputs.frontCANrangeDistance.magnitude() > 0.05 && inputs.backCANrangeDistance.magnitude() > 0.05;
+    }
+
+    public boolean shooterHasCoral(){
+        return escalatorClear();
+    }
+
     public boolean deviceStatusOK(){
         return latestStatusCode.isOK();
+    }
+
+    public Command shootSlow(){
+        return new InstantCommand(()->{this.setDutyCycle(ShooterSpeeds.ShootL2AndL3);}).withTimeout(0.5).finallyDo(this::stop);
+    }
+
+    public Command shootFast(){
+        return new InstantCommand(() -> {this.setDutyCycle(ShooterSpeeds.ShootL4);}).withTimeout(0.5).finallyDo(this::stop);
     }
 
     public enum ShooterSpeeds {
