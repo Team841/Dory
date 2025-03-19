@@ -2,7 +2,6 @@ package com.team841.dory.escalator;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
-import com.team841.dory.SM;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -53,17 +52,6 @@ public class Escalator extends SubsystemBase{
 
     public boolean atPosition(Position position){
         return Math.abs(inputs.rightMotorPosition.magnitude() - position.getPosition()) < 0.1;
-    }
-
-    public SM.SuperstructureStates getWhichSuperstructureState(){
-        for (Position state : Position.values()) {
-            SM.SuperstructureStates output = SM.SuperstructureStates.getSuperstructureStates(state);
-            if (atPosition(state) && output != null){
-                return output;
-            }
-        }
-
-        return SM.SuperstructureStates.travel;
     }
 
     public Position getTarget(){

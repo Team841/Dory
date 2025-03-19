@@ -23,13 +23,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 
 public class RobotContainer {
 
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    private final double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
 
-    private final CommandXboxController joystick = new CommandXboxController(0);
+    private final CommandPS5Controller joystick = new CommandPS5Controller(0);
 
     public final DriveIO driveIO;
     public final Drivetrain drivetrain;
@@ -43,6 +43,8 @@ public class RobotContainer {
 
     public final ShooterIO shooterIO;
     public final Shooter shooter;
+
+    public final Control control;
 
     private final DriveMaintainHeading driveMaintainHeading;
 
@@ -69,6 +71,8 @@ public class RobotContainer {
 
                 this.shooterIO = new ShooterIOKraken();
                 this.shooter = new Shooter(shooterIO);
+
+                this.control = new Control(this.drivetrain, this.escalator, this.shooter);
             }
         }
 
@@ -84,10 +88,53 @@ public class RobotContainer {
     private void configureBindings() {
         drivetrain.setDefaultCommand(driveMaintainHeading);
 
-        joystick.start().onTrue(new InstantCommand(drivetrain::seedFieldCentric));
+        joystick.create().onTrue(new InstantCommand(drivetrain::seedFieldCentric));
+
+        /* Zero Automation */
+        joystick.options()
+                .and(joystick.R2())
+                .whileTrue(control.noSnapAutoScoreL4);
+
+        joystick.options()
+                .and(joystick.R1())
+                .whileTrue(control.noSnapAutoScoreL3);
+
+        joystick.options()
+                .and(joystick.L2())
+                .whileTrue(control.noSnapAutoScoreL2);
+
+        joystick.options()
+                .onFalse(control.escalatorGoHome);
+
+        /* Automated */
+        joystick.L1()
+                .and(joystick.R2())
+                .whileTrue(control.snapScoreL4);
+
+        joystick.L1()
+                .and(joystick.R1())
+                .whileTrue(control.snapScoreL3);
+
+        joystick.L1()
+                .and(joystick.L2())
+                .whileTrue(control.snapScoreL2);
+
+        joystick.L1()
+                .onFalse(control.escalatorGoHome);
+
+        /* ###################################### */
+
+        joystick.L1()
+                .and(() -> !this.shooter.shooterHasCoral())
+                .whileTrue(control.intake);
+
+        joystick.create()
+                .onTrue(new InstantCommand(escalator::zero, escalator));
+
     }
 
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
     }
+
 }

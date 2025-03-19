@@ -10,10 +10,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class Snapping extends Command {
 
-    public Snapping(Drivetrain drivetrain, boolean goLeft) {
+    public Snapping(Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
 
-        this.setpoint = !goLeft ? -16.66 : 20.47;
+        this.setpoint = !(1==1) ? -16.66 : 20.47;
 
         addRequirements(this.drivetrain);
         setName("Snapping");

@@ -2,9 +2,10 @@ package com.team841.dory.shooter;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.team841.dory.escalator.Escalator;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.littletonrobotics.junction.Logger;
 
@@ -61,12 +62,32 @@ public class Shooter extends SubsystemBase {
         return latestStatusCode.isOK();
     }
 
-    public Command shootSlow(){
-        return new InstantCommand(()->{this.setDutyCycle(ShooterSpeeds.ShootL2AndL3);}).withTimeout(0.5).finallyDo(this::stop);
+    public Command runShooterScore(Escalator.Position atPosition, double timout){
+        return new RunCommand(
+                () -> {
+                    if (atPosition == Escalator.Position.L2 || atPosition == Escalator.Position.L3){
+                        setDutyCycle(ShooterSpeeds.ShootL2AndL3);
+                    } else if (atPosition == Escalator.Position.L4) {
+                        setDutyCycle(ShooterSpeeds.ShootL4);
+                    } else if (atPosition == Escalator.Position.L1){
+                        setDutyCycle(ShooterSpeeds.ShooterL1);
+                    }
+                }
+        )
+                .withName("runShooterScoreCommand")
+                .withTimeout(timout)
+                .finallyDo(this::stop);
     }
 
-    public Command shootFast(){
-        return new InstantCommand(() -> {this.setDutyCycle(ShooterSpeeds.ShootL4);}).withTimeout(0.5).finallyDo(this::stop);
+    public Command runShooterIntake(){
+        return new RunCommand(
+                () -> {
+                    this.setDutyCycle(ShooterSpeeds.Intake);
+                }
+        )
+                .withName("runShooterIntakeCommand")
+                .until(this::shooterHasCoral)
+                .finallyDo(this::stop);
     }
 
     public enum ShooterSpeeds {
