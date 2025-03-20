@@ -8,6 +8,7 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ControlModeValue;
+import com.team841.dory.constants.RC;
 import com.team841.dory.constants.SC;
 
 import edu.wpi.first.units.measure.Angle;
@@ -17,8 +18,8 @@ import edu.wpi.first.units.measure.Current;
 
 public class EscalatorIOKraken implements EscalatorIO {
     
-    TalonFX leftMotor = new TalonFX(SC.Escalator.left);
-    TalonFX rightMotor = new TalonFX(SC.Escalator.right);
+    TalonFX leftMotor = new TalonFX(SC.Escalator.left, RC.canivoreCANBus);
+    TalonFX rightMotor = new TalonFX(SC.Escalator.right, RC.canivoreCANBus);
 
     private final StatusSignal<Angle> rightPosition;
     private final StatusSignal<Angle> leftPosition;
@@ -74,6 +75,12 @@ public class EscalatorIOKraken implements EscalatorIO {
 
     @Override
     public void updateInputs(EscalatorIOInputs inputs) {
+        BaseStatusSignal.refreshAll(this.rightPosition, this.leftPosition,
+                this.rightVelocity, this.leftVelocity,
+                this.rightAcceleration, this.leftAcceleration,
+                this.rightTorqueCurrent, this.leftTorqueCurrent,
+                this.rightMotorDutyCycleOut, this.leftMotorDutyCycleOut);
+
         inputs.leftMotorPosition = this.leftPosition.getValue();
         inputs.leftMotorVelocity = this.leftVelocity.getValue();
         inputs.leftMotorAcceleration = this.leftAcceleration.getValue();

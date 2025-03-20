@@ -39,9 +39,9 @@ public class ShooterIOKraken implements ShooterIO {
     StatusSignal<Double> KrakenDutyCyleOut;
 
     public ShooterIOKraken() {
-        this.motor = new TalonFX(SC.Shooter.MotorId);
-        this.FrontCANrange = new CANrange(SC.Shooter.CanRangeIdFront);
-        this.BackCANrange = new CANrange(SC.Shooter.CanRangeIdBack);
+        this.motor = new TalonFX(SC.Shooter.MotorId, "rio");
+        this.FrontCANrange = new CANrange(SC.Shooter.CanRangeIdFront, "rio");
+        this.BackCANrange = new CANrange(SC.Shooter.CanRangeIdBack, "rio");
 
         this.motor.getConfigurator().apply(SC.Shooter.configs);
         this.FrontCANrange.getConfigurator().apply(SC.Shooter.CanrangeConfigs);
@@ -81,6 +81,16 @@ public class ShooterIOKraken implements ShooterIO {
 
     @Override
     public void updateInputs(ShooterIOInputs inputs) {
+        BaseStatusSignal.refreshAll(this.frontCANrangeHealth, this.backCANrangeHealth,
+                this.frontCANrangeMeasurementTime, this.backCANrangeMeasurementTime,
+                this.frontCANrangeSignalStrength, this.backCANrangeSignalStrength,
+                this.frontCANrangeDistance, this.backCANrangeDistance,
+                this.frontCANrangeStandardDeviation, this.backCANrangeStandardDeviation,
+                this.frontCANrangeAmbientSignal, this.backCANrangeAmbientSignal,
+                this.frontCANrangeIsDetected, this.backCANrangeIsDetected,
+                this.KrakenVelocity, this.KrakenAcceleration,
+                this.KrakenDutyCyleOut);
+
         inputs.frontCANrangeHealth = this.frontCANrangeHealth.getValue();
         inputs.backCANrangeHealth = this.backCANrangeHealth.getValue();
         inputs.frontCANrangeMeasurementTime = this.frontCANrangeMeasurementTime.getValue();

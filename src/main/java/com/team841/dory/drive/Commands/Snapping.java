@@ -32,7 +32,7 @@ public class Snapping extends Command {
     public void execute() {
 
         SmartDashboard.putNumber("Setpoint", setpoint);
-        double speed = this.drivetrain.controller.calculate(LimelightHelpers.getTX(RC.Vision.LimelightFrontName), setpoint);
+        double speed = this.drivetrain.controller.calculate(LimelightHelpers.getTX(RC.Vision.LimelightCharlieName), setpoint);
         SmartDashboard.putNumber("NOT Clamped Output", speed);
         speed = speed >= 0 ? Math.max(0, Math.min(speed, 8.5)) : -Math.max(0, Math.min(-speed, 8.5));
         speed /= 8.5;

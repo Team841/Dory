@@ -2,6 +2,7 @@ package com.team841.dory.shooter;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.team841.dory.constants.RC;
 import com.team841.dory.escalator.Escalator;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -14,7 +15,7 @@ public class Shooter extends SubsystemBase {
     ShooterIO io;
     ShooterIOInputsAutoLogged inputs = new ShooterIOInputsAutoLogged();
 
-    DutyCycleOut dutyCycle;
+    private final DutyCycleOut dutyCycle = new DutyCycleOut(0);
 
     StatusCode latestStatusCode;
 
@@ -27,6 +28,10 @@ public class Shooter extends SubsystemBase {
         double timestamp = Timer.getTimestamp();
         io.updateInputs(inputs);
         Logger.processInputs("Shooter", inputs);
+
+        if (RC.robotType == RC.RunType.DEV){
+            Logger.recordOutput("Shooter/isclear", this.escalatorClear());
+        }
         Logger.recordOutput("Shooter/latencyPeriodicSec", Timer.getTimestamp() - timestamp);
     }
 
@@ -43,7 +48,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public void setDutyCycle(ShooterSpeeds speed){
-       this.latestStatusCode =  io.setControl(dutyCycle.withOutput(speed.getDutyCyle()));
+       this.latestStatusCode =  io.setControl(dutyCycle.withOutput(speed.getDutyCycle()));
     }
 
     public void stop(){
@@ -51,11 +56,12 @@ public class Shooter extends SubsystemBase {
     }
 
     public boolean escalatorClear(){
-        return inputs.frontCANrangeDistance.magnitude() > 0.05 && inputs.backCANrangeDistance.magnitude() > 0.05;
+        return (inputs.frontCANrangeDistance.magnitude() < 0.05 && inputs.backCANrangeDistance.magnitude() > 0.05) ||
+                (inputs.frontCANrangeDistance.magnitude() > 0.05 && inputs.backCANrangeDistance.magnitude() > 0.05);
     }
 
     public boolean shooterHasCoral(){
-        return escalatorClear();
+        return (inputs.frontCANrangeDistance.magnitude() < 0.05 && inputs.backCANrangeDistance.magnitude() > 0.05);
     }
 
     public boolean deviceStatusOK(){
@@ -97,14 +103,14 @@ public class Shooter extends SubsystemBase {
         ShootL4(0.75),
         ShooterL1(0.25);
 
-        private final double dutyCyle;
+        private final double dutyCycle;
 
-        ShooterSpeeds(double dutyCyle) {
-            this.dutyCyle = dutyCyle;
+        ShooterSpeeds(double dutyCycle) {
+            this.dutyCycle = dutyCycle;
         }
 
-        public double getDutyCyle() {
-            return dutyCyle;
+        public double getDutyCycle() {
+            return dutyCycle;
         }
     }
 }

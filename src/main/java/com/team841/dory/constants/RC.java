@@ -29,10 +29,12 @@ public class RC {
 
     public class Vision {
         public static final double LOOKBACK_TIME = 1.0;
-        public static String LimelightFrontName = "limelight-charlie";
-        public static String LimelightBackName = "limelight-gamma";
+        // charlie is left, gamma is right
+        public static String LimelightCharlieName = "limelight-charlie";
+        public static String LimelightGammaName = "limelight-gamma";
         // x y z roll pitch yaw
-        public static double[] frontPose = {0.0, 0.0, 0.25, 180, 0.0, 0.0};
+        public static double[] CharliePose = {0.0, 0.0, 0.25, 180, 0.0, 0.0};
+        public static double[] GammaPose = {0.0, 0.0, 0.25, 180, 0.0, 0.0};
     }
 
     public enum Mode {

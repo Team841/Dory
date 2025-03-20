@@ -9,14 +9,19 @@ public interface VisionIO {
     @AutoLog
     class VisionIOInputs {
         public boolean charlieSeesTarget;
+        public boolean gammaSeesTarget;
 
         public FiducialObservation[] charlieFiducialObservations;
+        public FiducialObservation[] gammaFiducialObservations;
 
         public MegatagPoseEstimate charlieMegatagPoseEstimate;
+        public MegatagPoseEstimate gammaMegatagPoseEstimate;
 
         public int charlieMegatagCount;
+        public int gammaMegatagCount;
 
         public MegatagPoseEstimate charlieMegatag2PoseEstimates;
+        public MegatagPoseEstimate gammaMegatag2PoseEstimates;
 
         public Rotation2d gyroAngle;
         public double gyroAngularVelocity;
@@ -24,5 +29,5 @@ public interface VisionIO {
 
     void updateInputs(VisionIOInputs inputs);
 
-    void pollNetworktables();
+    //void pollNetworktables();
 }

@@ -65,7 +65,7 @@ public class SC {
 
     public static class Shooter {
         public static int MotorId = 35;
-        public static int CanRangeIdFront = 1;
+        public static int CanRangeIdFront = 6;
         public static int CanRangeIdBack = 2;
 
         public static TalonFXConfiguration configs =

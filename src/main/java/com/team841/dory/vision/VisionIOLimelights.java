@@ -9,7 +9,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class VisionIOLimelights implements VisionIO {
-    NetworkTable charlieTable = NetworkTableInstance.getDefault().getTable(RC.Vision.LimelightFrontName);
+    NetworkTable CharlieTable = NetworkTableInstance.getDefault().getTable(RC.Vision.LimelightCharlieName);
+    NetworkTable GammaTable = NetworkTableInstance.getDefault().getTable(RC.Vision.LimelightGammaName);
 
     VisionIOInputs inputCache = new VisionIOInputs();
 
@@ -18,13 +19,16 @@ public class VisionIOLimelights implements VisionIO {
     }
 
     private void setLLSettings() {
-        charlieTable.getEntry("camerapose_robotspace_set").setDoubleArray(RC.Vision.frontPose);
+        GammaTable.getEntry("camerapose_robotspace_set").setDoubleArray(RC.Vision.GammaPose);
+        CharlieTable.getEntry("camerapose_robotspace_set").setDoubleArray(RC.Vision.CharliePose);
 
         var gyroAngle = inputCache.gyroAngle;
         var gyroAngularVelocity = inputCache.gyroAngularVelocity;
         try {
             LimelightHelpers.SetRobotOrientation(
-                    RC.Vision.LimelightFrontName, gyroAngle.getDegrees(), gyroAngularVelocity, 0, 0, 0, 0);
+                    RC.Vision.LimelightGammaName, gyroAngle.getDegrees(), gyroAngularVelocity, 0, 0, 0, 0);
+            LimelightHelpers.SetRobotOrientation(
+                    RC.Vision.LimelightCharlieName, gyroAngle.getDegrees(), gyroAngularVelocity, 0, 0, 0, 0);
         } catch (Exception e) {
             return;
         }
@@ -32,10 +36,23 @@ public class VisionIOLimelights implements VisionIO {
 
     @Override
     public void updateInputs(VisionIOInputs inputs) {
-        inputs.charlieSeesTarget = charlieTable.getEntry("tv").getDouble(0) == 1.0;
-        if (inputs.charlieSeesTarget) {
-            var megatag = LimelightHelpers.getBotPoseEstimate_wpiBlue(RC.Vision.LimelightFrontName);
-            var megatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(RC.Vision.LimelightFrontName);
+        inputs.gammaSeesTarget = GammaTable.getEntry("tv").getDouble(0) == 1.0;
+        inputs.charlieSeesTarget = CharlieTable.getEntry("tv").getDouble(0) == 1.0;
+
+        if (inputs.gammaSeesTarget) {
+            var megatag = LimelightHelpers.getBotPoseEstimate_wpiBlue(RC.Vision.LimelightGammaName);
+            var megatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(RC.Vision.LimelightGammaName);
+            if (megatag2 == null || megatag == null) {
+                return;
+            }
+            inputs.gammaMegatagPoseEstimate = MegatagPoseEstimate.fromLimelight(megatag);
+            inputs.gammaMegatagCount = megatag.tagCount;
+            inputs.gammaMegatag2PoseEstimates = MegatagPoseEstimate.fromLimelight(megatag2);
+            inputs.gammaFiducialObservations = FiducialObservation.fromLimelight(megatag.rawFiducials);
+        }
+        if (inputs.charlieSeesTarget){
+            var megatag = LimelightHelpers.getBotPoseEstimate_wpiBlue(RC.Vision.LimelightCharlieName);
+            var megatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(RC.Vision.LimelightCharlieName);
             if (megatag2 == null || megatag == null) {
                 return;
             }
@@ -49,20 +66,35 @@ public class VisionIOLimelights implements VisionIO {
         setLLSettings();
     }
 
-    @Override
-    public void pollNetworktables() {
-        VisionIOInputs inputs = new VisionIOInputs();
-
-        inputs.charlieSeesTarget = charlieTable.getEntry("tv").getDouble(0) == 1.0;
-        if (inputs.charlieSeesTarget) {
-            var megatag = LimelightHelpers.getBotPoseEstimate_wpiBlue(RC.Vision.LimelightFrontName);
-            var megatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(RC.Vision.LimelightFrontName);
-
-            inputs.charlieMegatagPoseEstimate = MegatagPoseEstimate.fromLimelight(megatag);
-            inputs.charlieMegatagCount = megatag.tagCount;
-            inputs.charlieMegatag2PoseEstimates = MegatagPoseEstimate.fromLimelight(megatag2);
-            inputs.charlieFiducialObservations = FiducialObservation.fromLimelight(megatag.rawFiducials);
-        }
-        setLLSettings();
-    }
+//    @Override
+//    public void pollNetworktables() {
+//        VisionIOInputs inputs = new VisionIOInputs();
+//
+//        inputs.charlieSeesTarget = CharlieTable.getEntry("tv").getDouble(0) == 1.0;
+//        inputs.gammaSeesTarget = GammaTable.getEntry("tv").getDouble(0) == 1.0;
+//
+//        if (inputs.gammaSeesTarget) {
+//            var megatag = LimelightHelpers.getBotPoseEstimate_wpiBlue(RC.Vision.LimelightGammaName);
+//            var megatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(RC.Vision.LimelightGammaName);
+//            if (megatag2 == null || megatag == null) {
+//                return;
+//            }
+//            inputs.gammaMegatagPoseEstimate = MegatagPoseEstimate.fromLimelight(megatag);
+//            inputs.gammaMegatagCount = megatag.tagCount;
+//            inputs.gammaMegatag2PoseEstimates = MegatagPoseEstimate.fromLimelight(megatag2);
+//            inputs.gammaFiducialObservations = FiducialObservation.fromLimelight(megatag.rawFiducials);
+//        }
+//
+//        if (inputs.charlieSeesTarget) {
+//            var megatag = LimelightHelpers.getBotPoseEstimate_wpiBlue(RC.Vision.LimelightCharlieName);
+//            var megatag2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(RC.Vision.LimelightCharlieName);
+//
+//            inputs.charlieMegatagPoseEstimate = MegatagPoseEstimate.fromLimelight(megatag);
+//            inputs.charlieMegatagCount = megatag.tagCount;
+//            inputs.charlieMegatag2PoseEstimates = MegatagPoseEstimate.fromLimelight(megatag2);
+//            inputs.charlieFiducialObservations = FiducialObservation.fromLimelight(megatag.rawFiducials);
+//        }
+//
+//        setLLSettings();
+//    }
 }

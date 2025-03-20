@@ -2,6 +2,7 @@ package com.team841.dory.escalator;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
+import com.team841.dory.constants.RC;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -29,6 +30,10 @@ public class Escalator extends SubsystemBase{
         double timestamp = Timer.getTimestamp();
         io.updateInputs(inputs);
         Logger.processInputs("Escalator", inputs);
+
+        if (RC.robotType == RC.RunType.DEV){
+            Logger.recordOutput("Escalator/AtHome", this.atPosition(Position.HomeAndIntake));
+        }
         Logger.recordOutput("Escalator/latencyPeriodicSec", Timer.getTimestamp() - timestamp);
     }
 

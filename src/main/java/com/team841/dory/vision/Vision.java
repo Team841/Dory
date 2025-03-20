@@ -76,17 +76,20 @@ public class Vision extends SubsystemBase {
 
         if (inputs.charlieSeesTarget) {
             updateVision(
-                    inputs.charlieSeesTarget, inputs.charlieFiducialObservations, inputs.charlieMegatagPoseEstimate, inputs.charlieMegatag2PoseEstimates);
+                    inputs.charlieSeesTarget, inputs.charlieFiducialObservations, inputs.charlieMegatagPoseEstimate, inputs.charlieMegatag2PoseEstimates, "Vision/Charlie");
+        }
+        if (inputs.gammaSeesTarget) {
+            updateVision(
+                    inputs.gammaSeesTarget, inputs.charlieFiducialObservations, inputs.charlieMegatagPoseEstimate, inputs.charlieMegatag2PoseEstimates, "Vision/Gamma");
         }
 
         Logger.recordOutput("Vision/latencyPeriodicSec", Timer.getTimestamp() - timestamp);
     }
 
     public void updateVision(
-                             boolean cameraSeesTarget, FiducialObservation[] cameraFiducialObservations, MegatagPoseEstimate cameraMegatagPoseEstimate, MegatagPoseEstimate cameraMegatag2PoseEstimate) {
+                             boolean cameraSeesTarget, FiducialObservation[] cameraFiducialObservations, MegatagPoseEstimate cameraMegatagPoseEstimate, MegatagPoseEstimate cameraMegatag2PoseEstimate, String logPreface) {
 
         if (cameraMegatagPoseEstimate != null) {
-            String logPreface = "Vision/Charlie";
             var updateTimestamp = cameraMegatagPoseEstimate.timestampSeconds;
 
             boolean alreadyProcessedTimestamp = lastProcessedTimestamp == updateTimestamp;

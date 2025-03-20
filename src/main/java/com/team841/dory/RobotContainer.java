@@ -10,6 +10,7 @@ import com.team841.dory.constants.RC;
 import com.team841.dory.constants.TunerConstants;
 import com.team841.dory.drive.DriveIO;
 import com.team841.dory.drive.DriveIOReal;
+import com.team841.dory.drive.DriveIOSim;
 import com.team841.dory.drive.Drivetrain;
 import com.team841.dory.drive.Commands.DriveMaintainHeading;
 
@@ -59,6 +60,21 @@ public class RobotContainer {
 
     public RobotContainer() {
         switch (RC.robotType) {
+            case SIM -> {
+                this.driveIO = new DriveIOSim(TunerConstants.DrivetrainConstants, TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
+                this.drivetrain = new Drivetrain(driveIO);
+
+                // this.visionIO = new VisionIOLimelights();
+                // this.vision = new Vision(visionIO, visionEstimateConsumer, drivetrain);
+
+                this.escalatorIO = new EscalatorIOKraken();
+                this.escalator = new Escalator(escalatorIO);
+
+                this.shooterIO = new ShooterIOKraken();
+                this.shooter = new Shooter(shooterIO);
+
+                this.control = new Control(this.drivetrain, this.escalator, this.shooter);
+            }
             default -> {
                 this.driveIO = new DriveIOReal(TunerConstants.DrivetrainConstants, TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
                 this.drivetrain = new Drivetrain(driveIO);
