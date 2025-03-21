@@ -1,12 +1,19 @@
 package com.team841.dory.escalator;
 
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.team841.dory.constants.RC;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import edu.wpi.first.units.measure.*;
+
 
 public class Escalator extends SubsystemBase{
 
@@ -16,10 +23,11 @@ public class Escalator extends SubsystemBase{
 
     MotionMagicTorqueCurrentFOC withOutCoralControl = new MotionMagicTorqueCurrentFOC(0).withSlot(0);
     MotionMagicTorqueCurrentFOC withCoralControl = new MotionMagicTorqueCurrentFOC(0).withSlot(1);
+    DutyCycleOut dutyCycle = new DutyCycleOut(0);
 
     StatusCode[] latestStatus;
 
-    Position targetPosition;
+    Position targetPosition = Position.HomeAndIntake;
     
     public Escalator(EscalatorIO io) {
         this.io = io;
@@ -33,6 +41,7 @@ public class Escalator extends SubsystemBase{
 
         if (RC.robotType == RC.RunType.DEV){
             Logger.recordOutput("Escalator/AtHome", this.atPosition(Position.HomeAndIntake));
+            Logger.recordOutput("Escalator/TargetPosition", this.targetPosition.toString());
         }
         Logger.recordOutput("Escalator/latencyPeriodicSec", Timer.getTimestamp() - timestamp);
     }
@@ -56,7 +65,18 @@ public class Escalator extends SubsystemBase{
     }
 
     public boolean atPosition(Position position){
-        return Math.abs(inputs.rightMotorPosition.magnitude() - position.getPosition()) < 0.1;
+        return Math.abs(inputs.rightMotorPosition.in(Units.Radians) - position.getPosition()) < 0.5;
+    }
+
+    public Command passiveHoldDown(){
+        return new RunCommand(
+                () -> this.io.setControl(this.dutyCycle.withOutput(-0.025)), this
+        )
+                .onlyIf(() -> (this.targetPosition == Position.HomeAndIntake &&
+                        Math.abs(inputs.rightMotorPosition.in(Units.Radians) - Position.HomeAndIntake.getPosition()) < 2 &&
+                        !(inputs.rightMotorPosition.in(Units.Radians) < 0.01)))
+                .withName("passiveEscalatorHoldDown")
+                .withTimeout(0.25);
     }
 
     public Position getTarget(){

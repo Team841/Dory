@@ -4,6 +4,7 @@ import com.team841.dory.drive.Commands.Snapping;
 import com.team841.dory.drive.Drivetrain;
 import com.team841.dory.escalator.Escalator;
 import com.team841.dory.escalator.MoveCommand;
+import com.team841.dory.flapSystem.FlapSystem;
 import com.team841.dory.shooter.Shooter;
 import edu.wpi.first.wpilibj2.command.*;
 
@@ -14,6 +15,7 @@ public class Control {
     private final Drivetrain drivetrain;
     private final Escalator escalator;
     private final Shooter shooter;
+    private final FlapSystem flapSystem;
 
 //    public final SequentialCommandGroup snapScoreLeftL4;
 //    public final SequentialCommandGroup snapScoreLeftL3;
@@ -41,10 +43,11 @@ public class Control {
 //    public final Command intakeUp;
 //    public final Command intakeDown;
 
-    public Control(Drivetrain drivetrain, Escalator escalator, Shooter shooter) {
+    public Control(Drivetrain drivetrain, Escalator escalator, Shooter shooter, FlapSystem flapSystem) {
         this.drivetrain = drivetrain;
         this.escalator = escalator;
         this.shooter = shooter;
+        this.flapSystem = flapSystem;
 
 //        this.snapScoreLeftL4 =
 //                new SequentialCommandGroup(
@@ -140,10 +143,17 @@ public class Control {
 
     public Command Intake() {
         return new ConditionalCommand(
-                this.shooter.runShooterIntake(),
+                new ParallelRaceGroup(
+                        this.shooter.runShooterIntake(),
+                        this.flapSystem.runIntake()
+                ),
                 new SequentialCommandGroup(
                         new MoveCommand(this.escalator, Escalator.Position.HomeAndIntake, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
-                        this.shooter.runShooterIntake()
+                        new ParallelRaceGroup(
+                                this.shooter.runShooterIntake(),
+                                this.flapSystem.runIntake()
+                                )
+
                 ).onlyIf(this.shooter::escalatorClear),
                 () -> this.escalator.atPosition(Escalator.Position.HomeAndIntake)
         ); 

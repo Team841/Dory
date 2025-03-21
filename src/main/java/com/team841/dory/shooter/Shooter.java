@@ -31,6 +31,7 @@ public class Shooter extends SubsystemBase {
 
         if (RC.robotType == RC.RunType.DEV){
             Logger.recordOutput("Shooter/isclear", this.escalatorClear());
+            Logger.recordOutput("Shooter/hasCoral", this.shooterHasCoral());
         }
         Logger.recordOutput("Shooter/latencyPeriodicSec", Timer.getTimestamp() - timestamp);
     }
@@ -97,7 +98,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public enum ShooterSpeeds {
-        Intake(0.5),
+        Intake(0.1),
         Stopped(0),
         ShootL2AndL3(0.2),
         ShootL4(0.75),

@@ -108,7 +108,7 @@ public class ShooterIOKraken implements ShooterIO {
 
         inputs.KrakenVelocity = this.KrakenVelocity.getValue();
         inputs.KrakenAcceleration = this.KrakenAcceleration.getValue();
-        inputs.KrakenDutyCyleOut = this.KrakenDutyCyleOut.getValue();
+        inputs.KrakenDutyCycleOut = this.KrakenDutyCyleOut.getValue();
     }
 
     @Override

@@ -101,4 +101,42 @@ public class SC {
                         .withProximityParams(proximityParamsConfigs)
                         .withToFParams(toFParamsConfigs);
     }
+
+    public static class flapSystem{
+        public static int flapMotor = 9;
+        public static int intakeMotor = 14;
+        public static int canrange = 3;
+
+        public static TalonFXConfiguration configs =
+                new TalonFXConfiguration()
+                        .withCurrentLimits(
+                                new CurrentLimitsConfigs()
+                                        .withStatorCurrentLimit(60)
+                                        .withStatorCurrentLimitEnable(true)
+                        );
+
+        private static final FovParamsConfigs fovParamsConfigs =
+                new FovParamsConfigs()
+                        .withFOVCenterX(0)
+                        .withFOVCenterY(0)
+                        .withFOVRangeX(27)
+                        .withFOVRangeY(27);
+
+        private static final ProximityParamsConfigs proximityParamsConfigs =
+                new ProximityParamsConfigs()
+                        .withProximityThreshold(0.4)
+                        .withProximityHysteresis(0.01)
+                        .withMinSignalStrengthForValidMeasurement(2500);
+
+        private static final ToFParamsConfigs toFParamsConfigs =
+                new ToFParamsConfigs()
+                        .withUpdateMode(UpdateModeValue.ShortRange100Hz)
+                        .withUpdateFrequency(50);
+
+        public static final CANrangeConfiguration CanrangeConfigs =
+                new CANrangeConfiguration()
+                        .withFovParams(fovParamsConfigs)
+                        .withProximityParams(proximityParamsConfigs)
+                        .withToFParams(toFParamsConfigs);
+    }
 }

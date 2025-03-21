@@ -30,7 +30,7 @@ public interface ShooterIO {
 
         public AngularVelocity KrakenVelocity;
         public AngularAcceleration KrakenAcceleration;
-        public double KrakenDutyCyleOut;
+        public double KrakenDutyCycleOut;
     }
 
     public void updateInputs(ShooterIOInputs inputs);

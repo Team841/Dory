@@ -1,0 +1,36 @@
+package com.team841.dory.flapSystem;
+
+import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import edu.wpi.first.units.measure.*;
+import com.ctre.phoenix6.signals.MeasurementHealthValue;
+import org.littletonrobotics.junction.AutoLog;
+
+public interface FlapSystemIO {
+
+    @AutoLog
+    public static class FlapSystemIOInputs{
+        public MeasurementHealthValue CANrangeHealth;
+        public Time CANrangeMeasurementTime;
+        public double CANrangeSignalStrength;
+        public Distance CANrangeDistance;
+        public Distance CANrangeStandardDeviation;
+        public double CANrangeAmbientSignal;
+        public boolean CANrangeIsDetected;
+
+        public AngularVelocity IntakeVelocity;
+        public AngularAcceleration IntakeAcceleration;
+        public double IntakeDutyCycleOut;
+
+        public AngularVelocity FlapVelocity;
+        public AngularAcceleration FlapAcceleration;
+        public Angle FlapPosition;
+        public double FlapDutyCycleOut;
+    }
+
+    public void updateInputs(FlapSystemIOInputs inputs);
+
+    public StatusCode setControlIntake(DutyCycleOut control);
+
+    public void stopIntake();
+}

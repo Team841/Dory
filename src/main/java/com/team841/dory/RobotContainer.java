@@ -17,6 +17,9 @@ import com.team841.dory.drive.Commands.DriveMaintainHeading;
 import com.team841.dory.escalator.Escalator;
 import com.team841.dory.escalator.EscalatorIO;
 import com.team841.dory.escalator.EscalatorIOKraken;
+import com.team841.dory.flapSystem.FlapSystem;
+import com.team841.dory.flapSystem.FlapSystemIO;
+import com.team841.dory.flapSystem.FlapSystemIOKraken;
 import com.team841.dory.shooter.Shooter;
 import com.team841.dory.shooter.ShooterIO;
 import com.team841.dory.shooter.ShooterIOKraken;
@@ -47,9 +50,13 @@ public class RobotContainer {
     public final ShooterIO shooterIO;
     public final Shooter shooter;
 
+    public final FlapSystemIO flapSystemIO;
+    public final FlapSystem flapSystem;
+
     public final Control control;
 
     private final DriveMaintainHeading driveMaintainHeading;
+    private final Command escalatorDefaultCommand;
 
     private final SendableChooser<Command> autoChooser;
 
@@ -75,7 +82,10 @@ public class RobotContainer {
                 this.shooterIO = new ShooterIOKraken();
                 this.shooter = new Shooter(shooterIO);
 
-                this.control = new Control(this.drivetrain, this.escalator, this.shooter);
+                this.flapSystemIO = new FlapSystemIOKraken();
+                this.flapSystem = new FlapSystem(flapSystemIO);
+
+                this.control = new Control(this.drivetrain, this.escalator, this.shooter, this.flapSystem);
             }
             default -> {
                 this.driveIO = new DriveIOReal(TunerConstants.DrivetrainConstants, TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
@@ -90,12 +100,17 @@ public class RobotContainer {
                 this.shooterIO = new ShooterIOKraken();
                 this.shooter = new Shooter(shooterIO);
 
-                this.control = new Control(this.drivetrain, this.escalator, this.shooter);
+                this.flapSystemIO = new FlapSystemIOKraken();
+                this.flapSystem = new FlapSystem(flapSystemIO);
+
+                this.control = new Control(this.drivetrain, this.escalator, this.shooter, this.flapSystem);
             }
         }
 
         this.driveMaintainHeading = new DriveMaintainHeading(
                 drivetrain, () -> -joystick.getLeftY(), () -> -joystick.getLeftX(), () -> -joystick.getRightX());
+
+        this.escalatorDefaultCommand = this.escalator.passiveHoldDown();
 
         configureBindings();
 
@@ -105,6 +120,7 @@ public class RobotContainer {
 
     private void configureBindings() {
         drivetrain.setDefaultCommand(driveMaintainHeading);
+        //escalator.setDefaultCommand(escalatorDefaultCommand);
 
         joystick.create().onTrue(new InstantCommand(drivetrain::seedFieldCentric));
 
