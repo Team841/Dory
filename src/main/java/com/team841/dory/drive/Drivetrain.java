@@ -1,5 +1,6 @@
 package com.team841.dory.drive;
 
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -21,6 +22,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import java.util.function.Supplier;
+
 import static edu.wpi.first.units.Units.*;
 
 public class Drivetrain extends SubsystemBase {
@@ -55,6 +59,10 @@ public class Drivetrain extends SubsystemBase {
         telemetry.telemeterize(inputs);
         Logger.processInputs("Drivetrain", inputs);
         Logger.recordOutput("Drive/latencyPeriodicSec", Timer.getTimestamp() - timestamp);
+
+        if (RC.robotType == RC.RunType.DEV){
+            Logger.recordOutput("Drive/reefAnglePolar", getAngleToReefPolar());
+        }
 
         if (DriverStation.isDisabled()) {
             if (!m_hasAppliedOperatorPerspective) {
@@ -140,4 +148,16 @@ public class Drivetrain extends SubsystemBase {
     public void seedFieldCentric() {
         io.seedFieldCentric();
     }
+
+    public Supplier<Pose2d> pose2dSupplier = new Supplier<Pose2d>() {
+        @Override
+        public Pose2d get() {
+            return getPose();
+        }
+    };
+
+    public ChassisSpeeds getChassisSpeeds() {
+        return inputs.Speeds;
+    }
+
 }

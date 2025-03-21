@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 import org.littletonrobotics.junction.Logger;
 
 public class Vision extends SubsystemBase {
