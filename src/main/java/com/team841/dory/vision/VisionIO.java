@@ -23,7 +23,7 @@ public interface VisionIO {
         public MegatagPoseEstimate charlieMegatag2PoseEstimates;
         public MegatagPoseEstimate gammaMegatag2PoseEstimates;
 
-        public Rotation2d gyroAngle;
+        public Rotation2d gyroAngle = Rotation2d.kZero;
         public double gyroAngularVelocity;
     }
 

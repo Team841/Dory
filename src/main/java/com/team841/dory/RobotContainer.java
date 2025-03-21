@@ -20,6 +20,9 @@ import com.team841.dory.escalator.EscalatorIOKraken;
 import com.team841.dory.shooter.Shooter;
 import com.team841.dory.shooter.ShooterIO;
 import com.team841.dory.shooter.ShooterIOKraken;
+import com.team841.dory.vision.Vision;
+import com.team841.dory.vision.VisionIO;
+import com.team841.dory.vision.VisionIOLimelights;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,9 +38,8 @@ public class RobotContainer {
     public final DriveIO driveIO;
     public final Drivetrain drivetrain;
 
-    // public final VisionIO visionIO;
-    // public final Vision vision;
-
+     public final VisionIO visionIO;
+     public final Vision vision;
 
     public final EscalatorIO escalatorIO;
     public final Escalator escalator;
@@ -51,12 +53,12 @@ public class RobotContainer {
 
     private final SendableChooser<Command> autoChooser;
 
-    public final Consumer<VisionFieldPoseEstimate> visionEstimateConsumer = new Consumer<VisionFieldPoseEstimate>() {
+    public final Consumer<VisionFieldPoseEstimate> visionEstimateConsumer = new Consumer<>() {
         @Override
         public void accept(VisionFieldPoseEstimate visionFieldPoseEstimate) {
             drivetrain.addVisionMeasurement(visionFieldPoseEstimate);
         }
-    };
+    };;
 
     public RobotContainer() {
         switch (RC.robotType) {
@@ -64,8 +66,8 @@ public class RobotContainer {
                 this.driveIO = new DriveIOSim(TunerConstants.DrivetrainConstants, TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
                 this.drivetrain = new Drivetrain(driveIO);
 
-                // this.visionIO = new VisionIOLimelights();
-                // this.vision = new Vision(visionIO, visionEstimateConsumer, drivetrain);
+                this.visionIO = new VisionIOLimelights();
+                this.vision = new Vision(visionIO, visionEstimateConsumer, drivetrain);
 
                 this.escalatorIO = new EscalatorIOKraken();
                 this.escalator = new Escalator(escalatorIO);
@@ -79,8 +81,8 @@ public class RobotContainer {
                 this.driveIO = new DriveIOReal(TunerConstants.DrivetrainConstants, TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
                 this.drivetrain = new Drivetrain(driveIO);
 
-                // this.visionIO = new VisionIOLimelights();
-                // this.vision = new Vision(visionIO, visionEstimateConsumer, drivetrain);
+                this.visionIO = new VisionIOLimelights();
+                this.vision = new Vision(visionIO, visionEstimateConsumer, drivetrain);
 
                 this.escalatorIO = new EscalatorIOKraken();
                 this.escalator = new Escalator(escalatorIO);

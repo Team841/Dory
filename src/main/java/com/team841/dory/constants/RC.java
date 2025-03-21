@@ -27,14 +27,14 @@ public class RC {
         return alliance.filter(value -> value == DriverStation.Alliance.Red).isPresent();
     };
 
-    public class Vision {
+    public static class Vision {
         public static final double LOOKBACK_TIME = 1.0;
         // charlie is left, gamma is right
         public static String LimelightCharlieName = "limelight-charlie";
         public static String LimelightGammaName = "limelight-gamma";
         // x y z roll pitch yaw
-        public static double[] CharliePose = {0.0, 0.0, 0.25, 180, 0.0, 0.0};
-        public static double[] GammaPose = {0.0, 0.0, 0.25, 180, 0.0, 0.0};
+        public static double[] CharliePose = {0.1593, 0.225377, 0.2214, 0.0, 12.76, 0.0};
+        public static double[] GammaPose = {0.1593, -0.225377, 0.2214, 0.0, 12.76, 0.0};
     }
 
     public enum Mode {

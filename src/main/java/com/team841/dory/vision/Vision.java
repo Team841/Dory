@@ -80,7 +80,7 @@ public class Vision extends SubsystemBase {
         }
         if (inputs.gammaSeesTarget) {
             updateVision(
-                    inputs.gammaSeesTarget, inputs.charlieFiducialObservations, inputs.charlieMegatagPoseEstimate, inputs.charlieMegatag2PoseEstimates, "Vision/Gamma");
+                    inputs.gammaSeesTarget, inputs.gammaFiducialObservations, inputs.gammaMegatagPoseEstimate, inputs.gammaMegatag2PoseEstimates, "Vision/Gamma");
         }
 
         Logger.recordOutput("Vision/latencyPeriodicSec", Timer.getTimestamp() - timestamp);
@@ -233,10 +233,10 @@ public class Vision extends SubsystemBase {
         var maxYawVel = getMaxAbsDriveYawAngularVelocityInRange(
                 poseEstimate.timestampSeconds - kLargeYawEventTimeWindowS, poseEstimate.timestampSeconds);
         if (maxYawVel.isPresent() && Math.abs(maxYawVel.get()) > kLargeYawThreshold) {
-            Logger.recordOutput("Vision/Elevator/MegatagYawAngular", false);
+            Logger.recordOutput("Vision/MegatagYawAngular", false);
             return false;
         }
-        Logger.recordOutput("Vision/Elevator/MegatagYawAngular", true);
+        Logger.recordOutput("Vision/MegatagYawAngular", true);
 
         if (poseEstimate.avgTagArea < kMinAreaForMegatag) {
             Logger.recordOutput(logPreface + "megaTagAvgTagArea", false);
@@ -314,7 +314,7 @@ public class Vision extends SubsystemBase {
     }
 
     public void updateMegatagEstimate(VisionFieldPoseEstimate megatagEstimate) {
-        lastUsedMegatagTimestamp = Timer.getFPGATimestamp();
+        lastUsedMegatagTimestamp = Timer.getTimestamp();
         visionEstimateConsumer.accept(megatagEstimate);
     }
 
