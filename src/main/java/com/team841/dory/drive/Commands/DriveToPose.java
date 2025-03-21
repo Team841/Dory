@@ -22,31 +22,32 @@ public class DriveToPose extends Command {
     private final ProfiledPIDController thetaController = new ProfiledPIDController(
             0, 0.0, 0.0, new TrapezoidProfile.Constraints(0.0, 0.0), 0.02);
     private Drivetrain driveSubsystem;
-    private Supplier<Pose2d> poseSupplier;
+//    private Supplier<Pose2d> poseSupplier;
+    private Pose2d poseGoal;
     private Translation2d lastSetpointTranslation;
     private double driveErrorAbs;
     private double thetaErrorAbs;
     private double ffMinRadius = 0.2, ffMaxRadius = 0.8;
 
-    public DriveToPose(Drivetrain driveSubsystem, Supplier<Pose2d> poseSupplier) {
+    public DriveToPose(Drivetrain driveSubsystem, Pose2d poseGoal) {
         this.driveSubsystem = driveSubsystem;
-        this.poseSupplier = poseSupplier;
+//        this.poseSupplier = poseSupplier;
+        this.poseGoal = poseGoal;
         addRequirements(driveSubsystem);
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
     }
 
     @Override
     public void initialize() {
-        Pose2d currentPose = poseSupplier.get();
+        Pose2d currentPose = this.driveSubsystem.getPose();
         driveController.reset(
-                currentPose.getTranslation().getDistance(poseSupplier.get().getTranslation()),
+                currentPose.getTranslation().getDistance(poseGoal.getTranslation()),
                 Math.min(
                         0.0,
                         -new Translation2d(driveSubsystem.getChassisSpeeds().vxMetersPerSecond,
                                 driveSubsystem.getChassisSpeeds().vyMetersPerSecond)
                                 .rotateBy(
-                                        poseSupplier
-                                                .get()
+                                        poseGoal
                                                 .getTranslation()
                                                 .minus(driveSubsystem.getPose().getTranslation())
                                                 .getAngle()
@@ -60,12 +61,12 @@ public class DriveToPose extends Command {
     @Override
     public void execute() {
         Pose2d currentPose = driveSubsystem.getPose();
-        Pose2d targetPose = poseSupplier.get();
+        Pose2d targetPose = poseGoal;
 
         Logger.recordOutput("DriveToPose/currentPose", currentPose);
         Logger.recordOutput("DriveToPose/targetPose", targetPose);
 
-        double currentDistance = currentPose.getTranslation().getDistance(poseSupplier.get().getTranslation());
+        double currentDistance = currentPose.getTranslation().getDistance(poseGoal.getTranslation());
         double ffScaler = MathUtil.clamp(
                 (currentDistance - ffMinRadius) / (ffMaxRadius - ffMinRadius),
                 0.0,
@@ -110,7 +111,7 @@ public class DriveToPose extends Command {
 
     @Override
     public boolean isFinished() {
-        return poseSupplier.get().equals(null) || (driveController.atGoal() && thetaController.atGoal());
+        return poseGoal.equals(null) || (driveController.atGoal() && thetaController.atGoal());
     }
 
     public static Transform2d transform2dFromRotation(Rotation2d rotation) {

@@ -46,6 +46,8 @@ public class Drivetrain extends SubsystemBase {
 
     public PIDController controller = new PIDController(52.108, 0, 3.1803);
 
+    public int count = 0;
+
     public Drivetrain(DriveIO io) {
         this.io = io;
 
@@ -62,6 +64,12 @@ public class Drivetrain extends SubsystemBase {
 
         if (RC.robotType == RC.RunType.DEV){
             Logger.recordOutput("Drive/reefAnglePolar", getAngleToReefPolar());
+            if (count == 10){
+                Logger.recordOutput("Drive/scoringPose", getScoringPosition().getPoseRed());
+                count = 0;
+            } else {
+                count++;
+            }
         }
 
         if (DriverStation.isDisabled()) {
@@ -104,7 +112,36 @@ public class Drivetrain extends SubsystemBase {
         if (isRed) robotVector = inputs.Pose.getTranslation().minus(Field.Positions.Reef.redTranslation2d);
         else robotVector = inputs.Pose.getTranslation().minus(Field.Positions.Reef.blueTranslation2d);
 
-        return Math.atan2(robotVector.getY(), robotVector.getX());
+        return Math.atan2(robotVector.getY(), robotVector.getX()) * 57.2957795131;
+    }
+
+    public Field.ScoringPositions getScoringPosition(){
+        double angle = getAngleToReefPolar();
+        if (angle >= 0 && angle < 30){
+            return Field.ScoringPositions.H;
+        } else if (angle >= 30 && angle < 60){
+            return Field.ScoringPositions.I;
+        } else if (angle >= 60 && angle < 90){
+            return Field.ScoringPositions.J;
+        } else if (angle >= 90 && angle < 120){
+            return Field.ScoringPositions.K;
+        } else if (angle >= 120 && angle < 150){
+            return Field.ScoringPositions.L;
+        } else if (angle >= 150 && angle < 180){
+            return Field.ScoringPositions.A;
+        } else if (angle >= -180 && angle < -150) {
+            return Field.ScoringPositions.B;
+        } else if (angle >= -150 && angle < -120){
+            return Field.ScoringPositions.C;
+        } else if (angle >= -120 && angle < -90){
+            return Field.ScoringPositions.D;
+        } else if (angle >= -90 && angle < -60){
+            return Field.ScoringPositions.E;
+        } else if (angle >= -60 && angle < -30){
+            return Field.ScoringPositions.F;
+        } else {
+            return Field.ScoringPositions.G;
+        }
     }
 
     public void addVisionMeasurement(VisionFieldPoseEstimate visionFieldPoseEstimate) {
@@ -121,9 +158,9 @@ public class Drivetrain extends SubsystemBase {
                     // Consumer of ChassisSpeeds and feedforwards to drive the robot
                     (speeds, feedforwards) -> io.setControl(m_pathApplyRobotSpeeds.withSpeeds(speeds).withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons()).withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())), new PPHolonomicDriveController(
                             // PID constants for translation
-                            new PIDConstants(10, 0, 0),
+                            new PIDConstants(100.76, 0, 2.6208),
                             // PID constants for rotation
-                            new PIDConstants(7, 0, 0)), config,
+                            new PIDConstants(34.459, 0, 2.5039)), config,
                     // Assume the path needs to be flipped for Red vs Blue, this is normally the case
                     () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, this // Subsystem for requirements
             );

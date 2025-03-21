@@ -33,7 +33,7 @@ public class DriveMaintainHeading extends Command {
         this.controlYSupplier = velocityY;
         this.controlAngularVelocitySupplier = angularVelocity;
 
-        driveHeading.HeadingController.setPID(23.716, 0, 1.9934);
+        driveHeading.HeadingController.setPID(34.459, 0, 2.5039);
         driveHeading.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
 
         addRequirements(this.drivetrain);
