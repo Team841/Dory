@@ -66,7 +66,7 @@ public class ShooterIOKraken implements ShooterIO {
         this.KrakenAcceleration = this.motor.getAcceleration();
         this.KrakenDutyCyleOut = this.motor.getDutyCycle();
 
-        BaseStatusSignal.setUpdateFrequencyForAll(100,
+        BaseStatusSignal.setUpdateFrequencyForAll(50,
             this.frontCANrangeHealth, this.backCANrangeHealth,
             this.frontCANrangeMeasurementTime, this.backCANrangeMeasurementTime,
             this.frontCANrangeSignalStrength, this.backCANrangeSignalStrength,

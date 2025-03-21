@@ -120,9 +120,9 @@ public class RobotContainer {
 
     private void configureBindings() {
         drivetrain.setDefaultCommand(driveMaintainHeading);
-        //escalator.setDefaultCommand(escalatorDefaultCommand);
+//        escalator.setDefaultCommand(escalatorDefaultCommand);
 
-        joystick.create().onTrue(new InstantCommand(drivetrain::seedFieldCentric));
+        joystick.touchpad().onTrue(new InstantCommand(drivetrain::seedFieldCentric));
 
         /* Zero Automation */
         joystick.options()
@@ -158,7 +158,7 @@ public class RobotContainer {
 
         /* ###################################### */
 
-        joystick.L1()
+        joystick.povUp()
                 .and(() -> !this.shooter.shooterHasCoral())
                 .whileTrue(control.intake);
 

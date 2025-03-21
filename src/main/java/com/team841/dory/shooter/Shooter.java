@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Shooter extends SubsystemBase {
@@ -61,10 +62,15 @@ public class Shooter extends SubsystemBase {
                 (inputs.frontCANrangeDistance.magnitude() > 0.05 && inputs.backCANrangeDistance.magnitude() > 0.05);
     }
 
+//    @AutoLogOutput
     public boolean shooterHasCoral(){
         return (inputs.frontCANrangeDistance.magnitude() < 0.05 && inputs.backCANrangeDistance.magnitude() > 0.05);
     }
 
+
+    public boolean backSensor(){
+        return inputs.backCANrangeDistance.magnitude() < 0.05;
+    }
     public boolean deviceStatusOK(){
         return latestStatusCode.isOK();
     }
@@ -95,10 +101,12 @@ public class Shooter extends SubsystemBase {
                 .withName("runShooterIntakeCommand")
                 .until(this::shooterHasCoral)
                 .finallyDo(this::stop);
+//                .andThen(new RunCommand(() -> this.setDutyCycle(ShooterSpeeds.Intake)).withTimeout(0.1))
+//                .andThen(this::stop);
     }
 
     public enum ShooterSpeeds {
-        Intake(0.1),
+        Intake(0.08),
         Stopped(0),
         ShootL2AndL3(0.2),
         ShootL4(0.75),

@@ -54,7 +54,7 @@ public class FlapSystemIOKraken implements FlapSystemIO{
         this.FlapPosition = this.flapMotor.getPosition();
         this.FlapDutyCycleOut = this.flapMotor.getDutyCycle();
 
-        BaseStatusSignal.setUpdateFrequencyForAll(100,
+        BaseStatusSignal.setUpdateFrequencyForAll(50,
                 this.CANrangeHealth, this.CANrangeMeasurementTime,
                 this.CANrangeSignalStrength, this.CANrangeDistance,
                 this.CANrangeStandardDeviation, this.CANrangeAmbientSignal,

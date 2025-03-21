@@ -62,7 +62,7 @@ public class EscalatorIOKraken implements EscalatorIO {
 
         this.controlMode = this.rightMotor.getControlMode();
 
-        BaseStatusSignal.setUpdateFrequencyForAll(250, 
+        BaseStatusSignal.setUpdateFrequencyForAll(100,
             this.rightPosition, this.leftPosition,
             this.rightVelocity, this.leftVelocity,
             this.rightAcceleration, this.leftAcceleration,

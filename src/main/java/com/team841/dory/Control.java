@@ -148,7 +148,8 @@ public class Control {
                         this.flapSystem.runIntake()
                 ),
                 new SequentialCommandGroup(
-                        new MoveCommand(this.escalator, Escalator.Position.HomeAndIntake, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
+//                        new MoveCommand(this.escalator, Escalator.Position.HomeAndIntake, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
+                        this.escalator.passiveHoldDown().withTimeout(0.1),
                         new ParallelRaceGroup(
                                 this.shooter.runShooterIntake(),
                                 this.flapSystem.runIntake()

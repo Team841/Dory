@@ -42,6 +42,10 @@ public class Escalator extends SubsystemBase{
         if (RC.robotType == RC.RunType.DEV){
             Logger.recordOutput("Escalator/AtHome", this.atPosition(Position.HomeAndIntake));
             Logger.recordOutput("Escalator/TargetPosition", this.targetPosition.toString());
+            Logger.recordOutput("Escalator/PositionRadian", this.inputs.rightMotorPosition.in(Units.Rotation));
+            Logger.recordOutput("Escalator/Logical Check", this.targetPosition == Position.HomeAndIntake &&
+                    Math.abs(inputs.rightMotorPosition.in(Units.Rotation) - Position.HomeAndIntake.getPosition()) < 2 &&
+                    !(inputs.rightMotorPosition.in(Units.Rotation) < 0.01));
         }
         Logger.recordOutput("Escalator/latencyPeriodicSec", Timer.getTimestamp() - timestamp);
     }
@@ -65,18 +69,17 @@ public class Escalator extends SubsystemBase{
     }
 
     public boolean atPosition(Position position){
-        return Math.abs(inputs.rightMotorPosition.in(Units.Radians) - position.getPosition()) < 0.5;
+        return Math.abs(inputs.rightMotorPosition.in(Units.Rotation) - position.getPosition()) < 0.5;
     }
 
-    public Command passiveHoldDown(){
+    public Command passiveHoldDown(){   
         return new RunCommand(
                 () -> this.io.setControl(this.dutyCycle.withOutput(-0.025)), this
         )
                 .onlyIf(() -> (this.targetPosition == Position.HomeAndIntake &&
-                        Math.abs(inputs.rightMotorPosition.in(Units.Radians) - Position.HomeAndIntake.getPosition()) < 2 &&
-                        !(inputs.rightMotorPosition.in(Units.Radians) < 0.01)))
-                .withName("passiveEscalatorHoldDown")
-                .withTimeout(0.25);
+                        Math.abs(inputs.rightMotorPosition.in(Units.Rotation) - Position.HomeAndIntake.getPosition()) < 2 &&
+                        !(inputs.rightMotorPosition.in(Units.Rotation) < 0.01)))
+                .withName("passiveEscalatorHoldDown");
     }
 
     public Position getTarget(){
