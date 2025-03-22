@@ -13,20 +13,20 @@ public interface ShooterIO {
 
     @AutoLog
     public static class ShooterIOInputs{
-        public MeasurementHealthValue frontCANrangeHealth;
-        public MeasurementHealthValue backCANrangeHealth;
-        public Time frontCANrangeMeasurementTime;
-        public Time backCANrangeMeasurementTime;
-        public double frontCANrangeSignalStrength;
-        public double backCANrangeSignalStrength;
+//        public MeasurementHealthValue frontCANrangeHealth;
+//        public MeasurementHealthValue backCANrangeHealth;
+//        public Time frontCANrangeMeasurementTime;
+//        public Time backCANrangeMeasurementTime;
+//        public double frontCANrangeSignalStrength;
+//        public double backCANrangeSignalStrength;
         public Distance frontCANrangeDistance;
         public Distance backCANrangeDistance;
-        public Distance frontCANrangeStandardDeviation;
-        public Distance backCANrangeStandardDeviation;
-        public double frontCANrangeAmbientSignal;
-        public double backCANrangeAmbientSignal;
-        public boolean frontCANrangeIsDetected;
-        public boolean backCANrangeIsDetected;
+//        public Distance frontCANrangeStandardDeviation;
+//        public Distance backCANrangeStandardDeviation;
+//        public double frontCANrangeAmbientSignal;
+//        public double backCANrangeAmbientSignal;
+//        public boolean frontCANrangeIsDetected;
+//        public boolean backCANrangeIsDetected;
 
         public AngularVelocity KrakenVelocity;
         public AngularAcceleration KrakenAcceleration;

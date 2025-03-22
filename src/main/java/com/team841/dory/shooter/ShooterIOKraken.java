@@ -19,20 +19,20 @@ public class ShooterIOKraken implements ShooterIO {
     CANrange FrontCANrange;
     CANrange BackCANrange;
 
-    StatusSignal<MeasurementHealthValue> frontCANrangeHealth;
-    StatusSignal<MeasurementHealthValue> backCANrangeHealth;
-    StatusSignal<Time> frontCANrangeMeasurementTime;
-    StatusSignal<Time> backCANrangeMeasurementTime;
-    StatusSignal<Double> frontCANrangeSignalStrength;
-    StatusSignal<Double> backCANrangeSignalStrength;
+//    StatusSignal<MeasurementHealthValue> frontCANrangeHealth;
+//    StatusSignal<MeasurementHealthValue> backCANrangeHealth;
+//    StatusSignal<Time> frontCANrangeMeasurementTime;
+//    StatusSignal<Time> backCANrangeMeasurementTime;
+//    StatusSignal<Double> frontCANrangeSignalStrength;
+//    StatusSignal<Double> backCANrangeSignalStrength;
     StatusSignal<Distance> frontCANrangeDistance;
     StatusSignal<Distance> backCANrangeDistance;
-    StatusSignal<Distance> frontCANrangeStandardDeviation;
-    StatusSignal<Distance> backCANrangeStandardDeviation;
-    StatusSignal<Double> frontCANrangeAmbientSignal;
-    StatusSignal<Double> backCANrangeAmbientSignal;
-    StatusSignal<Boolean> frontCANrangeIsDetected;
-    StatusSignal<Boolean> backCANrangeIsDetected;
+//    StatusSignal<Distance> frontCANrangeStandardDeviation;
+//    StatusSignal<Distance> backCANrangeStandardDeviation;
+//    StatusSignal<Double> frontCANrangeAmbientSignal;
+//    StatusSignal<Double> backCANrangeAmbientSignal;
+//    StatusSignal<Boolean> frontCANrangeIsDetected;
+//    StatusSignal<Boolean> backCANrangeIsDetected;
 
     StatusSignal<AngularVelocity> KrakenVelocity;
     StatusSignal<AngularAcceleration> KrakenAcceleration;
@@ -47,33 +47,33 @@ public class ShooterIOKraken implements ShooterIO {
         this.FrontCANrange.getConfigurator().apply(SC.Shooter.CanrangeConfigs);
         this.BackCANrange.getConfigurator().apply(SC.Shooter.CanrangeConfigs);
 
-        this.frontCANrangeHealth = this.FrontCANrange.getMeasurementHealth();
-        this.backCANrangeHealth = this.BackCANrange.getMeasurementHealth();
-        this.frontCANrangeMeasurementTime = this.FrontCANrange.getMeasurementTime();
-        this.backCANrangeMeasurementTime = this.BackCANrange.getMeasurementTime();
-        this.frontCANrangeSignalStrength = this.FrontCANrange.getSignalStrength();
-        this.backCANrangeSignalStrength = this.BackCANrange.getSignalStrength();
+//        this.frontCANrangeHealth = this.FrontCANrange.getMeasurementHealth();
+//        this.backCANrangeHealth = this.BackCANrange.getMeasurementHealth();
+//        this.frontCANrangeMeasurementTime = this.FrontCANrange.getMeasurementTime();
+//        this.backCANrangeMeasurementTime = this.BackCANrange.getMeasurementTime();
+//        this.frontCANrangeSignalStrength = this.FrontCANrange.getSignalStrength();
+//        this.backCANrangeSignalStrength = this.BackCANrange.getSignalStrength();
         this.frontCANrangeDistance = this.FrontCANrange.getDistance();
         this.backCANrangeDistance = this.BackCANrange.getDistance();
-        this.frontCANrangeStandardDeviation = this.FrontCANrange.getDistanceStdDev();
-        this.backCANrangeStandardDeviation = this.BackCANrange.getDistanceStdDev();
-        this.frontCANrangeAmbientSignal = this.FrontCANrange.getAmbientSignal();
-        this.backCANrangeAmbientSignal = this.BackCANrange.getAmbientSignal();
-        this.frontCANrangeIsDetected = this.FrontCANrange.getIsDetected();
-        this.backCANrangeIsDetected = this.BackCANrange.getIsDetected();
+//        this.frontCANrangeStandardDeviation = this.FrontCANrange.getDistanceStdDev();
+//        this.backCANrangeStandardDeviation = this.BackCANrange.getDistanceStdDev();
+//        this.frontCANrangeAmbientSignal = this.FrontCANrange.getAmbientSignal();
+//        this.backCANrangeAmbientSignal = this.BackCANrange.getAmbientSignal();
+//        this.frontCANrangeIsDetected = this.FrontCANrange.getIsDetected();
+//        this.backCANrangeIsDetected = this.BackCANrange.getIsDetected();
 
         this.KrakenVelocity = this.motor.getVelocity();
         this.KrakenAcceleration = this.motor.getAcceleration();
         this.KrakenDutyCyleOut = this.motor.getDutyCycle();
 
         BaseStatusSignal.setUpdateFrequencyForAll(50,
-            this.frontCANrangeHealth, this.backCANrangeHealth,
-            this.frontCANrangeMeasurementTime, this.backCANrangeMeasurementTime,
-            this.frontCANrangeSignalStrength, this.backCANrangeSignalStrength,
+//            this.frontCANrangeHealth, this.backCANrangeHealth,
+//            this.frontCANrangeMeasurementTime, this.backCANrangeMeasurementTime,
+//            this.frontCANrangeSignalStrength, this.backCANrangeSignalStrength,
             this.frontCANrangeDistance, this.backCANrangeDistance,
-            this.frontCANrangeStandardDeviation, this.backCANrangeStandardDeviation,
-            this.frontCANrangeAmbientSignal, this.backCANrangeAmbientSignal,
-            this.frontCANrangeIsDetected, this.backCANrangeIsDetected,
+//            this.frontCANrangeStandardDeviation, this.backCANrangeStandardDeviation,
+//            this.frontCANrangeAmbientSignal, this.backCANrangeAmbientSignal,
+//            this.frontCANrangeIsDetected, this.backCANrangeIsDetected,
             this.KrakenVelocity, this.KrakenAcceleration,
             this.KrakenDutyCyleOut
         );
@@ -81,30 +81,31 @@ public class ShooterIOKraken implements ShooterIO {
 
     @Override
     public void updateInputs(ShooterIOInputs inputs) {
-        BaseStatusSignal.refreshAll(this.frontCANrangeHealth, this.backCANrangeHealth,
-                this.frontCANrangeMeasurementTime, this.backCANrangeMeasurementTime,
-                this.frontCANrangeSignalStrength, this.backCANrangeSignalStrength,
+        BaseStatusSignal.refreshAll(
+//                this.frontCANrangeHealth, this.backCANrangeHealth,
+//                this.frontCANrangeMeasurementTime, this.backCANrangeMeasurementTime,
+//                this.frontCANrangeSignalStrength, this.backCANrangeSignalStrength,
                 this.frontCANrangeDistance, this.backCANrangeDistance,
-                this.frontCANrangeStandardDeviation, this.backCANrangeStandardDeviation,
-                this.frontCANrangeAmbientSignal, this.backCANrangeAmbientSignal,
-                this.frontCANrangeIsDetected, this.backCANrangeIsDetected,
+//                this.frontCANrangeStandardDeviation, this.backCANrangeStandardDeviation,
+//                this.frontCANrangeAmbientSignal, this.backCANrangeAmbientSignal,
+//                this.frontCANrangeIsDetected, this.backCANrangeIsDetected,
                 this.KrakenVelocity, this.KrakenAcceleration,
                 this.KrakenDutyCyleOut);
 
-        inputs.frontCANrangeHealth = this.frontCANrangeHealth.getValue();
-        inputs.backCANrangeHealth = this.backCANrangeHealth.getValue();
-        inputs.frontCANrangeMeasurementTime = this.frontCANrangeMeasurementTime.getValue();
-        inputs.backCANrangeMeasurementTime = this.backCANrangeMeasurementTime.getValue();
-        inputs.frontCANrangeSignalStrength = this.frontCANrangeSignalStrength.getValue();
-        inputs.backCANrangeSignalStrength = this.backCANrangeSignalStrength.getValue();
+//        inputs.frontCANrangeHealth = this.frontCANrangeHealth.getValue();
+//        inputs.backCANrangeHealth = this.backCANrangeHealth.getValue();
+//        inputs.frontCANrangeMeasurementTime = this.frontCANrangeMeasurementTime.getValue();
+//        inputs.backCANrangeMeasurementTime = this.backCANrangeMeasurementTime.getValue();
+//        inputs.frontCANrangeSignalStrength = this.frontCANrangeSignalStrength.getValue();
+//        inputs.backCANrangeSignalStrength = this.backCANrangeSignalStrength.getValue();
         inputs.frontCANrangeDistance = this.frontCANrangeDistance.getValue();
         inputs.backCANrangeDistance = this.backCANrangeDistance.getValue();
-        inputs.frontCANrangeStandardDeviation = this.frontCANrangeStandardDeviation.getValue();
-        inputs.backCANrangeStandardDeviation = this.backCANrangeStandardDeviation.getValue();
-        inputs.frontCANrangeAmbientSignal = this.frontCANrangeAmbientSignal.getValue();
-        inputs.backCANrangeAmbientSignal = this.backCANrangeAmbientSignal.getValue();
-        inputs.frontCANrangeIsDetected = this.frontCANrangeIsDetected.getValue();
-        inputs.backCANrangeIsDetected = this.backCANrangeIsDetected.getValue();
+//        inputs.frontCANrangeStandardDeviation = this.frontCANrangeStandardDeviation.getValue();
+//        inputs.backCANrangeStandardDeviation = this.backCANrangeStandardDeviation.getValue();
+//        inputs.frontCANrangeAmbientSignal = this.frontCANrangeAmbientSignal.getValue();
+//        inputs.backCANrangeAmbientSignal = this.backCANrangeAmbientSignal.getValue();
+//        inputs.frontCANrangeIsDetected = this.frontCANrangeIsDetected.getValue();
+//        inputs.backCANrangeIsDetected = this.backCANrangeIsDetected.getValue();
 
         inputs.KrakenVelocity = this.KrakenVelocity.getValue();
         inputs.KrakenAcceleration = this.KrakenAcceleration.getValue();

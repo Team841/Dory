@@ -10,13 +10,13 @@ public interface FlapSystemIO {
 
     @AutoLog
     public static class FlapSystemIOInputs{
-        public MeasurementHealthValue CANrangeHealth;
-        public Time CANrangeMeasurementTime;
-        public double CANrangeSignalStrength;
+//        public MeasurementHealthValue CANrangeHealth;
+//        public Time CANrangeMeasurementTime;
+//        public double CANrangeSignalStrength;
         public Distance CANrangeDistance;
-        public Distance CANrangeStandardDeviation;
-        public double CANrangeAmbientSignal;
-        public boolean CANrangeIsDetected;
+//        public Distance CANrangeStandardDeviation;
+//        public double CANrangeAmbientSignal;
+//        public boolean CANrangeIsDetected;
 
         public AngularVelocity IntakeVelocity;
         public AngularAcceleration IntakeAcceleration;

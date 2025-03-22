@@ -15,13 +15,13 @@ public class FlapSystemIOKraken implements FlapSystemIO{
     public TalonFX flapMotor = new TalonFX(SC.flapSystem.flapMotor, "rio");
     public CANrange canrange = new CANrange(SC.flapSystem.canrange, "rio");
 
-    StatusSignal<MeasurementHealthValue> CANrangeHealth;
-    StatusSignal<Time> CANrangeMeasurementTime;
-    StatusSignal<Double> CANrangeSignalStrength;
+//    StatusSignal<MeasurementHealthValue> CANrangeHealth;
+//    StatusSignal<Time> CANrangeMeasurementTime;
+//    StatusSignal<Double> CANrangeSignalStrength;
     StatusSignal<Distance> CANrangeDistance;
-    StatusSignal<Distance> CANrangeStandardDeviation;
-    StatusSignal<Double> CANrangeAmbientSignal;
-    StatusSignal<Boolean> CANrangeIsDetected;
+//    StatusSignal<Distance> CANrangeStandardDeviation;
+//    StatusSignal<Double> CANrangeAmbientSignal;
+//    StatusSignal<Boolean> CANrangeIsDetected;
 
     StatusSignal<AngularVelocity> IntakeVelocity;
     StatusSignal<AngularAcceleration> IntakeAcceleration;
@@ -37,13 +37,13 @@ public class FlapSystemIOKraken implements FlapSystemIO{
         this.flapMotor.getConfigurator().apply(SC.flapSystem.configs);
         this.canrange.getConfigurator().apply(SC.flapSystem.CanrangeConfigs);
 
-        this.CANrangeHealth = this.canrange.getMeasurementHealth();
-        this.CANrangeMeasurementTime = this.canrange.getMeasurementTime();
-        this.CANrangeSignalStrength = this.canrange.getSignalStrength();
+//        this.CANrangeHealth = this.canrange.getMeasurementHealth();
+//        this.CANrangeMeasurementTime = this.canrange.getMeasurementTime();
+//        this.CANrangeSignalStrength = this.canrange.getSignalStrength();
         this.CANrangeDistance = this.canrange.getDistance();
-        this.CANrangeStandardDeviation = this.canrange.getDistanceStdDev();
-        this.CANrangeAmbientSignal = this.canrange.getAmbientSignal();
-        this.CANrangeIsDetected = this.canrange.getIsDetected();
+//        this.CANrangeStandardDeviation = this.canrange.getDistanceStdDev();
+//        this.CANrangeAmbientSignal = this.canrange.getAmbientSignal();
+//        this.CANrangeIsDetected = this.canrange.getIsDetected();
 
         this.IntakeVelocity = this.intakeMotor.getVelocity();
         this.IntakeAcceleration = this.intakeMotor.getAcceleration();
@@ -55,10 +55,10 @@ public class FlapSystemIOKraken implements FlapSystemIO{
         this.FlapDutyCycleOut = this.flapMotor.getDutyCycle();
 
         BaseStatusSignal.setUpdateFrequencyForAll(50,
-                this.CANrangeHealth, this.CANrangeMeasurementTime,
-                this.CANrangeSignalStrength, this.CANrangeDistance,
-                this.CANrangeStandardDeviation, this.CANrangeAmbientSignal,
-                this.CANrangeIsDetected,
+//                this.CANrangeHealth, this.CANrangeMeasurementTime,
+//                this.CANrangeSignalStrength, this.CANrangeDistance,
+//                this.CANrangeStandardDeviation, this.CANrangeAmbientSignal,
+//                this.CANrangeIsDetected,
                 this.IntakeVelocity, this.IntakeAcceleration,
                 this.IntakeDutyCycleOut,
                 this.FlapVelocity, this.FlapAcceleration,
@@ -67,22 +67,23 @@ public class FlapSystemIOKraken implements FlapSystemIO{
 
     @Override
     public void updateInputs(FlapSystemIOInputs inputs) {
-        BaseStatusSignal.refreshAll(this.CANrangeHealth, this.CANrangeMeasurementTime,
-                this.CANrangeSignalStrength, this.CANrangeDistance,
-                this.CANrangeStandardDeviation, this.CANrangeAmbientSignal,
-                this.CANrangeIsDetected,
+        BaseStatusSignal.refreshAll(
+//                this.CANrangeHealth, this.CANrangeMeasurementTime,
+//                this.CANrangeSignalStrength, this.CANrangeDistance,
+//                this.CANrangeStandardDeviation, this.CANrangeAmbientSignal,
+//                this.CANrangeIsDetected,
                 this.IntakeVelocity, this.IntakeAcceleration,
                 this.IntakeDutyCycleOut,
                 this.FlapVelocity, this.FlapAcceleration,
                 this.FlapPosition, this.FlapDutyCycleOut);
 
-        inputs.CANrangeHealth = this.CANrangeHealth.getValue();
-        inputs.CANrangeMeasurementTime = this.CANrangeMeasurementTime.getValue();
-        inputs.CANrangeSignalStrength = this.CANrangeSignalStrength.getValue();
+//        inputs.CANrangeHealth = this.CANrangeHealth.getValue();
+//        inputs.CANrangeMeasurementTime = this.CANrangeMeasurementTime.getValue();
+//        inputs.CANrangeSignalStrength = this.CANrangeSignalStrength.getValue();
         inputs.CANrangeDistance = this.CANrangeDistance.getValue();
-        inputs.CANrangeStandardDeviation = this.CANrangeStandardDeviation.getValue();
-        inputs.CANrangeAmbientSignal = this.CANrangeAmbientSignal.getValue();
-        inputs.CANrangeIsDetected = this.CANrangeIsDetected.getValue();
+//        inputs.CANrangeStandardDeviation = this.CANrangeStandardDeviation.getValue();
+//        inputs.CANrangeAmbientSignal = this.CANrangeAmbientSignal.getValue();
+//        inputs.CANrangeIsDetected = this.CANrangeIsDetected.getValue();
 
         inputs.IntakeVelocity = this.IntakeVelocity.getValue();
         inputs.IntakeAcceleration = this.IntakeAcceleration.getValue();
