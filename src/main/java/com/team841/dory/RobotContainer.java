@@ -33,12 +33,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotContainer {
 
     private final double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
 
     private final CommandPS5Controller joystick = new CommandPS5Controller(0);
+    private final CommandXboxController cojoystick = new CommandXboxController(1);
 
     public final DriveIO driveIO;
     public final Drivetrain drivetrain;
@@ -128,45 +130,51 @@ public class RobotContainer {
         joystick.touchpad().onTrue(new InstantCommand(drivetrain::seedFieldCentric));
 
         /* Zero Automation */
-        joystick.options()
-                .and(joystick.R2())
+        cojoystick.y()
+                .and(cojoystick.rightTrigger())
                 .whileTrue(control.noSnapAutoScoreL4);
 
-        joystick.options()
-                .and(joystick.R1())
+        cojoystick.y()
+                .and(cojoystick.rightBumper())
                 .whileTrue(control.noSnapAutoScoreL3);
 
-        joystick.options()
-                .and(joystick.L2())
+        cojoystick.y()
+                .and(cojoystick.leftTrigger())
                 .whileTrue(control.noSnapAutoScoreL2);
 
-        joystick.options()
+        cojoystick.y()
                 .onFalse(control.escalatorGoHome);
 
         /* Automated */
-        joystick.L1()
-                .and(joystick.R2())
+        cojoystick.leftBumper()
+                .and(cojoystick.rightTrigger())
                 .whileTrue(control.snapScoreL4);
 
-        joystick.L1()
-                .and(joystick.R1())
+        cojoystick.leftBumper()
+                .and(cojoystick.rightBumper())
                 .whileTrue(control.snapScoreL3);
 
-        joystick.L1()
-                .and(joystick.L2())
+        cojoystick.leftBumper()
+                .and(cojoystick.leftTrigger())
                 .whileTrue(control.snapScoreL2);
 
-        joystick.L1()
+        cojoystick.leftBumper()
                 .onFalse(control.escalatorGoHome);
 
         /* ###################################### */
 
-        joystick.povUp()
+        cojoystick.x()
                 .and(() -> !this.shooter.shooterHasCoral())
                 .whileTrue(control.intake);
 
-        joystick.create()
+        cojoystick.back()
                 .onTrue(new InstantCommand(escalator::zero, escalator));
+
+        cojoystick.povDown()
+                .whileTrue(this.escalator.goDown());
+
+        cojoystick.povUp()
+                .whileTrue(this.escalator.goDown());
 
     }
 

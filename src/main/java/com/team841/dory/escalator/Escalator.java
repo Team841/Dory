@@ -86,6 +86,18 @@ public class Escalator extends SubsystemBase{
         return this.targetPosition;
     }
 
+    public Command goUp(){
+        return new RunCommand(() -> this.io.setControl(this.dutyCycle.withOutput(0.1)), this)
+                .withName("EscalatorGoUp")
+                .finallyDo(() -> this.io.setControl(this.dutyCycle.withOutput(0)));
+    }
+
+    public Command goDown(){
+        return new RunCommand(() -> this.io.setControl(this.dutyCycle.withOutput(-0.1)), this)
+                .withName("EscalatorGoDown")
+                .finallyDo(() -> this.io.setControl(this.dutyCycle.withOutput(0)));
+    }
+
     public enum Position {
         HomeAndIntake(0),
         L1(1),

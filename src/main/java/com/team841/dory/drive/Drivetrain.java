@@ -47,7 +47,7 @@ public class Drivetrain extends SubsystemBase {
     /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
 
-    public PIDController controller = new PIDController(4, 0, 0.2wq);
+    public PIDController controller = new PIDController(4, 0, 0.2);
 
     public int count = 0;
 
