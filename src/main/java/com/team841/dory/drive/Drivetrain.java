@@ -1,6 +1,8 @@
 package com.team841.dory.drive;
 
 import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -48,6 +50,11 @@ public class Drivetrain extends SubsystemBase {
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
 
     public PIDController controller = new PIDController(4, 0, 0.2);
+    public ProfiledPIDController autoAlignController = new ProfiledPIDController(
+            4, 0, 0.2,
+            new TrapezoidProfile.Constraints(
+                    3, 2) // max velocity, max acceleration
+    );
 
     public int count = 0;
 
@@ -58,6 +65,8 @@ public class Drivetrain extends SubsystemBase {
     public Drivetrain(DriveIO io) {
         this.io = io;
         this.controller.setTolerance(0.5);
+
+        this.autoAlignController.setTolerance(0.5);
         configureAutoBuilder();
     }
 
