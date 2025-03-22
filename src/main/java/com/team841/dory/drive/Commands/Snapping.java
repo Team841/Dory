@@ -13,7 +13,9 @@ public class Snapping extends Command {
     public Snapping(Drivetrain drivetrain) {
         this.drivetrain = drivetrain;
 
-        this.setpoint = !(1==1) ? -16.66 : 20.47;
+        this.isRight = drivetrain.getScoringPositionIsRight();
+
+        this.setpoint = isRight ? -10.28 : 16.02;
 
         addRequirements(this.drivetrain);
         setName("Snapping");
@@ -22,6 +24,7 @@ public class Snapping extends Command {
     private final Drivetrain drivetrain;
 
     private double setpoint;
+    private boolean isRight;
 
     @Override
     public void initialize() {
@@ -32,7 +35,8 @@ public class Snapping extends Command {
     public void execute() {
 
         SmartDashboard.putNumber("Setpoint", setpoint);
-        double speed = this.drivetrain.controller.calculate(LimelightHelpers.getTX(RC.Vision.LimelightCharlieName), setpoint);
+        double speed = this.isRight ? this.drivetrain.controller.calculate(LimelightHelpers.getTX(RC.Vision.LimelightCharlieName), setpoint)
+                : this.drivetrain.controller.calculate(LimelightHelpers.getTX(RC.Vision.LimelightGammaName), setpoint);
         SmartDashboard.putNumber("NOT Clamped Output", speed);
         speed = speed >= 0 ? Math.max(0, Math.min(speed, 8.5)) : -Math.max(0, Math.min(-speed, 8.5));
         speed /= 8.5;

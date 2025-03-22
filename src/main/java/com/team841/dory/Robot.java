@@ -2,8 +2,10 @@ package com.team841.dory;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.commands.PathfindingCommand;
+import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.team841.dory.constants.RC;
 
+import com.team841.dory.lib.ADStar.LocalADStarAK;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -21,6 +23,8 @@ public class Robot extends LoggedRobot {
     private final RobotContainer m_robotContainer;
 
     public Robot() {
+        Pathfinding.setPathfinder(new LocalADStarAK());
+
         Logger.recordMetadata("ProjectName", "Nike");
         Logger.recordMetadata("TuningMode", Boolean.toString(RC.robotType == RC.RunType.DEV));
         Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);

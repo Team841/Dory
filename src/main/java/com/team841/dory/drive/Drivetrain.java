@@ -1,5 +1,8 @@
 package com.team841.dory.drive;
 
+import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.Command;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -44,13 +47,17 @@ public class Drivetrain extends SubsystemBase {
     /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
 
-    public PIDController controller = new PIDController(52.108, 0, 3.1803);
+    public PIDController controller = new PIDController(4, 0, 0.2wq);
 
     public int count = 0;
 
+    PathConstraints constraints = new PathConstraints(
+            3.0, 4.0,
+            Units.degreesToRadians(540), Units.degreesToRadians(720));
+
     public Drivetrain(DriveIO io) {
         this.io = io;
-
+        this.controller.setTolerance(0.5);
         configureAutoBuilder();
     }
 
@@ -81,6 +88,13 @@ public class Drivetrain extends SubsystemBase {
                 });
             }
         }
+    }
+
+    public Command getPathToAutoScore(){
+        return AutoBuilder.pathfindToPose(
+                getPoseToScore(),
+                constraints
+        );
     }
 
     public VisionData getVisionData() {
@@ -144,11 +158,29 @@ public class Drivetrain extends SubsystemBase {
         }
     }
 
+    public boolean getScoringPositionIsRight(){
+        Field.ScoringPositions pos = getScoringPosition();
+        switch (pos){
+            case A, C, E, G, I, K -> {return false;}
+            default -> {
+                return true;
+            }
+        }
+    }
+
+    public Pose2d getPoseToScore(){
+        if (RC.isRedAlliance.get()){
+            return getScoringPosition().getPoseRed();
+        } else {
+            return getScoringPosition().getPoseBlue();
+        }
+    }
+
     public void addVisionMeasurement(VisionFieldPoseEstimate visionFieldPoseEstimate) {
         io.addVisionMeasurement(visionFieldPoseEstimate);
     }
 
-    private void configureAutoBuilder() {
+    public void configureAutoBuilder() {
         try {
             var config = RobotConfig.fromGUISettings();
             AutoBuilder.configure(
@@ -158,7 +190,7 @@ public class Drivetrain extends SubsystemBase {
                     // Consumer of ChassisSpeeds and feedforwards to drive the robot
                     (speeds, feedforwards) -> io.setControl(m_pathApplyRobotSpeeds.withSpeeds(speeds).withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons()).withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())), new PPHolonomicDriveController(
                             // PID constants for translation
-                            new PIDConstants(100.76, 0, 2.6208),
+                            new PIDConstants(41.418, 0, 1.344),
                             // PID constants for rotation
                             new PIDConstants(34.459, 0, 2.5039)), config,
                     // Assume the path needs to be flipped for Red vs Blue, this is normally the case

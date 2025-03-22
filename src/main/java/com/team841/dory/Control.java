@@ -1,5 +1,6 @@
 package com.team841.dory;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.team841.dory.drive.Commands.DriveToPose;
 import com.team841.dory.drive.Commands.Snapping;
 import com.team841.dory.drive.Drivetrain;
@@ -50,6 +51,10 @@ public class Control {
         this.shooter = shooter;
         this.flapSystem = flapSystem;
 
+        if (!AutoBuilder.isConfigured()) {
+            drivetrain.configureAutoBuilder();
+        }
+
 //        this.snapScoreLeftL4 =
 //                new SequentialCommandGroup(
 //                        new Snapping(this.drivetrain, true),
@@ -90,7 +95,7 @@ public class Control {
 
         this.snapScoreL4 =
                 new SequentialCommandGroup(
-                        new DriveToPose(drivetrain, this.drivetrain.getScoringPosition().getPoseRed()),
+                        new Snapping(this.drivetrain),
                         new MoveCommand(this.escalator, Escalator.Position.L4, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
                         this.shooter.runShooterScore(Escalator.Position.L4, scoreTimeout),
                         new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)))

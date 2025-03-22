@@ -17,6 +17,7 @@ import com.team841.dory.drive.Commands.DriveMaintainHeading;
 import com.team841.dory.escalator.Escalator;
 import com.team841.dory.escalator.EscalatorIO;
 import com.team841.dory.escalator.EscalatorIOKraken;
+import com.team841.dory.escalator.MoveCommand;
 import com.team841.dory.flapSystem.FlapSystem;
 import com.team841.dory.flapSystem.FlapSystemIO;
 import com.team841.dory.flapSystem.FlapSystemIOKraken;
@@ -30,6 +31,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 
 public class RobotContainer {
@@ -41,8 +43,8 @@ public class RobotContainer {
     public final DriveIO driveIO;
     public final Drivetrain drivetrain;
 
-     public final VisionIO visionIO;
-     public final Vision vision;
+    public final VisionIO visionIO;
+    public final Vision vision;
 
     public final EscalatorIO escalatorIO;
     public final Escalator escalator;
@@ -65,7 +67,8 @@ public class RobotContainer {
         public void accept(VisionFieldPoseEstimate visionFieldPoseEstimate) {
             drivetrain.addVisionMeasurement(visionFieldPoseEstimate);
         }
-    };;
+    };
+    ;
 
     public RobotContainer() {
         switch (RC.robotType) {

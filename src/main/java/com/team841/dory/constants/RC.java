@@ -29,7 +29,7 @@ public class RC {
 
     public static class Vision {
         public static final double LOOKBACK_TIME = 1.0;
-        // charlie is left, gamma is right
+        // charlie is Right, gamma is left
         public static String LimelightCharlieName = "limelight-charlie";
         public static String LimelightGammaName = "limelight-gamma";
         // x y z roll pitch yaw
