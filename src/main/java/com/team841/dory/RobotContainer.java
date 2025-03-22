@@ -174,7 +174,7 @@ public class RobotContainer {
                 .whileTrue(this.escalator.goDown());
 
         cojoystick.povUp()
-                .whileTrue(this.escalator.goDown());
+                .whileTrue(this.escalator.goUp());
 
     }
 

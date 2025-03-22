@@ -37,13 +37,13 @@ public class Shooter extends SubsystemBase {
         Logger.recordOutput("Shooter/latencyPeriodicSec", Timer.getTimestamp() - timestamp);
     }
 
-    public boolean BackSensorTriggerd(){
-        return inputs.backCANrangeIsDetected;
-    }
-
-    public boolean frontSensorTriggerd(){
-        return inputs.frontCANrangeIsDetected;
-    }
+//    public boolean BackSensorTriggerd(){
+//        return inputs.backCANrangeIsDetected;
+//    }
+//
+//    public boolean frontSensorTriggerd(){
+//        return inputs.frontCANrangeIsDetected;
+//    }
 
     public void setDutyCycle(double output) {
         this.latestStatusCode = io.setControl(dutyCycle.withOutput(output));

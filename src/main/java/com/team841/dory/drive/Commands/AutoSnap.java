@@ -2,12 +2,15 @@ package com.team841.dory.drive.Commands;
 
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.team841.dory.constants.RC;
 import com.team841.dory.constants.TunerConstants;
 import com.team841.dory.drive.Drivetrain;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import org.opencv.core.Mat;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -19,14 +22,12 @@ public class AutoSnap extends Command {
     Drivetrain drivetrain;
     ProfiledPIDController controller;
     Pose2d target;
-    double angle;
+    double atan2Angle;
+    double pointAngle;
 
     private final SwerveRequest.FieldCentricFacingAngle driveHeading = new SwerveRequest.FieldCentricFacingAngle().withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
 
-    double count = 0;
-    boolean keepgoing = true;
-    double oldAngle;
     public AutoSnap(Drivetrain drivetrain) {
         this.controller = drivetrain.autoAlignController;
         this.drivetrain = drivetrain;
@@ -39,35 +40,57 @@ public class AutoSnap extends Command {
 
     @Override
     public void initialize() {
-        this.target = drivetrain.getPoseToScore();
-        this.controller.reset(0);
-        this.angle = Math.atan2(this.target.getX() - this.drivetrain.getPose().getX(), this.target.getY() - this.drivetrain.getPose().getY());
-        this.oldAngle = angle;
+        this.atan2Angle = this.drivetrain.getAngleToReefPolar();
+        this.target = this.drivetrain.getPoseToScore(atan2Angle);
+        this.controller.reset(0,
+                Math.min(0.0, new Translation2d(
+                        this.drivetrain.getChassisSpeeds().vxMetersPerSecond, this.drivetrain.getChassisSpeeds().vyMetersPerSecond)
+                        .rotateBy(this.target.getTranslation().minus(
+                                this.drivetrain.getPose().getTranslation()).getAngle())
+                        .getX())
+                );
+        if (Math.abs(this.atan2Angle) > Math.PI/2){
+            this.pointAngle = (Math.PI/2 - (Math.PI - Math.abs(atan2Angle)));
+        } else {
+            this.pointAngle = Math.PI/2 - atan2Angle;
+        }
+
         runControl();
-        count++;
     }
 
     @Override
     public void execute() {
         runControl();
-        if (count==5 && keepgoing){
-            this.oldAngle = this.angle;
-            this.angle = Math.atan2(this.target.getX() - this.drivetrain.getPose().getX(), this.target.getY() - this.drivetrain.getPose().getY());
-            if (Math.abs(this.angle - this.oldAngle) < 0.1) {
-                keepgoing = false;
-            }
-            this.count = 0;
-        }
     }
 
     private void runControl() {
         Transform2d transform = this.drivetrain.getPose().minus(this.target);
-        double magnitude = Math.sqrt(transform.getX() * transform.getX() + transform.getY() * transform.getY());
+        double magnitude = this.drivetrain.getPose().getTranslation().getDistance(this.target.getTranslation());
+        this.controller.reset(
+                0.0,
+                this.controller.getSetpoint().velocity
+        );
         double output = this.controller.calculate(0, magnitude);
-        this.drivetrain.setControl(driveHeading
-                .withVelocityX(output * Math.sin(angle))
-                .withVelocityY(output * Math.cos(angle))
-                .withTargetDirection(this.target.getRotation()));
+
+        double x, y;
+        x = magnitude * Math.sin(pointAngle);
+        y = magnitude * Math.cos(pointAngle);
+
+        if (!RC.isRedAlliance.get()){
+            this.drivetrain.setControl(
+                    this.driveHeading
+                            .withVelocityY(this.atan2Angle < 0 ? y : -y)
+                            .withVelocityX(Math.abs(this.atan2Angle) > Math.PI/2 ? x : -x)
+                            .withTargetDirection(this.target.getRotation())
+            );
+        } else {
+            this.drivetrain.setControl(
+                    this.driveHeading
+                            .withVelocityY(this.atan2Angle < 0 ? -y : y)
+                            .withVelocityX(Math.abs(this.atan2Angle) > Math.PI/2 ? -x : x)
+                            .withTargetDirection(this.target.getRotation())
+            );
+        }
     }
 
     @Override

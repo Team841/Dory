@@ -23,7 +23,7 @@ public class Robot extends LoggedRobot {
     private final RobotContainer m_robotContainer;
 
     public Robot() {
-        Pathfinding.setPathfinder(new LocalADStarAK());
+//        Pathfinding.setPathfinder(new LocalADStarAK());
 
         Logger.recordMetadata("ProjectName", "Nike");
         Logger.recordMetadata("TuningMode", Boolean.toString(RC.robotType == RC.RunType.DEV));
