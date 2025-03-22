@@ -114,7 +114,7 @@ public class RobotContainer {
         }
 
         this.driveMaintainHeading = new DriveMaintainHeading(
-                drivetrain, () -> -joystick.getLeftY(), () -> -joystick.getLeftX(), () -> -joystick.getRightX());
+                drivetrain, () -> -joystick.getLeftY(), () -> -joystick.getLeftX(), () -> -joystick.getRightX(), ()->joystick.L2().getAsBoolean());
 
         this.escalatorDefaultCommand = this.escalator.passiveHoldDown();
 

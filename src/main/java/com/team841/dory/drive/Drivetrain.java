@@ -89,15 +89,15 @@ public class Drivetrain extends SubsystemBase {
 //            }
 //        }
 
-        if (DriverStation.isDisabled()) {
-            if (!m_hasAppliedOperatorPerspective) {
-                DriverStation.getAlliance().ifPresent(allianceColor -> {
-                    io.setOperatorPerspectiveForward(
-                            allianceColor == Alliance.Red ? kRedAlliancePerspectiveRotation : kBlueAlliancePerspectiveRotation);
-                    m_hasAppliedOperatorPerspective = true;
-                });
-            }
-        }
+//        if (DriverStation.isDisabled()) {
+//            if (!m_hasAppliedOperatorPerspective) {
+//                DriverStation.getAlliance().ifPresent(allianceColor -> {
+//                    io.setOperatorPerspectiveForward(
+//                            allianceColor == Alliance.Red ? kRedAlliancePerspectiveRotation : kBlueAlliancePerspectiveRotation);
+//                    m_hasAppliedOperatorPerspective = true;
+//                });
+//            }
+//        }
     }
 
 //    public Command getPathToAutoScore(){
@@ -137,6 +137,11 @@ public class Drivetrain extends SubsystemBase {
         else robotVector = inputs.Pose.getTranslation().minus(Field.Positions.Reef.blueTranslation2d);
 
         return Math.atan2(robotVector.getY(), robotVector.getX()) * 57.2957795131;
+    }
+
+    public double getAngleToPosePolar(Pose2d targetPose){
+        Translation2d robotVector = inputs.Pose.getTranslation().minus(targetPose.getTranslation());
+        return Math.atan2(robotVector.getY(), robotVector.getX());
     }
 
     public Field.ScoringPositions getScoringPosition(double angle){
