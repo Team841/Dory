@@ -51,6 +51,7 @@ public class AutoSnap extends Command {
     public void execute() {
         runControl();
         if (count==5 && keepgoing){
+            this.oldAngle = this.angle;
             this.angle = Math.atan2(this.target.getX() - this.drivetrain.getPose().getX(), this.target.getY() - this.drivetrain.getPose().getY());
             if (Math.abs(this.angle - this.oldAngle) < 0.1) {
                 keepgoing = false;
