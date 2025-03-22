@@ -7,6 +7,7 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MeasurementHealthValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.team841.dory.constants.SC;
 import edu.wpi.first.units.measure.*;
 
@@ -35,6 +36,7 @@ public class FlapSystemIOKraken implements FlapSystemIO{
     public FlapSystemIOKraken(){
         this.intakeMotor.getConfigurator().apply(SC.flapSystem.configs);
         this.flapMotor.getConfigurator().apply(SC.flapSystem.configs);
+        this.flapMotor.setNeutralMode(NeutralModeValue.Brake);
         this.canrange.getConfigurator().apply(SC.flapSystem.CanrangeConfigs);
 
 //        this.CANrangeHealth = this.canrange.getMeasurementHealth();
@@ -99,9 +101,15 @@ public class FlapSystemIOKraken implements FlapSystemIO{
     public StatusCode setControlIntake(DutyCycleOut control) {
         return this.intakeMotor.setControl(control);
     }
+    public StatusCode setControlFlapper(DutyCycleOut control){
+        return this.flapMotor.setControl(control);
+    }
 
     @Override
     public void stopIntake() {
         this.intakeMotor.stopMotor();
+    }
+    public void stopFlapper(){
+        this.flapMotor.stopMotor();
     }
 }
