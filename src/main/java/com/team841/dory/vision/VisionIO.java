@@ -11,17 +11,17 @@ public interface VisionIO {
         public boolean charlieSeesTarget;
         public boolean gammaSeesTarget;
 
-        public FiducialObservation[] charlieFiducialObservations;
-        public FiducialObservation[] gammaFiducialObservations;
+        public FiducialObservation[] charlieFiducialObservations = new FiducialObservation[0];
+        public FiducialObservation[] gammaFiducialObservations = new FiducialObservation[0];
 
-        public MegatagPoseEstimate charlieMegatagPoseEstimate;
-        public MegatagPoseEstimate gammaMegatagPoseEstimate;
+        public MegatagPoseEstimate charlieMegatagPoseEstimate = new MegatagPoseEstimate();
+        public MegatagPoseEstimate gammaMegatagPoseEstimate = new MegatagPoseEstimate();
 
         public int charlieMegatagCount;
         public int gammaMegatagCount;
 
-        public MegatagPoseEstimate charlieMegatag2PoseEstimates;
-        public MegatagPoseEstimate gammaMegatag2PoseEstimates;
+        public MegatagPoseEstimate charlieMegatag2PoseEstimates = new MegatagPoseEstimate();
+        public MegatagPoseEstimate gammaMegatag2PoseEstimates = new MegatagPoseEstimate();
 
         public Rotation2d gyroAngle = Rotation2d.kZero;
         public double gyroAngularVelocity;
