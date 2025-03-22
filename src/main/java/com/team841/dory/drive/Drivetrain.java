@@ -51,7 +51,13 @@ public class Drivetrain extends SubsystemBase {
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
 
     public PIDController controller = new PIDController(4, 0, 0.2);
-    public ProfiledPIDController autoAlignController = new ProfiledPIDController(
+    public ProfiledPIDController vxController = new ProfiledPIDController(
+            19.556, 0, 1.9988,
+            new TrapezoidProfile.Constraints(
+                    3, 2) // max velocity, max acceleration
+    );
+
+    public ProfiledPIDController vyController = new ProfiledPIDController(
             19.556, 0, 1.9988,
             new TrapezoidProfile.Constraints(
                     3, 2) // max velocity, max acceleration
@@ -67,7 +73,9 @@ public class Drivetrain extends SubsystemBase {
         this.io = io;
         this.controller.setTolerance(0.5);
 
-        this.autoAlignController.setTolerance(0.5);
+        this.vxController.setTolerance(0.5);
+        this.vyController.setTolerance(0.5);
+
         configureAutoBuilder();
     }
 
