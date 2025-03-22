@@ -4,6 +4,9 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import edu.wpi.first.units.measure.*;
 import com.ctre.phoenix6.signals.MeasurementHealthValue;
+
+import java.io.ObjectInputFilter.Status;
+
 import org.littletonrobotics.junction.AutoLog;
 
 public interface FlapSystemIO {
@@ -29,8 +32,11 @@ public interface FlapSystemIO {
     }
 
     public void updateInputs(FlapSystemIOInputs inputs);
+    
 
     public StatusCode setControlIntake(DutyCycleOut control);
+    public StatusCode setControlFlapper(DutyCycleOut control);
 
     public void stopIntake();
+    public void stopFlapper();
 }

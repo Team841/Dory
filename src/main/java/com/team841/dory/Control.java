@@ -1,7 +1,6 @@
 package com.team841.dory;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.team841.dory.drive.Commands.DriveToPose;
 import com.team841.dory.drive.Commands.Snapping;
 import com.team841.dory.drive.Drivetrain;
 import com.team841.dory.escalator.Escalator;

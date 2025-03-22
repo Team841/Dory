@@ -67,10 +67,11 @@ public class RobotContainer {
     public final Consumer<VisionFieldPoseEstimate> visionEstimateConsumer = new Consumer<>() {
         @Override
         public void accept(VisionFieldPoseEstimate visionFieldPoseEstimate) {
-            drivetrain.addVisionMeasurement(visionFieldPoseEstimate);
+           drivetrain.addVisionMeasurement(visionFieldPoseEstimate);
+        //     return;
         }
     };
-    ;
+
 
     public RobotContainer() {
         switch (RC.robotType) {
@@ -174,7 +175,15 @@ public class RobotContainer {
                 .whileTrue(this.escalator.goDown());
 
         cojoystick.povUp()
-                .whileTrue(this.escalator.goDown());
+                .whileTrue(this.escalator.goUp());
+        
+        cojoystick.b()
+                .whileTrue(new InstantCommand(()->this.flapSystem.setFlapperDutyCycle(0.25),flapSystem))
+                .onFalse(new InstantCommand(()->this.flapSystem.stopFlapper(),flapSystem));
+             
+        cojoystick.a()
+                .whileTrue(new InstantCommand(()->this.flapSystem.setFlapperDutyCycle(-0.25),flapSystem))
+                .onFalse(new InstantCommand(()->this.flapSystem.stopFlapper(),flapSystem));
 
     }
 

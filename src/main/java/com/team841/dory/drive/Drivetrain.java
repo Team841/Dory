@@ -1,6 +1,8 @@
 package com.team841.dory.drive;
 
 import com.pathplanner.lib.path.PathConstraints;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -40,6 +42,7 @@ public class Drivetrain extends SubsystemBase {
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
     public final SwerveRequest.ApplyRobotSpeeds m_robotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
+    @AutoLogOutput
     private boolean m_hasAppliedOperatorPerspective = false;
 
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
@@ -48,6 +51,11 @@ public class Drivetrain extends SubsystemBase {
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
 
     public PIDController controller = new PIDController(4, 0, 0.2);
+    public ProfiledPIDController autoAlignController = new ProfiledPIDController(
+            19.556, 0, 1.9988,
+            new TrapezoidProfile.Constraints(
+                    3, 2) // max velocity, max acceleration
+    );
 
     public int count = 0;
 
@@ -58,6 +66,8 @@ public class Drivetrain extends SubsystemBase {
     public Drivetrain(DriveIO io) {
         this.io = io;
         this.controller.setTolerance(0.5);
+
+        this.autoAlignController.setTolerance(0.5);
         configureAutoBuilder();
     }
 
@@ -69,15 +79,15 @@ public class Drivetrain extends SubsystemBase {
         Logger.processInputs("Drivetrain", inputs);
         Logger.recordOutput("Drive/latencyPeriodicSec", Timer.getTimestamp() - timestamp);
 
-        if (RC.robotType == RC.RunType.DEV){
-            Logger.recordOutput("Drive/reefAnglePolar", getAngleToReefPolar());
-            if (count == 10){
-                Logger.recordOutput("Drive/scoringPose", getScoringPosition().getPoseRed());
-                count = 0;
-            } else {
-                count++;
-            }
-        }
+//        if (RC.robotType == RC.RunType.DEV){
+//            Logger.recordOutput("Drive/reefAnglePolar", getAngleToReefPolar());
+//            if (count == 10){
+//                Logger.recordOutput("Drive/scoringPose", getScoringPosition().getPoseRed());
+//                count = 0;
+//            } else {
+//                count++;
+//            }
+//        }
 
         if (DriverStation.isDisabled()) {
             if (!m_hasAppliedOperatorPerspective) {
@@ -90,12 +100,12 @@ public class Drivetrain extends SubsystemBase {
         }
     }
 
-    public Command getPathToAutoScore(){
-        return AutoBuilder.pathfindToPose(
-                getPoseToScore(),
-                constraints
-        );
-    }
+//    public Command getPathToAutoScore(){
+//        return AutoBuilder.pathfindToPose(
+//                getPoseToScore(),
+//                constraints
+//        );
+//    }
 
     public VisionData getVisionData() {
         var visionData = new VisionData();
@@ -129,8 +139,8 @@ public class Drivetrain extends SubsystemBase {
         return Math.atan2(robotVector.getY(), robotVector.getX()) * 57.2957795131;
     }
 
-    public Field.ScoringPositions getScoringPosition(){
-        double angle = getAngleToReefPolar();
+    public Field.ScoringPositions getScoringPosition(double angle){
+//        double angle = getAngleToReefPolar();
         if (angle >= 0 && angle < 30){
             return Field.ScoringPositions.H;
         } else if (angle >= 30 && angle < 60){
@@ -159,7 +169,7 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public boolean getScoringPositionIsRight(){
-        Field.ScoringPositions pos = getScoringPosition();
+        Field.ScoringPositions pos = getScoringPosition(this.getAngleToReefPolar());
         switch (pos){
             case A, C, E, G, I, K -> {return false;}
             default -> {
@@ -168,11 +178,11 @@ public class Drivetrain extends SubsystemBase {
         }
     }
 
-    public Pose2d getPoseToScore(){
+    public Pose2d getPoseToScore(double angle){
         if (RC.isRedAlliance.get()){
-            return getScoringPosition().getPoseRed();
+            return getScoringPosition(angle).getPoseRed();
         } else {
-            return getScoringPosition().getPoseBlue();
+            return getScoringPosition(angle).getPoseBlue();
         }
     }
 
