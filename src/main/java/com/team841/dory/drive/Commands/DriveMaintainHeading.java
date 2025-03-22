@@ -61,24 +61,24 @@ public class DriveMaintainHeading extends Command {
         double angularVelocity = controlAngularVelocity * MaxAngularRate;
         double throttleFieldFrame = velocityX; // RC.isRedAlliance.get() ? -velocityX : velocityX;
         double strafeFieldFrame = velocityY; // RC.isRedAlliance.get() ? -velocityY : velocityY;
-        if (Math.abs(controlAngularVelocity) > this.kSteerJoystickDeadband) {
-            mJoystickLastTouched = Timer.getFPGATimestamp();
-        }
-        if (Math.abs(controlAngularVelocity) > kSteerJoystickDeadband || (epsilonEquals(mJoystickLastTouched, Timer.getFPGATimestamp(), 0.25) && Math.abs(drivetrain.getCurrentRobotSpeeds().omegaRadiansPerSecond) > Math.toRadians(10))) {
-            drivetrain.setControl(drive.withVelocityX(throttleFieldFrame).withVelocityY(strafeFieldFrame).withRotationalRate(angularVelocity));
-            mHeadingSetpoint = Optional.empty();
-            Logger.recordOutput("DriveMaintainHeading/Mode", "NoHeading");
-        } else {
-            if (mHeadingSetpoint.isEmpty()) {
-                mHeadingSetpoint = Optional.of(drivetrain.getPose().getRotation().rotateBy(Rotation2d.k180deg));
-            }
-            drivetrain.setControl(driveHeading.withVelocityX(throttleFieldFrame).withVelocityY(strafeFieldFrame).withTargetDirection(mHeadingSetpoint.get()));
-            Logger.recordOutput("DriveMaintainHeading/Mode", "Heading");
-            Logger.recordOutput(
-                    "DriveMaintainHeading/HeadingSetpoint", mHeadingSetpoint.get().getDegrees());
-        }
+//        if (Math.abs(controlAngularVelocity) > this.kSteerJoystickDeadband) {
+//            mJoystickLastTouched = Timer.getFPGATimestamp();
+//        }
+//        if (Math.abs(controlAngularVelocity) > kSteerJoystickDeadband || (epsilonEquals(mJoystickLastTouched, Timer.getFPGATimestamp(), 0.25) && Math.abs(drivetrain.getCurrentRobotSpeeds().omegaRadiansPerSecond) > Math.toRadians(10))) {
+//            drivetrain.setControl(drive.withVelocityX(throttleFieldFrame).withVelocityY(strafeFieldFrame).withRotationalRate(angularVelocity));
+//            mHeadingSetpoint = Optional.empty();
+//            Logger.recordOutput("DriveMaintainHeading/Mode", "NoHeading");
+//        } else {
+//            if (mHeadingSetpoint.isEmpty()) {
+//                mHeadingSetpoint = Optional.of(drivetrain.getPose().getRotation().rotateBy(Rotation2d.k180deg));
+//            }
+//            drivetrain.setControl(driveHeading.withVelocityX(throttleFieldFrame).withVelocityY(strafeFieldFrame).withTargetDirection(mHeadingSetpoint.get()));
+//            Logger.recordOutput("DriveMaintainHeading/Mode", "Heading");
+//            Logger.recordOutput(
+//                    "DriveMaintainHeading/HeadingSetpoint", mHeadingSetpoint.get().getDegrees());
+//        }
 
-//        drivetrain.setControl(drive.withVelocityX(throttleFieldFrame).withVelocityY(strafeFieldFrame).withRotationalRate(angularVelocity));
+        drivetrain.setControl(drive.withVelocityX(throttleFieldFrame).withVelocityY(strafeFieldFrame).withRotationalRate(angularVelocity));
 
     }
 
