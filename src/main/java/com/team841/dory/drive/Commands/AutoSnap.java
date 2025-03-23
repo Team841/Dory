@@ -25,7 +25,7 @@ public class AutoSnap extends Command {
     Drivetrain drivetrain;
     ProfiledPIDController vx;
     ProfiledPIDController vy;
-    Pose2d target = new Pose2d(2, 2, new Rotation2d(Math.PI/4));
+    Pose2d target;
 
     private final SwerveRequest.FieldCentricFacingAngle driveHeading = new SwerveRequest.FieldCentricFacingAngle().withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
@@ -47,7 +47,7 @@ public class AutoSnap extends Command {
                 ChassisSpeeds.fromRobotRelativeSpeeds(
                         this.drivetrain.getChassisSpeeds(),
                         this.drivetrain.getPose().getRotation());
-//        this.target = drivetrain.getPoseToScore(this.drivetrain.getAngleToReefPolar());
+        this.target = drivetrain.getPoseToScore(this.drivetrain.getAngleToReefPolar());
         Translation2d translation2d = this.drivetrain.getPose().getTranslation();
 //        Translation2d error = this.target.minus(this.drivetrain.getPose()).getTranslation();
         this.vx.reset(translation2d.getX(), fieldRelativeSpeeds.vxMetersPerSecond);
