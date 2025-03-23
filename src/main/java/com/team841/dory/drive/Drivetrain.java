@@ -214,7 +214,11 @@ public class Drivetrain extends Drive {
     }
 
     public void seedFieldCentric() {
-        super.setPose(Pose2d.kZero);
+        if (RC.isRedAlliance.get()){
+            super.setPose(new Pose2d(0, 0, Rotation2d.k180deg));
+        } else {
+            super.setPose(Pose2d.kZero);
+        }
     }
 
     public void runVelocity(ChassisSpeeds speeds){
