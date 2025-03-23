@@ -67,15 +67,15 @@ public class AutoSnap extends Command {
         if (!RC.isRedAlliance.get()){
             this.drivetrain.setControl(
                     this.driveHeading
-                            .withVelocityY(-outputY)
-                            .withVelocityX(-outputX)
+                            .withVelocityY(outputY)
+                            .withVelocityX(outputX)
                             .withTargetDirection(this.target.getRotation())
             );
         } else {
             this.drivetrain.setControl(
                     this.driveHeading
-                            .withVelocityY(outputY)
-                            .withVelocityX(outputX)
+                            .withVelocityY(-outputY)
+                            .withVelocityX(-outputX)
                             .withTargetDirection(this.target.getRotation())
             );
         }
