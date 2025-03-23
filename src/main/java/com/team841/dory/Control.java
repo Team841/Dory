@@ -12,7 +12,7 @@ import com.team841.dory.shooter.Shooter;
 import edu.wpi.first.wpilibj2.command.*;
 
 public class Control {
-    
+
     public static double scoreTimeout = 0.3;
 
     private final Drivetrain drivetrain;
@@ -59,6 +59,11 @@ public class Control {
         NamedCommands.registerCommand("L2", new SequentialCommandGroup(
                 new MoveCommand(this.escalator, Escalator.Position.L2, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
                 this.shooter.runShooterScore(Escalator.Position.L2, scoreTimeout),
+                new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)))
+                .onlyIf(this.shooter::escalatorClear));
+        NamedCommands.registerCommand("L4", new SequentialCommandGroup(
+                new MoveCommand(this.escalator, Escalator.Position.L4, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
+                this.shooter.runShooterScore(Escalator.Position.L4, scoreTimeout),
                 new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)))
                 .onlyIf(this.shooter::escalatorClear));
 
@@ -110,7 +115,7 @@ public class Control {
 
         this.snapScoreL3 =
                 new SequentialCommandGroup(
-                        new Snapping(this.drivetrain),
+                        new AutoSnap(this.drivetrain),
                         new MoveCommand(this.escalator, Escalator.Position.L3, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
                         this.shooter.runShooterScore(Escalator.Position.L3, scoreTimeout),
                         new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)))
@@ -118,7 +123,7 @@ public class Control {
 
         this.snapScoreL2 =
                 new SequentialCommandGroup(
-                        new Snapping(this.drivetrain),
+                        new AutoSnap(this.drivetrain),
                         new MoveCommand(this.escalator, Escalator.Position.L2, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
                         this.shooter.runShooterScore(Escalator.Position.L2, scoreTimeout),
                         new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)))
@@ -166,10 +171,10 @@ public class Control {
                         new ParallelRaceGroup(
                                 this.shooter.runShooterIntake(),
                                 this.flapSystem.runIntake()
-                                )
+                        )
 
                 ).onlyIf(this.shooter::escalatorClear),
                 () -> this.escalator.atPosition(Escalator.Position.HomeAndIntake)
-        ); 
+        );
     }
 }
