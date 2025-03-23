@@ -79,8 +79,8 @@ public class AutoSnap extends Command {
         Logger.recordOutput("AutoSnap/outputX", outputX);
         Logger.recordOutput("AutoSnap/outputY", outputY);
 
-        outputX *= RC.isRedAlliance.get() ? 1 : -1;
-        outputY *= RC.isRedAlliance.get() ? 1 : -1;
+        outputX *= RC.isRedAlliance.get() ? -1 : 1;
+        outputY *= RC.isRedAlliance.get() ? -1 : 1;
 
 //        if (!RC.isRedAlliance.get()){
             this.drivetrain.setControl(
