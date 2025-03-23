@@ -45,8 +45,8 @@ public class RobotContainer {
     public final DriveIO driveIO;
     public final Drivetrain drivetrain;
 
-//    public final VisionIO visionIO;
-//    public final Vision vision;
+    public final VisionIO visionIO;
+    public final Vision vision;
 
     public final EscalatorIO escalatorIO;
     public final Escalator escalator;
@@ -79,8 +79,8 @@ public class RobotContainer {
                 this.driveIO = new DriveIOSim(TunerConstants.DrivetrainConstants, TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
                 this.drivetrain = new Drivetrain(driveIO);
 
-//                this.visionIO = new VisionIOLimelights();
-//                this.vision = new Vision(visionIO, visionEstimateConsumer, drivetrain);
+                this.visionIO = new VisionIOLimelights();
+                this.vision = new Vision(visionIO, visionEstimateConsumer, drivetrain);
 
                 this.escalatorIO = new EscalatorIOKraken();
                 this.escalator = new Escalator(escalatorIO);
@@ -97,8 +97,8 @@ public class RobotContainer {
                 this.driveIO = new DriveIOReal(TunerConstants.DrivetrainConstants, TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
                 this.drivetrain = new Drivetrain(driveIO);
 
-//                this.visionIO = new VisionIOLimelights();
-//                this.vision = new Vision(visionIO, visionEstimateConsumer, drivetrain);
+                this.visionIO = new VisionIOLimelights();
+                this.vision = new Vision(visionIO, visionEstimateConsumer, drivetrain);
 
                 this.escalatorIO = new EscalatorIOKraken();
                 this.escalator = new Escalator(escalatorIO);
