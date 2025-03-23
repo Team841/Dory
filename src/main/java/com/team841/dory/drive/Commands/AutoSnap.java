@@ -67,7 +67,7 @@ public class AutoSnap extends Command {
 
         double outputX = this.vx.calculate(translation2d.getX(), this.target.getX());
         double outputY = this.vy.calculate(translation2d.getY(), this.target.getY());
-        
+
         Logger.recordOutput("AutoSnap/outputX", outputX);
         Logger.recordOutput("AutoSnap/outputY", outputY);
 
@@ -85,7 +85,7 @@ public class AutoSnap extends Command {
 //                            .withVelocityX(outputX)
 //                            .withTargetDirection(this.target.getRotation())
 //            );
-//        }
+        }
     }
 
 
