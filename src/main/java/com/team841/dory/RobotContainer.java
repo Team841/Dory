@@ -188,6 +188,9 @@ public class RobotContainer {
         cojoystick.povRight()
                 .whileTrue(new InstantCommand(()->this.flapSystem.setFlapperDutyCycle(-0.25),flapSystem))
                 .onFalse(new InstantCommand(()->this.flapSystem.stopFlapper(),flapSystem));
+        joystick.povUp()
+                .whileTrue(new InstantCommand(()->this.flapSystem.setHangDutyCycle(-.7),flapSystem))
+                .onFalse(new InstantCommand(()->this.flapSystem.stopHang(),flapSystem));
 
     }
 

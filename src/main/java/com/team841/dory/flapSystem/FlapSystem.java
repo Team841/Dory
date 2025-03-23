@@ -40,6 +40,9 @@ public class FlapSystem extends SubsystemBase {
     public void setFlapperDutyCycle(double output){
         this.latestStatusCode = io.setControlFlapper(dutyCycle.withOutput(output));
     }
+    public void setHangDutyCycle(double output){
+        this.latestStatusCode = io.setControlHang(dutyCycle.withOutput(output));
+    }
 
     public void stopIntake(){
         io.stopIntake();
@@ -47,7 +50,9 @@ public class FlapSystem extends SubsystemBase {
     public void stopFlapper(){
         io.stopFlapper();
     }
-
+    public void stopHang(){
+        io.stopHang();
+    }
 
     public Command runIntake(){
         return new RunCommand(

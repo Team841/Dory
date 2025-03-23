@@ -15,6 +15,7 @@ public class FlapSystemIOKraken implements FlapSystemIO{
     public TalonFX intakeMotor = new TalonFX(SC.flapSystem.intakeMotor, "rio");
     public TalonFX flapMotor = new TalonFX(SC.flapSystem.flapMotor, "rio");
     public CANrange canrange = new CANrange(SC.flapSystem.canrange, "rio");
+    public TalonFX hangMotor = new TalonFX(SC.flapSystem.hangMotor, "rio");
 
 //    StatusSignal<MeasurementHealthValue> CANrangeHealth;
 //    StatusSignal<Time> CANrangeMeasurementTime;
@@ -33,12 +34,19 @@ public class FlapSystemIOKraken implements FlapSystemIO{
     StatusSignal<Angle> FlapPosition;
     StatusSignal<Double> FlapDutyCycleOut;
 
+    StatusSignal<AngularVelocity> HangVelocity;
+    StatusSignal<AngularAcceleration> HangAcceleration;
+    StatusSignal<Angle> HangPosition;
+    StatusSignal<Double> HangDutyCycleOut;
+
     public FlapSystemIOKraken(){
         this.intakeMotor.getConfigurator().apply(SC.flapSystem.configs);
         this.intakeMotor.setNeutralMode(NeutralModeValue.Brake);
         this.flapMotor.getConfigurator().apply(SC.flapSystem.configs);
         this.flapMotor.setNeutralMode(NeutralModeValue.Brake);
         this.canrange.getConfigurator().apply(SC.flapSystem.CanrangeConfigs);
+        this.hangMotor.getConfigurator().apply(SC.flapSystem.configs);
+        this.hangMotor.setNeutralMode(NeutralModeValue.Brake);
 
 //        this.CANrangeHealth = this.canrange.getMeasurementHealth();
 //        this.CANrangeMeasurementTime = this.canrange.getMeasurementTime();
@@ -57,6 +65,11 @@ public class FlapSystemIOKraken implements FlapSystemIO{
         this.FlapPosition = this.flapMotor.getPosition();
         this.FlapDutyCycleOut = this.flapMotor.getDutyCycle();
 
+        this.HangVelocity = this.hangMotor.getVelocity();
+        this.HangAcceleration = this.hangMotor.getAcceleration();
+        this.HangPosition = this.hangMotor.getPosition();
+        this.HangDutyCycleOut = this.hangMotor.getDutyCycle();
+
         BaseStatusSignal.setUpdateFrequencyForAll(50,
 //                this.CANrangeHealth, this.CANrangeMeasurementTime,
 //                this.CANrangeSignalStrength, this.CANrangeDistance,
@@ -65,7 +78,9 @@ public class FlapSystemIOKraken implements FlapSystemIO{
                 this.IntakeVelocity, this.IntakeAcceleration,
                 this.IntakeDutyCycleOut,
                 this.FlapVelocity, this.FlapAcceleration,
-                this.FlapPosition, this.FlapDutyCycleOut);
+                this.FlapPosition, this.FlapDutyCycleOut,
+                this.HangVelocity, this.HangAcceleration,
+                this.HangPosition, this.HangDutyCycleOut);
     }
 
     @Override
@@ -78,7 +93,9 @@ public class FlapSystemIOKraken implements FlapSystemIO{
                 this.IntakeVelocity, this.IntakeAcceleration,
                 this.IntakeDutyCycleOut,
                 this.FlapVelocity, this.FlapAcceleration,
-                this.FlapPosition, this.FlapDutyCycleOut);
+                this.FlapPosition, this.FlapDutyCycleOut,
+                this.HangVelocity, this.HangAcceleration,
+                this.HangPosition, this.HangDutyCycleOut);
 
 //        inputs.CANrangeHealth = this.CANrangeHealth.getValue();
 //        inputs.CANrangeMeasurementTime = this.CANrangeMeasurementTime.getValue();
@@ -96,6 +113,11 @@ public class FlapSystemIOKraken implements FlapSystemIO{
         inputs.FlapAcceleration = this.FlapAcceleration.getValue();
         inputs.FlapPosition = this.FlapPosition.getValue();
         inputs.FlapDutyCycleOut = this.FlapDutyCycleOut.getValue();
+        
+        inputs.HangVelocity = this.HangVelocity.getValue();
+        inputs.HangAcceleration = this.HangAcceleration.getValue();
+        inputs.HangPosition = this.HangPosition.getValue();
+        inputs.HangDutyCycleOut = this.HangDutyCycleOut.getValue();
     }
 
     @Override
@@ -105,6 +127,9 @@ public class FlapSystemIOKraken implements FlapSystemIO{
     public StatusCode setControlFlapper(DutyCycleOut control){
         return this.flapMotor.setControl(control);
     }
+    public StatusCode setControlHang(DutyCycleOut control){
+        return this.hangMotor.setControl(control);
+    }
 
     @Override
     public void stopIntake() {
@@ -112,5 +137,8 @@ public class FlapSystemIOKraken implements FlapSystemIO{
     }
     public void stopFlapper(){
         this.flapMotor.stopMotor();
+    }
+    public void stopHang(){
+        this.hangMotor.stopMotor();
     }
 }
