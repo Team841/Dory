@@ -61,8 +61,8 @@ public class RobotContainer {
     public final Consumer<VisionFieldPoseEstimate> visionEstimateConsumer = new Consumer<>() {
         @Override
         public void accept(VisionFieldPoseEstimate visionFieldPoseEstimate) {
-           drivetrain.addVisionMeasurement(visionFieldPoseEstimate);
-//             return;
+//           drivetrain.addVisionMeasurement(visionFieldPoseEstimate);
+             return;
         }
     };
 
