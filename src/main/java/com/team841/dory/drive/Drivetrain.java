@@ -85,6 +85,7 @@ public class Drivetrain extends Drive {
             toApplyX = 0;
             toApplyY = 0;
         }
+
         if (Math.abs(toApplyOmega) < RotationalDeadband) {
             toApplyOmega = 0;
         }
@@ -210,7 +211,7 @@ public class Drivetrain extends Drive {
     }
 
     public Pose2d getPose() {
-        return super.getPose();
+        return new Pose2d(super.getPose().getTranslation(), super.getRotation());
     }
 
     public void seedFieldCentric() {
