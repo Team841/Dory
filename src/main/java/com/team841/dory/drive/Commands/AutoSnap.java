@@ -7,10 +7,11 @@ import com.team841.dory.constants.TunerConstants;
 import com.team841.dory.drive.Drivetrain;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import org.opencv.core.Mat;
+import org.littletonrobotics.junction.Logger;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -20,19 +21,16 @@ public class AutoSnap extends Command {
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
     Drivetrain drivetrain;
-    ProfiledPIDController controller;
-    Pose2d target;
-    double atan2Angle;
-    double pointAngle;
-
-    private final SwerveRequest.FieldCentricFacingAngle driveHeading = new SwerveRequest.FieldCentricFacingAngle().withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-            .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
+    ProfiledPIDController vx;
+    ProfiledPIDController vy;
+    Pose2d target = new Pose2d(2, 1, new Rotation2d(-Math.PI*3/4));
 
     public AutoSnap(Drivetrain drivetrain) {
-        this.controller = drivetrain.autoAlignController;
+        this.vx = drivetrain.vxController;
+        this.vy = drivetrain.vyController;
         this.drivetrain = drivetrain;
-        driveHeading.HeadingController.setPID(34.459, 0, 2.5039);
-        driveHeading.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
+        this.drivetrain.HeadingController.setPID(34.459, 0, 2.5039);
+        this.drivetrain.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
 
         addRequirements(this.drivetrain);
         setName("AutoSnap");
@@ -40,68 +38,69 @@ public class AutoSnap extends Command {
 
     @Override
     public void initialize() {
-        this.atan2Angle = this.drivetrain.getAngleToReefPolar();
-        this.target = this.drivetrain.getPoseToScore(atan2Angle);
-        this.controller.reset(0,
-                Math.min(0.0, new Translation2d(
-                        this.drivetrain.getChassisSpeeds().vxMetersPerSecond, this.drivetrain.getChassisSpeeds().vyMetersPerSecond)
-                        .rotateBy(this.target.getTranslation().minus(
-                                this.drivetrain.getPose().getTranslation()).getAngle())
-                        .getX())
-                );
-        if (Math.abs(this.atan2Angle) > Math.PI/2){
-            this.pointAngle = (Math.PI/2 - (Math.PI - Math.abs(atan2Angle)));
-        } else {
-            this.pointAngle = Math.PI/2 - atan2Angle;
-        }
-
-        runControl();
+        ChassisSpeeds fieldRelativeSpeeds =
+                ChassisSpeeds.fromRobotRelativeSpeeds(
+                        this.drivetrain.getChassisSpeeds(),
+                        this.drivetrain.getPose().getRotation());
+//        this.target = drivetrain.getPoseToScore(this.drivetrain.getAngleToReefPolar());
+        Translation2d translation2d = this.drivetrain.getPose().getTranslation();
+//        Translation2d error = this.target.minus(this.drivetrain.getPose()).getTranslation();
+        this.vx.reset(translation2d.getX(), fieldRelativeSpeeds.vxMetersPerSecond);
+        this.vy.reset(translation2d.getY(), fieldRelativeSpeeds.vyMetersPerSecond);
+        runAutoSnap();
     }
 
     @Override
     public void execute() {
-        runControl();
+        runAutoSnap();
     }
 
-    private void runControl() {
-        Transform2d transform = this.drivetrain.getPose().minus(this.target);
-        double magnitude = this.drivetrain.getPose().getTranslation().getDistance(this.target.getTranslation());
-        this.controller.reset(
-                0.0,
-                this.controller.getSetpoint().velocity
-        );
-        double output = this.controller.calculate(0, magnitude);
+    private void runAutoSnap() {
+        ChassisSpeeds fieldRelativeSpeeds =
+                ChassisSpeeds.fromRobotRelativeSpeeds(
+                        this.drivetrain.getChassisSpeeds(),
+                        this.drivetrain.getPose().getRotation());
+        Translation2d translation2d = this.drivetrain.getPose().getTranslation();
+//        Translation2d error = this.target.minus(this.drivetrain.getPose()).getTranslation();
+//        this.vx.reset(translation2d.getX(), fieldRelativeSpeeds.vxMetersPerSecond);
+//        this.vy.reset(translation2d.getY(), fieldRelativeSpeeds.vyMetersPerSecond);
 
-        double x, y;
-        x = magnitude * Math.sin(pointAngle);
-        y = magnitude * Math.cos(pointAngle);
+//        double outputX = this.vx.calculate(0, error.getX());
+//        double outputY = this.vy.calculate(0, error.getY());
 
-        if (!RC.isRedAlliance.get()){
-            this.drivetrain.setControl(
-                    this.driveHeading
-                            .withVelocityY(this.atan2Angle < 0 ? y : -y)
-                            .withVelocityX(Math.abs(this.atan2Angle) > Math.PI/2 ? x : -x)
-                            .withTargetDirection(this.target.getRotation())
-            );
-        } else {
-            this.drivetrain.setControl(
-                    this.driveHeading
-                            .withVelocityY(this.atan2Angle < 0 ? -y : y)
-                            .withVelocityX(Math.abs(this.atan2Angle) > Math.PI/2 ? -x : x)
-                            .withTargetDirection(this.target.getRotation())
-            );
-        }
+        double outputX = this.vx.calculate(translation2d.getX(), this.target.getX());
+        double outputY = this.vy.calculate(translation2d.getY(), this.target.getY());
+
+        Logger.recordOutput("AutoSnap/outputX", outputX);
+        Logger.recordOutput("AutoSnap/outputY", outputY);
+
+        outputX = RC.isRedAlliance.get() ? -outputX : outputX;
+        outputY = RC.isRedAlliance.get() ? -outputY : outputY;
+
+//        if (!RC.isRedAlliance.get()){
+            this.drivetrain.runFieldCentricFacingAngle(outputY, outputX, this.target.getRotation());
+//        } else {
+//            this.drivetrain.setControl(
+//                    this.driveHeading
+//                            .withVelocityY(-outputY)
+//                            .withVelocityX(outputX)
+//                            .withTargetDirection(this.target.getRotation())
+//            );
+//        }
     }
+
 
     @Override
     public void end(boolean interrupted) {
-        return;
+        this.drivetrain.runVelocity(new ChassisSpeeds());
     }
 
     @Override
     public boolean isFinished() {
-        return this.controller.atSetpoint();
+        return this.vx.atGoal() && this.vy.atGoal();
+//        return false;
     }
+
 
 //    public static Transform2d transform2dFromRotation(Rotation2d rotation) {
 //        return new Transform2d(Translation2d.kZero, rotation);

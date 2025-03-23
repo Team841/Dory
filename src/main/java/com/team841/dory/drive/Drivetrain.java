@@ -1,122 +1,138 @@
 package com.team841.dory.drive;
 
-import com.pathplanner.lib.path.PathConstraints;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.Command;
-import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
+import com.ctre.phoenix6.StatusCode;
 
-import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.config.PIDConstants;
-import com.pathplanner.lib.config.RobotConfig;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.ctre.phoenix6.mechanisms.swerve.LegacySwerveModule;
+import com.ctre.phoenix6.mechanisms.swerve.LegacySwerveRequest;
+import com.ctre.phoenix6.swerve.utility.PhoenixPIDController;
 import com.team254.vision.VisionFieldPoseEstimate;
 import com.team841.dory.constants.Field;
 import com.team841.dory.constants.RC;
 import com.team841.dory.constants.TunerConstants;
-
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
-import java.util.function.Supplier;
 
 import static edu.wpi.first.units.Units.*;
 
-public class Drivetrain extends SubsystemBase {
-    DriveIO io;
+public class Drivetrain extends Drive {
 
-    DriveIOInputsAutoLogged inputs = new DriveIOInputsAutoLogged();
+    public Drivetrain(GyroIO gyroIO, ModuleIO flModuleIO, ModuleIO frModuleIO, ModuleIO blModuleIO, ModuleIO brModuleIO) {
+        super(gyroIO, flModuleIO, frModuleIO, blModuleIO, brModuleIO);
 
-    Telemetry telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
+        this.vxController.setTolerance(0.5);
+        this.vyController.setTolerance(0.5);
+    }
 
-    private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
-    public final SwerveRequest.ApplyRobotSpeeds m_robotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
+    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
-    @AutoLogOutput
-    private boolean m_hasAppliedOperatorPerspective = false;
+    public double Deadband = MaxSpeed * 0.1;
 
-    /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
-    private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
-    /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
-    private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
+    public double RotationalDeadband = MaxAngularRate * 0.1;
+
+    public Translation2d CenterOfRotation = new Translation2d();
+
+    public boolean DesaturateWheelSpeeds = true;
+
+    public StatusCode runFieldCentric(double toApplyX, double toApplyY, double toApplyOmega) {
+        if (Math.sqrt(toApplyX * toApplyX + toApplyY * toApplyY) < Deadband) {
+            toApplyX = 0;
+            toApplyY = 0;
+        }
+        if (Math.abs(toApplyOmega) < RotationalDeadband) {
+            toApplyOmega = 0;
+        }
+
+        ChassisSpeeds speeds = ChassisSpeeds.discretize(
+                ChassisSpeeds.fromFieldRelativeSpeeds(
+                        toApplyX, toApplyY, toApplyOmega,
+                        super.getRotation()
+                ),
+                1.0 / Drive.ODOMETRY_FREQUENCY
+        );
+
+        var states = super.kinematics.toSwerveModuleStates(speeds, CenterOfRotation);
+        if (DesaturateWheelSpeeds && super.getMaxLinearSpeedMetersPerSec() > 0.0) {
+            SwerveDriveKinematics.desaturateWheelSpeeds(states, super.getMaxLinearSpeedMetersPerSec());
+        }
+
+        for (int i = 0; i < super.modules.length; ++i) {
+            super.modules[i].runSetpoint(states[i]);
+        }
+
+        return StatusCode.OK;
+    }
+
+    public Rotation2d TargetDirection = new Rotation2d();
+
+    public PhoenixPIDController HeadingController = new PhoenixPIDController(0, 0, 0);
+
+    public StatusCode runFieldCentricFacingAngle(double toApplyX, double toApplyY, Rotation2d angleToFace) {
+
+        double rotationRate = HeadingController.calculate(super.getRotation().getRadians(),
+                angleToFace.getRadians(), Timer.getTimestamp());
+
+        double toApplyOmega = rotationRate;
+        if (Math.sqrt(toApplyX * toApplyX + toApplyY * toApplyY) < Deadband) {
+            toApplyX = 0;
+            toApplyY = 0;
+        }
+
+        if (Math.abs(toApplyOmega) < RotationalDeadband) {
+            toApplyOmega = 0;
+        }
+
+        ChassisSpeeds speeds = ChassisSpeeds.discretize(
+                ChassisSpeeds.fromFieldRelativeSpeeds(
+                        toApplyX, toApplyY, toApplyOmega,
+                        super.getRotation()
+                ),
+                1.0 / Drive.ODOMETRY_FREQUENCY
+        );
+
+        var states = super.kinematics.toSwerveModuleStates(speeds, CenterOfRotation);
+        if (DesaturateWheelSpeeds && super.getMaxLinearSpeedMetersPerSec() > 0.0) {
+            SwerveDriveKinematics.desaturateWheelSpeeds(states, super.getMaxLinearSpeedMetersPerSec());
+        }
+
+        for (int i = 0; i < super.modules.length; ++i) {
+            super.modules[i].runSetpoint(states[i]);
+        }
+
+        return StatusCode.OK;
+    }
 
     public PIDController controller = new PIDController(4, 0, 0.2);
-    public ProfiledPIDController autoAlignController = new ProfiledPIDController(
+    public ProfiledPIDController vxController = new ProfiledPIDController(
             19.556, 0, 1.9988,
             new TrapezoidProfile.Constraints(
                     3, 2) // max velocity, max acceleration
     );
 
-    public int count = 0;
-
-    PathConstraints constraints = new PathConstraints(
-            3.0, 4.0,
-            Units.degreesToRadians(540), Units.degreesToRadians(720));
-
-    public Drivetrain(DriveIO io) {
-        this.io = io;
-        this.controller.setTolerance(0.5);
-
-        this.autoAlignController.setTolerance(0.5);
-        configureAutoBuilder();
-    }
-
-    @Override
-    public void periodic() {
-        double timestamp = Timer.getTimestamp();
-        io.updateInputs(inputs);
-        telemetry.telemeterize(inputs);
-        Logger.processInputs("Drivetrain", inputs);
-        Logger.recordOutput("Drive/latencyPeriodicSec", Timer.getTimestamp() - timestamp);
-
-//        if (RC.robotType == RC.RunType.DEV){
-//            Logger.recordOutput("Drive/reefAnglePolar", getAngleToReefPolar());
-//            if (count == 10){
-//                Logger.recordOutput("Drive/scoringPose", getScoringPosition().getPoseRed());
-//                count = 0;
-//            } else {
-//                count++;
-//            }
-//        }
-
-        if (DriverStation.isDisabled()) {
-            if (!m_hasAppliedOperatorPerspective) {
-                DriverStation.getAlliance().ifPresent(allianceColor -> {
-                    io.setOperatorPerspectiveForward(
-                            allianceColor == Alliance.Red ? kRedAlliancePerspectiveRotation : kBlueAlliancePerspectiveRotation);
-                    m_hasAppliedOperatorPerspective = true;
-                });
-            }
-        }
-    }
-
-//    public Command getPathToAutoScore(){
-//        return AutoBuilder.pathfindToPose(
-//                getPoseToScore(),
-//                constraints
-//        );
-//    }
+    public ProfiledPIDController vyController = new ProfiledPIDController(
+            19.556, 0, 1.9988,
+            new TrapezoidProfile.Constraints(
+                    3, 2) // max velocity, max acceleration
+    );
 
     public VisionData getVisionData() {
         var visionData = new VisionData();
-        visionData.robotPose = inputs.Pose;
-        visionData.gyroRotation = inputs.Pose.getRotation();
-        visionData.measuredRobotRelativeChassisSpeeds = inputs.Speeds;
+        visionData.robotPose = super.getPose();
+        visionData.gyroRotation = super.getRotation();
+        visionData.measuredRobotRelativeChassisSpeeds = super.getChassisSpeeds();
         //        visionData.measuredFieldRelativeChassisSpeeds =
         // ChassisSpeeds.fromRobotRelativeSpeeds(visionData.measuredRobotRelativeChassisSpeeds,
         // visionData.gyroRotation);
 
-        visionData.yawRadsPers = inputs.Speeds.omegaRadiansPerSecond;
+        visionData.yawRadsPers = super.getChassisSpeeds().omegaRadiansPerSecond;
         return visionData;
     }
 
@@ -133,10 +149,15 @@ public class Drivetrain extends SubsystemBase {
         boolean isRed = RC.isRedAlliance.get();
         Translation2d robotVector;
 
-        if (isRed) robotVector = inputs.Pose.getTranslation().minus(Field.Positions.Reef.redTranslation2d);
-        else robotVector = inputs.Pose.getTranslation().minus(Field.Positions.Reef.blueTranslation2d);
+        if (isRed) robotVector = super.getPose().getTranslation().minus(Field.Positions.Reef.redTranslation2d);
+        else robotVector = super.getPose().getTranslation().minus(Field.Positions.Reef.blueTranslation2d);
 
         return Math.atan2(robotVector.getY(), robotVector.getX()) * 57.2957795131;
+    }
+
+    public double getAngleToPosePolar(Pose2d targetPose){
+        Translation2d robotVector = super.getPose().getTranslation().minus(targetPose.getTranslation());
+        return Math.atan2(robotVector.getY(), robotVector.getX());
     }
 
     public Field.ScoringPositions getScoringPosition(double angle){
@@ -168,16 +189,6 @@ public class Drivetrain extends SubsystemBase {
         }
     }
 
-    public boolean getScoringPositionIsRight(){
-        Field.ScoringPositions pos = getScoringPosition(this.getAngleToReefPolar());
-        switch (pos){
-            case A, C, E, G, I, K -> {return false;}
-            default -> {
-                return true;
-            }
-        }
-    }
-
     public Pose2d getPoseToScore(double angle){
         if (RC.isRedAlliance.get()){
             return getScoringPosition(angle).getPoseRed();
@@ -187,56 +198,31 @@ public class Drivetrain extends SubsystemBase {
     }
 
     public void addVisionMeasurement(VisionFieldPoseEstimate visionFieldPoseEstimate) {
-        io.addVisionMeasurement(visionFieldPoseEstimate);
+//        if (visionFieldPoseEstimate.getVisionMeasurementStdDevs() == null) {
+//            super.addVisionMeasurement(visionFieldPoseEstimate.getVisionRobotPoseMeters(), visionFieldPoseEstimate.getTimestampSeconds());
+//        } else {
+            super.addVisionMeasurement(
+                    visionFieldPoseEstimate.getVisionRobotPoseMeters(), visionFieldPoseEstimate.getTimestampSeconds(), visionFieldPoseEstimate.getVisionMeasurementStdDevs());
+//        }
     }
 
-    public void configureAutoBuilder() {
-        try {
-            var config = RobotConfig.fromGUISettings();
-            AutoBuilder.configure(
-                    () -> inputs.Pose, // Supplier of current robot pose
-                    io::seedFieldRelative, // Consumer for seeding pose against auto
-                    () -> inputs.Speeds, // Supplier of current robot speeds
-                    // Consumer of ChassisSpeeds and feedforwards to drive the robot
-                    (speeds, feedforwards) -> io.setControl(m_pathApplyRobotSpeeds.withSpeeds(speeds).withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons()).withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())), new PPHolonomicDriveController(
-                            // PID constants for translation
-                            new PIDConstants(41.418, 0, 1.344),
-                            // PID constants for rotation
-                            new PIDConstants(34.459, 0, 2.5039)), config,
-                    // Assume the path needs to be flipped for Red vs Blue, this is normally the case
-                    () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, this // Subsystem for requirements
-            );
-        } catch (Exception ex) {
-            DriverStation.reportError(
-                    "Failed to load PathPlanner config and configure AutoBuilder", ex.getStackTrace());
-        }
-    }
-
-    public void setControl(SwerveRequest request) {
-        io.setControl(request);
-    }
-
-    public ChassisSpeeds getCurrentRobotSpeeds() {
-        return inputs.Speeds;
+    public ChassisSpeeds getChassisSpeeds() {
+        return super.getChassisSpeeds();
     }
 
     public Pose2d getPose() {
-        return inputs.Pose;
+        return super.getPose();
     }
 
     public void seedFieldCentric() {
-        io.seedFieldCentric();
-    }
-
-    public Supplier<Pose2d> pose2dSupplier = new Supplier<Pose2d>() {
-        @Override
-        public Pose2d get() {
-            return getPose();
+        if (RC.isRedAlliance.get()){
+            super.setPose(new Pose2d(0, 0, Rotation2d.k180deg));
+        } else {
+            super.setPose(Pose2d.kZero);
         }
-    };
-
-    public ChassisSpeeds getChassisSpeeds() {
-        return inputs.Speeds;
     }
 
+    public void runVelocity(ChassisSpeeds speeds){
+        super.runVelocity(speeds);
+    }
 }
