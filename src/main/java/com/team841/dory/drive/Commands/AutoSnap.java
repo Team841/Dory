@@ -91,12 +91,12 @@ public class AutoSnap extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        this.drivetrain.setControl(this.drivetrain.m_robotSpeeds.withSpeeds(new ChassisSpeeds()));
+//        this.drivetrain.setControl(this.drivetrain.m_robotSpeeds.withSpeeds(new ChassisSpeeds()));
     }
 
     @Override
     public boolean isFinished() {
-        return this.vx.atSetpoint() && this.vy.atSetpoint();
+//        return this.vx.atSetpoint() && this.vy.atSetpoint();
     }
 
 
