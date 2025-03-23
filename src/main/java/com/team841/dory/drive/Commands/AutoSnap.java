@@ -25,7 +25,7 @@ public class AutoSnap extends Command {
     Drivetrain drivetrain;
     ProfiledPIDController vx;
     ProfiledPIDController vy;
-    Pose2d target = new Pose2d(0.5, 0.5, new Rotation2d(Math.PI/4));
+    Pose2d target = new Pose2d(2, 2, new Rotation2d(Math.PI/4));
 
     private final SwerveRequest.FieldCentricFacingAngle driveHeading = new SwerveRequest.FieldCentricFacingAngle().withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
