@@ -57,12 +57,16 @@ public class AutoSnap extends Command {
                 ChassisSpeeds.fromRobotRelativeSpeeds(
                         this.drivetrain.getChassisSpeeds(),
                         this.drivetrain.getPose().getRotation());
-        Translation2d error = this.target.minus(this.drivetrain.getPose()).getTranslation();
-        this.vx.reset(error.getX(), fieldRelativeSpeeds.vxMetersPerSecond);
-        this.vy.reset(error.getY(), fieldRelativeSpeeds.vyMetersPerSecond);
+        Translation2d translation2d = this.drivetrain.getPose().getTranslation();
+//        Translation2d error = this.target.minus(this.drivetrain.getPose()).getTranslation();
+        this.vx.reset(translation2d.getX(), fieldRelativeSpeeds.vxMetersPerSecond);
+        this.vy.reset(translation2d.getY(), fieldRelativeSpeeds.vyMetersPerSecond);
 
-        double outputX = this.vx.calculate(0, error.getX());
-        double outputY = this.vy.calculate(0, error.getY());
+//        double outputX = this.vx.calculate(0, error.getX());
+//        double outputY = this.vy.calculate(0, error.getY());
+
+        double outputX = this.vx.calculate(translation2d.getX(), this.target.getX());
+        double outputY = this.vy.calculate(translation2d.getY(), this.target.getY());
 
         if (!RC.isRedAlliance.get()){
             this.drivetrain.setControl(
