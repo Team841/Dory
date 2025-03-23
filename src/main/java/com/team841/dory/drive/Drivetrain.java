@@ -67,7 +67,7 @@ public class Drivetrain extends SubsystemBase {
     public int count = 0;
 
     PathConstraints constraints = new PathConstraints(
-            3.0, 4.0,
+            4.8, 1.8,
             Units.degreesToRadians(540), Units.degreesToRadians(720));
 
     public Drivetrain(DriveIO io) {
