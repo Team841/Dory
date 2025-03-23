@@ -43,7 +43,7 @@ public class AutoSnap extends Command {
 
     @Override
     public void initialize() {
-        this.target = drivetrain.getPoseToScore(this.drivetrain.getAngleToReefPolar());
+//        this.target = drivetrain.getPoseToScore(this.drivetrain.getAngleToReefPolar());
         runAutoSnap();
     }
 
