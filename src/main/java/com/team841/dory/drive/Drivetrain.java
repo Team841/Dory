@@ -211,7 +211,7 @@ public class Drivetrain extends Drive {
     }
 
     public Pose2d getPose() {
-        return new Pose2d(super.getPose().getTranslation(), super.getRotation());
+        return super.getPose();
     }
 
     public void seedFieldCentric() {
