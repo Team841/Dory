@@ -1,6 +1,7 @@
 package com.team841.dory;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.team841.dory.drive.Commands.AutoSnap;
 import com.team841.dory.drive.Commands.Snapping;
 import com.team841.dory.drive.Drivetrain;
@@ -54,6 +55,12 @@ public class Control {
         if (!AutoBuilder.isConfigured()) {
             drivetrain.configureAutoBuilder();
         }
+
+        NamedCommands.registerCommand("L2", new SequentialCommandGroup(
+                new MoveCommand(this.escalator, Escalator.Position.L2, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
+                this.shooter.runShooterScore(Escalator.Position.L2, scoreTimeout),
+                new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)))
+                .onlyIf(this.shooter::escalatorClear));
 
 //        this.snapScoreLeftL4 =
 //                new SequentialCommandGroup(
