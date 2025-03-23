@@ -43,7 +43,15 @@ public class AutoSnap extends Command {
 
     @Override
     public void initialize() {
+        ChassisSpeeds fieldRelativeSpeeds =
+                ChassisSpeeds.fromRobotRelativeSpeeds(
+                        this.drivetrain.getChassisSpeeds(),
+                        this.drivetrain.getPose().getRotation());
 //        this.target = drivetrain.getPoseToScore(this.drivetrain.getAngleToReefPolar());
+        Translation2d translation2d = this.drivetrain.getPose().getTranslation();
+//        Translation2d error = this.target.minus(this.drivetrain.getPose()).getTranslation();
+        this.vx.reset(translation2d.getX(), fieldRelativeSpeeds.vxMetersPerSecond);
+        this.vy.reset(translation2d.getY(), fieldRelativeSpeeds.vyMetersPerSecond);
         runAutoSnap();
     }
 
@@ -59,8 +67,8 @@ public class AutoSnap extends Command {
                         this.drivetrain.getPose().getRotation());
         Translation2d translation2d = this.drivetrain.getPose().getTranslation();
 //        Translation2d error = this.target.minus(this.drivetrain.getPose()).getTranslation();
-        this.vx.reset(translation2d.getX(), fieldRelativeSpeeds.vxMetersPerSecond);
-        this.vy.reset(translation2d.getY(), fieldRelativeSpeeds.vyMetersPerSecond);
+//        this.vx.reset(translation2d.getX(), fieldRelativeSpeeds.vxMetersPerSecond);
+//        this.vy.reset(translation2d.getY(), fieldRelativeSpeeds.vyMetersPerSecond);
 
 //        double outputX = this.vx.calculate(0, error.getX());
 //        double outputY = this.vy.calculate(0, error.getY());
@@ -71,7 +79,7 @@ public class AutoSnap extends Command {
         Logger.recordOutput("AutoSnap/outputX", outputX);
         Logger.recordOutput("AutoSnap/outputY", outputY);
 
-        if (!RC.isRedAlliance.get()){
+//        if (!RC.isRedAlliance.get()){
             this.drivetrain.setControl(
                     this.driveHeading
                             .withVelocityY(outputX)
@@ -85,7 +93,7 @@ public class AutoSnap extends Command {
 //                            .withVelocityX(outputX)
 //                            .withTargetDirection(this.target.getRotation())
 //            );
-        }
+//        }
     }
 
 
