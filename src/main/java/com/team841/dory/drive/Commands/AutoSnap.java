@@ -97,6 +97,7 @@ public class AutoSnap extends Command {
     @Override
     public boolean isFinished() {
 //        return this.vx.atSetpoint() && this.vy.atSetpoint();
+        return false;
     }
 
 
