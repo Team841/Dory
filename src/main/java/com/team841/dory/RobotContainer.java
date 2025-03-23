@@ -168,6 +168,10 @@ public class RobotContainer {
                 .and(() -> !this.shooter.shooterHasCoral())
                 .whileTrue(control.intake);
 
+        cojoystick.b()
+                .whileTrue(new InstantCommand(()->this.shooter.setDutyCycle(-.08),shooter))
+                .onFalse(new InstantCommand(()->this.shooter.setDutyCycle(0),shooter));
+
         cojoystick.back()
                 .onTrue(new InstantCommand(escalator::zero, escalator));
 
@@ -177,11 +181,11 @@ public class RobotContainer {
         cojoystick.povUp()
                 .whileTrue(this.escalator.goUp());
         
-        cojoystick.b()
+        cojoystick.povLeft()
                 .whileTrue(new InstantCommand(()->this.flapSystem.setFlapperDutyCycle(0.25),flapSystem))
                 .onFalse(new InstantCommand(()->this.flapSystem.stopFlapper(),flapSystem));
              
-        cojoystick.a()
+        cojoystick.povRight()
                 .whileTrue(new InstantCommand(()->this.flapSystem.setFlapperDutyCycle(-0.25),flapSystem))
                 .onFalse(new InstantCommand(()->this.flapSystem.stopFlapper(),flapSystem));
 

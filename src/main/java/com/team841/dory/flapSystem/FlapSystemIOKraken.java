@@ -35,6 +35,7 @@ public class FlapSystemIOKraken implements FlapSystemIO{
 
     public FlapSystemIOKraken(){
         this.intakeMotor.getConfigurator().apply(SC.flapSystem.configs);
+        this.intakeMotor.setNeutralMode(NeutralModeValue.Brake);
         this.flapMotor.getConfigurator().apply(SC.flapSystem.configs);
         this.flapMotor.setNeutralMode(NeutralModeValue.Brake);
         this.canrange.getConfigurator().apply(SC.flapSystem.CanrangeConfigs);
