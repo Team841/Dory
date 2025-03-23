@@ -8,12 +8,10 @@ import com.team841.dory.drive.Drivetrain;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import org.littletonrobotics.junction.Logger;
-import org.opencv.core.Mat;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -27,15 +25,12 @@ public class AutoSnap extends Command {
     ProfiledPIDController vy;
     Pose2d target = new Pose2d(2, 1, new Rotation2d(-Math.PI*3/4));
 
-    private final SwerveRequest.FieldCentricFacingAngle driveHeading = new SwerveRequest.FieldCentricFacingAngle().withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-            .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
-
     public AutoSnap(Drivetrain drivetrain) {
         this.vx = drivetrain.vxController;
         this.vy = drivetrain.vyController;
         this.drivetrain = drivetrain;
-        driveHeading.HeadingController.setPID(34.459, 0, 2.5039);
-        driveHeading.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
+        this.drivetrain.HeadingController.setPID(34.459, 0, 2.5039);
+        this.drivetrain.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
 
         addRequirements(this.drivetrain);
         setName("AutoSnap");
@@ -79,13 +74,11 @@ public class AutoSnap extends Command {
         Logger.recordOutput("AutoSnap/outputX", outputX);
         Logger.recordOutput("AutoSnap/outputY", outputY);
 
+        outputX = RC.isRedAlliance.get() ? -outputX : outputX;
+        outputY = RC.isRedAlliance.get() ? -outputY : outputY;
+
 //        if (!RC.isRedAlliance.get()){
-            this.drivetrain.setControl(
-                    this.driveHeading
-                            .withVelocityY(outputY)
-                            .withVelocityX(outputX)
-                            .withTargetDirection(this.target.getRotation())
-            );
+            this.drivetrain.runFieldCentricFacingAngle(outputY, outputX, this.target.getRotation());
 //        } else {
 //            this.drivetrain.setControl(
 //                    this.driveHeading
@@ -99,13 +92,13 @@ public class AutoSnap extends Command {
 
     @Override
     public void end(boolean interrupted) {
-//        this.drivetrain.setControl(this.drivetrain.m_robotSpeeds.withSpeeds(new ChassisSpeeds()));
+        this.drivetrain.runVelocity(new ChassisSpeeds());
     }
 
     @Override
     public boolean isFinished() {
-//        return this.vx.atSetpoint() && this.vy.atSetpoint();
-        return false;
+        return this.vx.atSetpoint() && this.vy.atSetpoint();
+//        return false;
     }
 
 

@@ -8,16 +8,12 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.team254.vision.VisionFieldPoseEstimate;
 import com.team841.dory.constants.RC;
 import com.team841.dory.constants.TunerConstants;
-import com.team841.dory.drive.DriveIO;
-import com.team841.dory.drive.DriveIOReal;
-import com.team841.dory.drive.DriveIOSim;
-import com.team841.dory.drive.Drivetrain;
+import com.team841.dory.drive.*;
 import com.team841.dory.drive.Commands.DriveMaintainHeading;
 
 import com.team841.dory.escalator.Escalator;
 import com.team841.dory.escalator.EscalatorIO;
 import com.team841.dory.escalator.EscalatorIOKraken;
-import com.team841.dory.escalator.MoveCommand;
 import com.team841.dory.flapSystem.FlapSystem;
 import com.team841.dory.flapSystem.FlapSystemIO;
 import com.team841.dory.flapSystem.FlapSystemIOKraken;
@@ -31,7 +27,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
@@ -42,11 +37,10 @@ public class RobotContainer {
     private final CommandPS5Controller joystick = new CommandPS5Controller(0);
     private final CommandXboxController cojoystick = new CommandXboxController(1);
 
-    public final DriveIO driveIO;
     public final Drivetrain drivetrain;
 
-//    public final VisionIO visionIO;
-//    public final Vision vision;
+    public final VisionIO visionIO;
+    public final Vision vision;
 
     public final EscalatorIO escalatorIO;
     public final Escalator escalator;
@@ -58,7 +52,7 @@ public class RobotContainer {
     public final FlapSystem flapSystem;
 
     public final Control control;
-
+//
     private final DriveMaintainHeading driveMaintainHeading;
     private final Command escalatorDefaultCommand;
 
@@ -67,8 +61,8 @@ public class RobotContainer {
     public final Consumer<VisionFieldPoseEstimate> visionEstimateConsumer = new Consumer<>() {
         @Override
         public void accept(VisionFieldPoseEstimate visionFieldPoseEstimate) {
-           drivetrain.addVisionMeasurement(visionFieldPoseEstimate);
-        //     return;
+//           drivetrain.addVisionMeasurement(visionFieldPoseEstimate);
+             return;
         }
     };
 
@@ -76,11 +70,15 @@ public class RobotContainer {
     public RobotContainer() {
         switch (RC.robotType) {
             case SIM -> {
-                this.driveIO = new DriveIOSim(TunerConstants.DrivetrainConstants, TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
-                this.drivetrain = new Drivetrain(driveIO);
+                this.drivetrain = new Drivetrain(
+                        new GyroIO() {},
+                        new ModuleIOSim(TunerConstants.FrontLeft),
+                        new ModuleIOSim(TunerConstants.FrontRight),
+                        new ModuleIOSim(TunerConstants.BackLeft),
+                        new ModuleIOSim(TunerConstants.BackRight));
 
-//                this.visionIO = new VisionIOLimelights();
-//                this.vision = new Vision(visionIO, visionEstimateConsumer, drivetrain);
+                this.visionIO = new VisionIOLimelights();
+                this.vision = new Vision(visionIO, visionEstimateConsumer, drivetrain);
 
                 this.escalatorIO = new EscalatorIOKraken();
                 this.escalator = new Escalator(escalatorIO);
@@ -94,11 +92,15 @@ public class RobotContainer {
                 this.control = new Control(this.drivetrain, this.escalator, this.shooter, this.flapSystem);
             }
             default -> {
-                this.driveIO = new DriveIOReal(TunerConstants.DrivetrainConstants, TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
-                this.drivetrain = new Drivetrain(driveIO);
+                this.drivetrain = new Drivetrain(
+                        new GyroIOPigeon2(),
+                        new ModuleIOTalonFX(TunerConstants.FrontLeft),
+                        new ModuleIOTalonFX(TunerConstants.FrontRight),
+                        new ModuleIOTalonFX(TunerConstants.BackLeft),
+                        new ModuleIOTalonFX(TunerConstants.BackRight));
 
-//                this.visionIO = new VisionIOLimelights();
-//                this.vision = new Vision(visionIO, visionEstimateConsumer, drivetrain);
+                this.visionIO = new VisionIOLimelights();
+                this.vision = new Vision(visionIO, visionEstimateConsumer, drivetrain);
 
                 this.escalatorIO = new EscalatorIOKraken();
                 this.escalator = new Escalator(escalatorIO);
@@ -126,7 +128,7 @@ public class RobotContainer {
 
     private void configureBindings() {
         drivetrain.setDefaultCommand(driveMaintainHeading);
-//        escalator.setDefaultCommand(escalatorDefaultCommand);
+        escalator.setDefaultCommand(escalatorDefaultCommand);
 
         joystick.touchpad().onTrue(new InstantCommand(drivetrain::seedFieldCentric));
 
@@ -176,11 +178,11 @@ public class RobotContainer {
 
         cojoystick.povUp()
                 .whileTrue(this.escalator.goUp());
-        
+
         cojoystick.b()
                 .whileTrue(new InstantCommand(()->this.flapSystem.setFlapperDutyCycle(0.25),flapSystem))
                 .onFalse(new InstantCommand(()->this.flapSystem.stopFlapper(),flapSystem));
-             
+
         cojoystick.a()
                 .whileTrue(new InstantCommand(()->this.flapSystem.setFlapperDutyCycle(-0.25),flapSystem))
                 .onFalse(new InstantCommand(()->this.flapSystem.stopFlapper(),flapSystem));
@@ -190,5 +192,4 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
     }
-
 }

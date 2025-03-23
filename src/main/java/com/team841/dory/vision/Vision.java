@@ -5,8 +5,8 @@ import com.team254.lib.ConcurrentTimeInterpolatableBuffer;
 import com.team254.vision.FiducialObservation;
 import com.team254.vision.MegatagPoseEstimate;
 import com.team254.vision.VisionFieldPoseEstimate;
-import com.team841.dory.drive.Drivetrain;
 
+import com.team841.dory.drive.Drivetrain;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 

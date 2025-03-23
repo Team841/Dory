@@ -6,15 +6,13 @@ import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.team841.dory.constants.RC;
 import com.team841.dory.constants.TunerConstants;
-import com.team841.dory.drive.Drivetrain;
 
+import com.team841.dory.drive.Drivetrain;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
-import org.littletonrobotics.junction.Logger;
 
 public class DriveMaintainHeading extends Command {
 
@@ -84,7 +82,7 @@ public class DriveMaintainHeading extends Command {
 //                        "DriveMaintainHeading/HeadingSetpoint", mHeadingSetpoint.get().getDegrees());
 //            }
 //        } else {
-            drivetrain.setControl(drive.withVelocityX(throttleFieldFrame).withVelocityY(strafeFieldFrame).withRotationalRate(angularVelocity));
+            drivetrain.runFieldCentric(throttleFieldFrame, strafeFieldFrame, angularVelocity);
 //        }
     }
 
