@@ -73,14 +73,14 @@ public class AutoSnap extends Command {
 //        double outputX = this.vx.calculate(0, error.getX());
 //        double outputY = this.vy.calculate(0, error.getY());
 
-        double outputX = this.vx.calculate(translation2d.getX(), this.target.getX());
-        double outputY = this.vy.calculate(translation2d.getY(), this.target.getY());
+        double outputX = this.vx.calculate(translation2d.getX(), this.target.getX()) + this.vx.getSetpoint().velocity;
+        double outputY = this.vy.calculate(translation2d.getY(), this.target.getY()) + this.vy.getSetpoint().velocity;
 
         Logger.recordOutput("AutoSnap/outputX", outputX);
         Logger.recordOutput("AutoSnap/outputY", outputY);
 
-        outputX *= RC.isRedAlliance.get() ? -1 : 1;
-        outputY *= RC.isRedAlliance.get() ? -1 : 1;
+        outputX *= RC.isRedAlliance.get() ? 1 : -1;
+        outputY *= RC.isRedAlliance.get() ? 1 : -1;
 
 //        if (!RC.isRedAlliance.get()){
             this.drivetrain.setControl(

@@ -88,15 +88,19 @@ public class Drivetrain extends SubsystemBase {
         Logger.processInputs("Drivetrain", inputs);
         Logger.recordOutput("Drive/latencyPeriodicSec", Timer.getTimestamp() - timestamp);
 
-//        if (RC.robotType == RC.RunType.DEV){
+        if (RC.robotType == RC.RunType.DEV){
 //            Logger.recordOutput("Drive/reefAnglePolar", getAngleToReefPolar());
-//            if (count == 10){
-//                Logger.recordOutput("Drive/scoringPose", getScoringPosition().getPoseRed());
-//                count = 0;
-//            } else {
-//                count++;
-//            }
-//        }
+            if (count == 10){
+                Logger.recordOutput("Drive/scoringPose", getScoringPosition(getAngleToReefPolar()).getPoseRed());
+                count = 0;
+            } else {
+                count++;
+            }
+
+            for (var pose : Field.ScoringPositions.values()){
+                Logger.recordOutput("Pos/" + pose.toString(), pose.getPoseRed());
+            }
+        }
 
 //        if (DriverStation.isDisabled()) {
 //            if (!m_hasAppliedOperatorPerspective) {
@@ -212,9 +216,15 @@ public class Drivetrain extends SubsystemBase {
                     io::seedFieldRelative, // Consumer for seeding pose against auto
                     () -> inputs.Speeds, // Supplier of current robot speeds
                     // Consumer of ChassisSpeeds and feedforwards to drive the robot
-                    (speeds, feedforwards) -> io.setControl(m_pathApplyRobotSpeeds.withSpeeds(speeds).withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons()).withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())), new PPHolonomicDriveController(
+                    (speeds, feedforwards) ->
+                            io.setControl(
+                                    m_pathApplyRobotSpeeds
+                                            .withSpeeds(DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red ? speeds.unaryMinus() : speeds)
+                                            .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
+                                            .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
+                    new PPHolonomicDriveController(
                             // PID constants for translation
-                            new PIDConstants(41.418, 0, 1.344),
+                            new PIDConstants(19.556, 0, 1.9988),
                             // PID constants for rotation
                             new PIDConstants(34.459, 0, 2.5039)), config,
                     // Assume the path needs to be flipped for Red vs Blue, this is normally the case

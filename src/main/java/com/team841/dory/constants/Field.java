@@ -21,18 +21,18 @@ public class Field {
     }
 
     public enum ScoringPositions{
-        A(new Pose2d(3.221, 4.193, new Rotation2d(0))),
-        B(new Pose2d(3.221, 3.860, new Rotation2d(0))),
-        C(new Pose2d(3.702, 3.006, new Rotation2d(Units.degreesToRadians(60)))),
-        D(new Pose2d(4.002, 2.842, new Rotation2d(Units.degreesToRadians(60)))),
-        E(new Pose2d(4.986, 2.835, new Rotation2d(Units.degreesToRadians(120)))),
-        F(new Pose2d(5.263, 3.008, new Rotation2d(Units.degreesToRadians(120)))),
-        G(new Pose2d(5.761, 3.853, new Rotation2d(Units.degreesToRadians(180)))),
-        H(new Pose2d(5.761, 4.186, new Rotation2d(Units.degreesToRadians(180)))),
-        I(new Pose2d(5.259, 5.038, new Rotation2d(Units.degreesToRadians(240)))),
-        J(new Pose2d(4.980, 5.211, new Rotation2d(Units.degreesToRadians(240)))),
-        K(new Pose2d(3.993, 5.208, new Rotation2d(Units.degreesToRadians(300)))),
-        L(new Pose2d(3.716, 5.039, new Rotation2d(Units.degreesToRadians(300))));
+        A(new Pose2d(3.208, 4.178, new Rotation2d(0))),
+        B(new Pose2d(3.218, 3.845, new Rotation2d(0))),
+        C(new Pose2d(3.720, 3.031, new Rotation2d(Units.degreesToRadians(60)))),
+        D(new Pose2d(4.000, 2.865, new Rotation2d(Units.degreesToRadians(60)))),
+        E(new Pose2d(4.988, 2.838, new Rotation2d(Units.degreesToRadians(120)))),
+        F(new Pose2d(5.270, 3.024, new Rotation2d(Units.degreesToRadians(120)))),
+        G(new Pose2d(5.773, 3.851, new Rotation2d(Units.degreesToRadians(180)))),
+        H(new Pose2d(5.751, 4.197, new Rotation2d(Units.degreesToRadians(180)))),
+        I(new Pose2d(5.259, 5.019, new Rotation2d(Units.degreesToRadians(240)))),
+        J(new Pose2d(4.970, 5.204, new Rotation2d(Units.degreesToRadians(240)))),
+        K(new Pose2d(4.000, 5.227, new Rotation2d(Units.degreesToRadians(300)))),
+        L(new Pose2d(3.720, 5.046, new Rotation2d(Units.degreesToRadians(300))));
 
         private final Pose2d pose;
 
@@ -45,7 +45,7 @@ public class Field {
         }
 
         public Pose2d getPoseRed(){
-            return new Pose2d(new Translation2d(Units.feetToMeters(28.7565) + pose.getX(), pose.getY()), pose.getRotation());
+            return new Pose2d(new Translation2d(Positions.Reef.redTranslation2d.getX() - (Positions.Reef.blueTranslation2d.getX() - pose.getX()), pose.getY()), pose.getRotation());
         }
     }
 }

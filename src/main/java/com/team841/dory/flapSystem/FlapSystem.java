@@ -57,7 +57,7 @@ public class FlapSystem extends SubsystemBase {
     public Command runIntake(){
         return new RunCommand(
                 () -> {
-                    this.setIntakeDutyCycle(0.1);
+                    this.setIntakeDutyCycle(0.2);
                 }
         )
                 .withName("runShooterIntakeCommand")

@@ -67,6 +67,16 @@ public class Control {
                 new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)))
                 .onlyIf(this.shooter::escalatorClear));
 
+        NamedCommands.registerCommand("AutoL4", new SequentialCommandGroup(
+                        new AutoSnap(this.drivetrain),
+                        new MoveCommand(this.escalator, Escalator.Position.L4, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
+                        this.shooter.runShooterScore(Escalator.Position.L4, scoreTimeout),
+                        new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)))
+                        .onlyIf(this.shooter::escalatorClear)
+                );
+
+        NamedCommands.registerCommand("Intake", Intake());
+
 //        this.snapScoreLeftL4 =
 //                new SequentialCommandGroup(
 //                        new Snapping(this.drivetrain, true),

@@ -7,37 +7,67 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Z_h"
+            "pathName": "Start to F"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoL4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Z_h3"
+            "pathName": "F Score to Source"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Z_i3"
+            "pathName": "Source to E"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoL4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Z_3i.0"
+            "pathName": "E Score to Source"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Z_3k"
+            "pathName": "Source to D"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "AutoL4"
           }
         }
       ]
     }
   },
-  "resetOdom": true,
+  "resetOdom": false,
   "folder": null,
-  "choreoAuto": true
+  "choreoAuto": false
 }

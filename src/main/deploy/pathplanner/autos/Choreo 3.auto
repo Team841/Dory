@@ -5,33 +5,39 @@
     "data": {
       "commands": [
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 7.0
+            "pathName": "Z_h"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "w auto"
+            "pathName": "Z_h3"
           }
         },
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 0.75
+            "pathName": "Z_i3"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "L4"
+            "pathName": "Z_3i.0"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Z_3k"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
-  "choreoAuto": false
+  "folder": "Choreo",
+  "choreoAuto": true
 }
