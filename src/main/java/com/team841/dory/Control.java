@@ -76,7 +76,7 @@ public class Control {
                 .onlyIf(this.shooter::escalatorClear)
         );
         NamedCommands.registerCommand("Intake", Intake());
-        NamedCommands.registerCommand("PassiveRaise", new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.Hold, false)));
+        NamedCommands.registerCommand("PassiveRaise", new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.Hold, true)));
         NamedCommands.registerCommand("FlapDown", new RunCommand(() -> this.flapSystem.setFlapperDutyCycle(-0.5), flapSystem).withTimeout(1).finallyDo(flapSystem::stopFlapper));
 
 //        this.snapScoreLeftL4 =
