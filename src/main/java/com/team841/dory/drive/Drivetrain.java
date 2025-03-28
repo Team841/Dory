@@ -100,6 +100,8 @@ public class Drivetrain extends SubsystemBase {
             for (var pose : Field.ScoringPositions.values()){
                 Logger.recordOutput("Pos/" + pose.toString(), pose.getPoseRed());
             }
+
+            Logger.recordOutput("Drive/rotateRate", inputs.Speeds.omegaRadiansPerSecond);
         }
 
 //        if (DriverStation.isDisabled()) {
@@ -224,9 +226,9 @@ public class Drivetrain extends SubsystemBase {
                                             .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
                     new PPHolonomicDriveController(
                             // PID constants for translation
-                            new PIDConstants(19.556, 0, 1.9988),
+                            new PIDConstants(0.083314, 0, 0),
                             // PID constants for rotation
-                            new PIDConstants(34.459, 0, 2.5039)), config,
+                            new PIDConstants(0.015768, 0, 0)), config,
                     // Assume the path needs to be flipped for Red vs Blue, this is normally the case
                     () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, this // Subsystem for requirements
             );
