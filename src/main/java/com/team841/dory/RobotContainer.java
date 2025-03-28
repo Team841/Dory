@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -189,8 +190,8 @@ public class RobotContainer {
         //         .whileTrue(new InstantCommand(()->this.flapSystem.setFlapperDutyCycle(-0.25),flapSystem))
         //         .onFalse(new InstantCommand(()->this.flapSystem.stopFlapper(),flapSystem));
 
-        cojoystick.povRight().onTrue(new InstantCommand(() -> this.flapSystem.setFlapperDutyCycle(-0.40), flapSystem).withTimeout(1).finallyDo(flapSystem::stopFlapper));
-        
+        cojoystick.povRight().onTrue(new RunCommand(() -> this.flapSystem.setFlapperDutyCycle(-0.40), flapSystem).withTimeout(1).finallyDo(flapSystem::stopFlapper));
+
         joystick.L1()
                 .whileTrue(new InstantCommand(()->this.flapSystem.setHangDutyCycle(-.7),flapSystem))
                 .onFalse(new InstantCommand(()->this.flapSystem.stopHang(),flapSystem));
