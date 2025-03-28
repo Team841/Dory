@@ -107,7 +107,7 @@ public class AutoSnap extends Command {
 
     @Override
     public boolean isFinished() {
-        return this.vx.atGoal() && this.vy.atGoal();
+        return this.vx.atGoal() && this.vy.atGoal() && this.vx.getSetpoint().velocity < 0.1 && this.vy.getSetpoint().velocity < 0.1;
     }
 
 
