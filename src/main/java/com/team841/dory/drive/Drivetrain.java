@@ -91,7 +91,7 @@ public class Drivetrain extends SubsystemBase {
         if (RC.robotType == RC.RunType.DEV){
 //            Logger.recordOutput("Drive/reefAnglePolar", getAngleToReefPolar());
             if (count == 10){
-                Logger.recordOutput("Drive/scoringPose", getScoringPosition(getAngleToReefPolar()).getPoseRed());
+                Logger.recordOutput("Drive/scoringPose", getPoseToScore(getAngleToReefPolar()));
                 count = 0;
             } else {
                 count++;
