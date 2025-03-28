@@ -7,6 +7,7 @@ import com.team841.dory.drive.Commands.Snapping;
 import com.team841.dory.drive.Drivetrain;
 import com.team841.dory.escalator.Escalator;
 import com.team841.dory.escalator.MoveCommand;
+import com.team841.dory.escalator.Escalator.Position;
 import com.team841.dory.flapSystem.FlapSystem;
 import com.team841.dory.shooter.Shooter;
 import edu.wpi.first.wpilibj2.command.*;
@@ -75,6 +76,7 @@ public class Control {
                 new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)))
                 .onlyIf(this.shooter::escalatorClear)
         );
+        NamedCommands.registerCommand("GoDown", new InstantCommand(() -> this.escalator.setPosition(Position.HomeAndIntake, false), escalator));
         NamedCommands.registerCommand("Intake", Intake());
         NamedCommands.registerCommand("PassiveRaise", new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.Hold, true)));
         NamedCommands.registerCommand("FlapDown", new RunCommand(() -> this.flapSystem.setFlapperDutyCycle(-0.5), flapSystem).withTimeout(1).finallyDo(flapSystem::stopFlapper));
