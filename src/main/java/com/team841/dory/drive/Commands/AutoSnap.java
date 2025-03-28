@@ -79,8 +79,8 @@ public class AutoSnap extends Command {
         Logger.recordOutput("AutoSnap/outputX", outputX);
         Logger.recordOutput("AutoSnap/outputY", outputY);
 
-        outputX *= RC.isRedAlliance.get() ? 1 : -1;
-        outputY *= RC.isRedAlliance.get() ? 1 : -1;
+        // outputX *= RC.isRedAlliance.get() ? 1 : -1;
+        // outputY *= RC.isRedAlliance.get() ? 1 : -1;
 
 //        if (!RC.isRedAlliance.get()){
             this.drivetrain.setControl(
@@ -107,7 +107,7 @@ public class AutoSnap extends Command {
 
     @Override
     public boolean isFinished() {
-        return this.vx.atGoal() && this.vy.atGoal();
+        return this.vx.atGoal() && this.vy.atGoal() && this.vx.getSetpoint().velocity < 0.1 && this.vy.getSetpoint().velocity < 0.1;
     }
 
 
