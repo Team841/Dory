@@ -77,7 +77,7 @@ public class Control {
         );
         NamedCommands.registerCommand("Intake", Intake());
         NamedCommands.registerCommand("PassiveRaise", new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.Hold, false)));
-        NamedCommands.registerCommand("FlapDown", new InstantCommand(() -> this.flapSystem.setFlapperDutyCycle(0.25)).withTimeout(0.75).finallyDo(flapSystem::stopFlapper));
+        NamedCommands.registerCommand("FlapDown", new InstantCommand(() -> this.flapSystem.setFlapperDutyCycle(0.25), flapSystem).withTimeout(0.75).finallyDo(flapSystem::stopFlapper));
 
 //        this.snapScoreLeftL4 =
 //                new SequentialCommandGroup(
