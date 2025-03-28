@@ -56,13 +56,13 @@ public class Drivetrain extends SubsystemBase {
     public ProfiledPIDController vxController = new ProfiledPIDController(
         19.556, 0, 1.9988,
             new TrapezoidProfile.Constraints(
-                    4.7, 3.75) // max velocity, max acceleration
+                    4.7, 3) // max velocity, max acceleration
     );
 
     public ProfiledPIDController vyController = new ProfiledPIDController(
         19.556, 0, 1.9988,
             new TrapezoidProfile.Constraints(
-                    4.7, 3.75) // max velocity, max acceleration
+                    4.7, 3) // max velocity, max acceleration
     );
 
     public int count = 0;
