@@ -68,14 +68,16 @@ public class Control {
                 .onlyIf(this.shooter::escalatorClear));
 
         NamedCommands.registerCommand("AutoL4", new SequentialCommandGroup(
+                new ParallelCommandGroup(
                         new AutoSnap(this.drivetrain),
-                        new MoveCommand(this.escalator, Escalator.Position.L4, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
-                        this.shooter.runShooterScore(Escalator.Position.L4, scoreTimeout),
-                        new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)))
-                        .onlyIf(this.shooter::escalatorClear)
-                );
-
+                        new MoveCommand(this.escalator, Escalator.Position.L4, this.shooter::shooterHasCoral, this.shooter::escalatorClear)),
+                this.shooter.runShooterScore(Escalator.Position.L4, scoreTimeout),
+                new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)))
+                .onlyIf(this.shooter::escalatorClear)
+        );
         NamedCommands.registerCommand("Intake", Intake());
+        NamedCommands.registerCommand("PassiveRaise", new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.Hold, false)));
+        NamedCommands.registerCommand("FlapDown", new InstantCommand(() -> this.flapSystem.setFlapperDutyCycle(0.25)).withTimeout(0.75).finallyDo(flapSystem::stopFlapper));
 
 //        this.snapScoreLeftL4 =
 //                new SequentialCommandGroup(

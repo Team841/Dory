@@ -68,6 +68,12 @@ public class Robot extends LoggedRobot {
 
         m_robotContainer = new RobotContainer();
 
+        // Command warmupCommand = PathfindingCommand.warmupCommand();
+        // warmupCommand.schedule();
+        // while(!warmupCommand.isFinished()){
+        //     continue;
+        // }
+
         PathfindingCommand.warmupCommand().schedule();
     }
 
