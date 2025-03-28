@@ -5,15 +5,28 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "Z_c"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AutoL4"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "FlapDown"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "Z_c"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoL4"
+                }
+              }
+            ]
           }
         },
         {
