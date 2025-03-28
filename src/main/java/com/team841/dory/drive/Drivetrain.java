@@ -5,6 +5,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj2.command.Command;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -74,8 +75,8 @@ public class Drivetrain extends SubsystemBase {
         this.io = io;
         this.controller.setTolerance(0.5);
 
-        this.vxController.setTolerance(0.5);
-        this.vyController.setTolerance(0.5);
+        this.vxController.setTolerance(Units.inchesToMeters(1));
+        this.vyController.setTolerance(Units.inchesToMeters(1));
 
         configureAutoBuilder();
     }
