@@ -219,7 +219,7 @@ public class Drivetrain extends SubsystemBase {
                     (speeds, feedforwards) ->
                             io.setControl(
                                     m_pathApplyRobotSpeeds
-                                            .withSpeeds(DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red ? speeds.unaryMinus() : speeds)
+                                            .withSpeeds(speeds)
                                             .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
                                             .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
                     new PPHolonomicDriveController(
