@@ -182,7 +182,7 @@ public class RobotContainer {
                 .whileTrue(this.escalator.goUp());
         
         cojoystick.povLeft()
-                .whileTrue(new InstantCommand(()->this.flapSystem.setFlapperDutyCycle(0.25),flapSystem))
+                .whileTrue(new InstantCommand(()->this.flapSystem.setFlapperDutyCycle(\),flapSystem))
                 .onFalse(new InstantCommand(()->this.flapSystem.stopFlapper(),flapSystem));
              
         cojoystick.povRight()
