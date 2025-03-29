@@ -180,7 +180,7 @@ public class Control {
                 ),
                 new SequentialCommandGroup(
 //                        new MoveCommand(this.escalator, Escalator.Position.HomeAndIntake, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
-                        this.escalator.passiveHoldDown().withTimeout(0.1),
+                        this.escalator.passiveHoldDown().withTimeout(0.2),
                         new ParallelRaceGroup(
                                 this.shooter.runShooterIntake(),
                                 this.flapSystem.runIntake()
