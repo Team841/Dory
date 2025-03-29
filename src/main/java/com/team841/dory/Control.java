@@ -158,7 +158,7 @@ public class Control {
         this.noSnapAutoScoreL2 =
                 new SequentialCommandGroup(
                         new MoveCommand(this.escalator, Escalator.Position.L2, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
-                        this.shooter.runShooterScore(Escalator.Position.L2, scoreTimeout),
+                        this.shooter.runShooterScore(Escalator.Position.L3, scoreTimeout),
                         new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)))
                         .onlyIf(this.shooter::escalatorClear);
 
