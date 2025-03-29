@@ -27,7 +27,7 @@ public class AutoSnap extends Command {
     ProfiledPIDController vy;
     Pose2d target;
 
-    private final SwerveRequest.FieldCentricFacingAngle driveHeading = new SwerveRequest.FieldCentricFacingAngle().withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+    private final SwerveRequest.FieldCentricFacingAngle driveHeading = new SwerveRequest.FieldCentricFacingAngle()// Add a 10% deadband
             .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
 
     public AutoSnap(Drivetrain drivetrain) {
@@ -108,7 +108,7 @@ public class AutoSnap extends Command {
 
     @Override
     public boolean isFinished() {
-        return this.vx.atGoal() && this.vy.atGoal() && this.vx.getSetpoint().velocity < 0.1 && this.vy.getSetpoint().velocity < 0.1;
+        return this.vx.atGoal() && this.vy.atGoal();
     }
 
 
