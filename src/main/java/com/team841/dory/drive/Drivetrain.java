@@ -56,13 +56,13 @@ public class Drivetrain extends SubsystemBase {
     public ProfiledPIDController vxController = new ProfiledPIDController(
         24.531, 0, 0.8503,
             new TrapezoidProfile.Constraints(
-                    4.7, 3.75) // max velocity, max acceleration
+                    4.25, 3) // max velocity, max acceleration
     );
 
     public ProfiledPIDController vyController = new ProfiledPIDController(
         24.531, 0, 0.8503,
             new TrapezoidProfile.Constraints(
-                    4.7, 3.75) // max velocity, max acceleration
+                    4.25, 3) // max velocity, max acceleration
     );
 
     public int count = 0;
@@ -75,8 +75,8 @@ public class Drivetrain extends SubsystemBase {
         this.io = io;
         this.controller.setTolerance(0.5);
 
-        this.vxController.setTolerance(Units.inchesToMeters(1));
-        this.vyController.setTolerance(Units.inchesToMeters(1));
+        this.vxController.setTolerance(Units.inchesToMeters(0.5));
+        this.vyController.setTolerance(Units.inchesToMeters(0.5));
 
         configureAutoBuilder();
     }
