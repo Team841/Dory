@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.*;
 
 public class Control {
 
-    public static double scoreTimeout = 0.3;
+    public static double scoreTimeout = 0.5;
 
     private final Drivetrain drivetrain;
     private final Escalator escalator;

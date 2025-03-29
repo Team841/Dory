@@ -75,8 +75,8 @@ public class Drivetrain extends SubsystemBase {
         this.io = io;
         this.controller.setTolerance(0.5);
 
-        this.vxController.setTolerance(Units.inchesToMeters(0.5));
-        this.vyController.setTolerance(Units.inchesToMeters(0.5));
+        this.vxController.setTolerance(Units.inchesToMeters(1));
+        this.vyController.setTolerance(Units.inchesToMeters(1));
 
         configureAutoBuilder();
     }
