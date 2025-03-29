@@ -4,12 +4,14 @@ import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.CANrange;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.MeasurementHealthValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.team841.dory.constants.SC;
 import edu.wpi.first.units.measure.*;
+
 
 public class FlapSystemIOKraken implements FlapSystemIO{
     public TalonFX intakeMotor = new TalonFX(SC.flapSystem.intakeMotor, "rio");
@@ -44,6 +46,8 @@ public class FlapSystemIOKraken implements FlapSystemIO{
     StatusSignal<AngularAcceleration> Hang2Acceleration;
     StatusSignal<Angle> Hang2Position;
     StatusSignal<Double> Hang2DutyCycleOut;
+
+     Follower HangFollower = new Follower(SC.flapSystem.hangMotor, true);
 
     public FlapSystemIOKraken(){
         this.intakeMotor.getConfigurator().apply(SC.flapSystem.configs);
