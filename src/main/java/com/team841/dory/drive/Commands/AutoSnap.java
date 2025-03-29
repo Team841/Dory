@@ -49,6 +49,7 @@ public class AutoSnap extends Command {
                         this.drivetrain.getChassisSpeeds(),
                         this.drivetrain.getPose().getRotation());
         this.target = drivetrain.getPoseToScore(this.drivetrain.getAngleToReefPolar());
+        Logger.recordOutput("AutoSnap/PoseTarget", this.target);
         Translation2d translation2d = this.drivetrain.getPose().getTranslation();
 //        Translation2d error = this.target.minus(this.drivetrain.getPose()).getTranslation();
         this.vx.reset(translation2d.getX(), fieldRelativeSpeeds.vxMetersPerSecond);
@@ -79,6 +80,8 @@ public class AutoSnap extends Command {
 
         Logger.recordOutput("AutoSnap/outputX", outputX);
         Logger.recordOutput("AutoSnap/outputY", outputY);
+        Logger.recordOutput("AutoSnap/vxAtGoal", this.vx.atGoal());
+        Logger.recordOutput("AutoSnap/vyAtGoal", this.vy.atGoal());
 
         // outputX *= RC.isRedAlliance.get() ? 1 : -1;
         // outputY *= RC.isRedAlliance.get() ? 1 : -1;

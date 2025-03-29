@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "FlapDown"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "1-shot"
@@ -14,12 +20,6 @@
           "type": "named",
           "data": {
             "name": "AutoL4"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "FlapDown"
           }
         }
       ]
