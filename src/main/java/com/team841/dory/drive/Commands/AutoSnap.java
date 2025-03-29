@@ -36,6 +36,7 @@ public class AutoSnap extends Command {
         this.drivetrain = drivetrain;
         driveHeading.HeadingController.setPID(34.459, 0, 2.5039);
         driveHeading.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
+        driveHeading.HeadingController.setTolerance(0.1, 0.1);
 
         addRequirements(this.drivetrain);
         setName("AutoSnap");
