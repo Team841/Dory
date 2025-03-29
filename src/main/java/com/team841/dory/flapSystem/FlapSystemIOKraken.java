@@ -47,8 +47,6 @@ public class FlapSystemIOKraken implements FlapSystemIO{
     StatusSignal<Angle> Hang2Position;
     StatusSignal<Double> Hang2DutyCycleOut;
 
-     Follower HangFollower = new Follower(SC.flapSystem.hangMotor, true);
-
     public FlapSystemIOKraken(){
         this.intakeMotor.getConfigurator().apply(SC.flapSystem.configs);
         this.intakeMotor.setNeutralMode(NeutralModeValue.Brake);
@@ -102,7 +100,7 @@ public class FlapSystemIOKraken implements FlapSystemIO{
                 this.HangPosition, this.HangDutyCycleOut,
                 this.Hang2Velocity, this.Hang2Acceleration,
                 this.Hang2Position, this.Hang2DutyCycleOut);
-                this.hangMotor2.setControl(HangFollower);
+        this.hangMotor2.setControl(new Follower(SC.flapSystem.hangMotor, false));
     }
 
     @Override
