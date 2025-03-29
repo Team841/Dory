@@ -102,6 +102,7 @@ public class FlapSystemIOKraken implements FlapSystemIO{
                 this.HangPosition, this.HangDutyCycleOut,
                 this.Hang2Velocity, this.Hang2Acceleration,
                 this.Hang2Position, this.Hang2DutyCycleOut);
+                this.hangMotor2.setControl(HangFollower);
     }
 
     @Override
