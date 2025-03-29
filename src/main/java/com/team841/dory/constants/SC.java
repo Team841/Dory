@@ -24,7 +24,7 @@ public class SC {
                 new Slot1Configs()
                         .withKP(10.5)
                         .withKD(1.4)
-                        .withKS(9.85-1)
+                        .withKS(9.85-1.5)
                         .withKA(0.19)
                         .withKG(25.75)
                         .withGravityType(GravityTypeValue.Elevator_Static)
