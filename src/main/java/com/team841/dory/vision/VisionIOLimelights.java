@@ -27,10 +27,10 @@ public class VisionIOLimelights implements VisionIO {
 //        try {
         LimelightHelpers.SetIMUMode(RC.Vision.LimelightGammaName, 1);
         LimelightHelpers.SetIMUMode(RC.Vision.LimelightCharlieName, 1);
-            LimelightHelpers.SetRobotOrientation(
-                    RC.Vision.LimelightGammaName, gyroAngle.getDegrees(), gyroAngularVelocity, 0, 0, 0, 0);
-            LimelightHelpers.SetRobotOrientation(
-                    RC.Vision.LimelightCharlieName, gyroAngle.getDegrees(), gyroAngularVelocity, 0, 0, 0, 0);
+        LimelightHelpers.SetRobotOrientation(
+                RC.Vision.LimelightGammaName, gyroAngle.getDegrees(), gyroAngularVelocity, 0, 0, 0, 0);
+        LimelightHelpers.SetRobotOrientation(
+                RC.Vision.LimelightCharlieName, gyroAngle.getDegrees(), gyroAngularVelocity, 0, 0, 0, 0);
 
 //        } catch (Exception e) {
 //            return;

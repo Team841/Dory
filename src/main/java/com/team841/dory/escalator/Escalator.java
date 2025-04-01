@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.units.measure.*;
 
 
-public class Escalator extends SubsystemBase{
+public class Escalator extends SubsystemBase {
 
     EscalatorIO io;
 
@@ -28,7 +28,7 @@ public class Escalator extends SubsystemBase{
     StatusCode[] latestStatus;
 
     Position targetPosition = Position.HomeAndIntake;
-    
+
     public Escalator(EscalatorIO io) {
         this.io = io;
     }
@@ -39,13 +39,11 @@ public class Escalator extends SubsystemBase{
         io.updateInputs(inputs);
         Logger.processInputs("Escalator", inputs);
 
-        if (RC.robotType == RC.RunType.DEV){
+        if (RC.robotType == RC.RunType.DEV) {
             Logger.recordOutput("Escalator/AtHome", this.atPosition(Position.HomeAndIntake));
             Logger.recordOutput("Escalator/TargetPosition", this.targetPosition.toString());
             Logger.recordOutput("Escalator/PositionRadian", this.inputs.rightMotorPosition.in(Units.Rotation));
-            Logger.recordOutput("Escalator/Logical Check", this.targetPosition == Position.HomeAndIntake &&
-                    Math.abs(inputs.rightMotorPosition.in(Units.Rotation) - Position.HomeAndIntake.getPosition()) < 2 &&
-                    !(inputs.rightMotorPosition.in(Units.Rotation) < 0.01));
+            Logger.recordOutput("Escalator/Logical Check", this.targetPosition == Position.HomeAndIntake && Math.abs(inputs.rightMotorPosition.in(Units.Rotation) - Position.HomeAndIntake.getPosition()) < 2 && !(inputs.rightMotorPosition.in(Units.Rotation) < 0.01));
         }
         Logger.recordOutput("Escalator/latencyPeriodicSec", Timer.getTimestamp() - timestamp);
     }
@@ -60,52 +58,38 @@ public class Escalator extends SubsystemBase{
         this.targetPosition = position;
     }
 
-    public void zero(){
+    public void zero() {
         io.resetPositions();
     }
 
-    public boolean deviceStatusOK(){
+    public boolean deviceStatusOK() {
         return latestStatus[0].isOK() && latestStatus[1].isOK();
     }
 
-    public boolean atPosition(Position position){
+    public boolean atPosition(Position position) {
         return Math.abs(inputs.rightMotorPosition.in(Units.Rotation) - position.getPosition()) < 0.5;
     }
 
-    public Command passiveHoldDown(){   
+    public Command passiveHoldDown() {
         return new RunCommand(
                 () -> this.io.setControl(this.dutyCycle.withOutput(-0.025)), this
-        )
-                .onlyIf(() -> (this.targetPosition == Position.HomeAndIntake &&
-                        Math.abs(inputs.rightMotorPosition.in(Units.Rotation) - Position.HomeAndIntake.getPosition()) < 2 &&
-                        !(inputs.rightMotorPosition.in(Units.Rotation) < 0.01)))
-                .withName("passiveEscalatorHoldDown");
+        ).onlyIf(() -> (this.targetPosition == Position.HomeAndIntake && Math.abs(inputs.rightMotorPosition.in(Units.Rotation) - Position.HomeAndIntake.getPosition()) < 2 && !(inputs.rightMotorPosition.in(Units.Rotation) < 0.01))).withName("passiveEscalatorHoldDown");
     }
 
-    public Position getTarget(){
+    public Position getTarget() {
         return this.targetPosition;
     }
 
-    public Command goUp(){
-        return new RunCommand(() -> this.io.setControl(this.dutyCycle.withOutput(0.1)), this)
-                .withName("EscalatorGoUp")
-                .finallyDo(() -> this.io.setControl(this.dutyCycle.withOutput(0)));
+    public Command goUp() {
+        return new RunCommand(() -> this.io.setControl(this.dutyCycle.withOutput(0.1)), this).withName("EscalatorGoUp").finallyDo(() -> this.io.setControl(this.dutyCycle.withOutput(0)));
     }
 
-    public Command goDown(){
-        return new RunCommand(() -> this.io.setControl(this.dutyCycle.withOutput(-0.1)), this)
-                .withName("EscalatorGoDown")
-                .finallyDo(() -> this.io.setControl(this.dutyCycle.withOutput(0)));
+    public Command goDown() {
+        return new RunCommand(() -> this.io.setControl(this.dutyCycle.withOutput(-0.1)), this).withName("EscalatorGoDown").finallyDo(() -> this.io.setControl(this.dutyCycle.withOutput(0)));
     }
 
     public enum Position {
-        HomeAndIntake(0),
-        L1(1),
-        L2(5.118 - 0.26123),
-        L3(11.5463 - 0.26123),
-        L4(22.0844 - 0.26123+0.3),
-        Hold(7.0),
-        Other(-1);
+        HomeAndIntake(0), L1(1), L2(5.118 - 0.26123), L3(11.5463 - 0.26123), L4(22.0844 - 0.26123 + 0.3), Hold(7.0), Other(-1);
 
         private final double position;
 

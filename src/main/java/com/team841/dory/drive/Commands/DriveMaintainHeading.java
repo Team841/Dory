@@ -9,12 +9,10 @@ import com.team841.dory.constants.TunerConstants;
 import com.team841.dory.drive.Drivetrain;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
-import org.littletonrobotics.junction.Logger;
 
 public class DriveMaintainHeading extends Command {
 
@@ -31,7 +29,7 @@ public class DriveMaintainHeading extends Command {
     BooleanSupplier normalDrive;
 
     public DriveMaintainHeading(
-            Drivetrain drivetrain, DoubleSupplier velocityX, DoubleSupplier velocityY, DoubleSupplier angularVelocity, BooleanSupplier normalDrive) {
+                                Drivetrain drivetrain, DoubleSupplier velocityX, DoubleSupplier velocityY, DoubleSupplier angularVelocity, BooleanSupplier normalDrive) {
         this.drivetrain = drivetrain;
         this.controlXSupplier = velocityX;
         this.controlYSupplier = velocityY;
@@ -84,7 +82,7 @@ public class DriveMaintainHeading extends Command {
 //                        "DriveMaintainHeading/HeadingSetpoint", mHeadingSetpoint.get().getDegrees());
 //            }
 //        } else {
-            drivetrain.setControl(drive.withVelocityX(throttleFieldFrame).withVelocityY(strafeFieldFrame).withRotationalRate(angularVelocity));
+        drivetrain.setControl(drive.withVelocityX(throttleFieldFrame).withVelocityY(strafeFieldFrame).withRotationalRate(angularVelocity));
 //        }
     }
 

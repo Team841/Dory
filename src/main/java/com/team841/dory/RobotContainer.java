@@ -17,7 +17,6 @@ import com.team841.dory.drive.Commands.DriveMaintainHeading;
 import com.team841.dory.escalator.Escalator;
 import com.team841.dory.escalator.EscalatorIO;
 import com.team841.dory.escalator.EscalatorIOKraken;
-import com.team841.dory.escalator.MoveCommand;
 import com.team841.dory.flapSystem.FlapSystem;
 import com.team841.dory.flapSystem.FlapSystemIO;
 import com.team841.dory.flapSystem.FlapSystemIOKraken;
@@ -31,8 +30,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
@@ -68,8 +65,8 @@ public class RobotContainer {
     public final Consumer<VisionFieldPoseEstimate> visionEstimateConsumer = new Consumer<>() {
         @Override
         public void accept(VisionFieldPoseEstimate visionFieldPoseEstimate) {
-          drivetrain.addVisionMeasurement(visionFieldPoseEstimate);
-        //     return;
+            drivetrain.addVisionMeasurement(visionFieldPoseEstimate);
+            //     return;
         }
     };
 
@@ -115,7 +112,7 @@ public class RobotContainer {
         }
 
         this.driveMaintainHeading = new DriveMaintainHeading(
-                drivetrain, () -> -joystick.getLeftY(), () -> -joystick.getLeftX(), () -> -joystick.getRightX(), ()->joystick.L2().getAsBoolean());
+                drivetrain, () -> -joystick.getLeftY(), () -> -joystick.getLeftX(), () -> -joystick.getRightX(), () -> joystick.L2().getAsBoolean());
 
         this.escalatorDefaultCommand = this.escalator.passiveHoldDown();
 
@@ -132,69 +129,42 @@ public class RobotContainer {
         joystick.touchpad().onTrue(new InstantCommand(drivetrain::seedFieldCentric));
 
         /* Zero Automation */
-        cojoystick.y()
-                .and(cojoystick.rightTrigger())
-                .whileTrue(control.noSnapAutoScoreL4);
+        cojoystick.y().and(cojoystick.rightTrigger()).whileTrue(control.noSnapAutoScoreL4);
 
-        cojoystick.y()
-                .and(cojoystick.rightBumper())
-                .whileTrue(control.noSnapAutoScoreL3);
+        cojoystick.y().and(cojoystick.rightBumper()).whileTrue(control.noSnapAutoScoreL3);
 
-        cojoystick.y()
-                .and(cojoystick.leftTrigger())
-                .whileTrue(control.noSnapAutoScoreL2);
+        cojoystick.y().and(cojoystick.leftTrigger()).whileTrue(control.noSnapAutoScoreL2);
 
-        cojoystick.y()
-                .onFalse(control.escalatorGoHome);
+        cojoystick.y().onFalse(control.escalatorGoHome);
 
         /* Automated */
-        cojoystick.leftBumper()
-                .and(cojoystick.rightTrigger())
-                .whileTrue(control.snapScoreL4);
+        cojoystick.leftBumper().and(cojoystick.rightTrigger()).whileTrue(control.snapScoreL4);
 
-        cojoystick.leftBumper()
-                .and(cojoystick.rightBumper())
-                .whileTrue(control.snapScoreL3);
+        cojoystick.leftBumper().and(cojoystick.rightBumper()).whileTrue(control.snapScoreL3);
 
-        cojoystick.leftBumper()
-                .and(cojoystick.leftTrigger())
-                .whileTrue(control.snapScoreL2);
+        cojoystick.leftBumper().and(cojoystick.leftTrigger()).whileTrue(control.snapScoreL2);
 
-        cojoystick.leftBumper()
-                .onFalse(control.escalatorGoHome);
+        cojoystick.leftBumper().onFalse(control.escalatorGoHome);
 
         /* ###################################### */
 
-        cojoystick.x()
-                .and(() -> !this.shooter.shooterHasCoral())
-                .whileTrue(control.intake);
+        cojoystick.x().and(() -> !this.shooter.shooterHasCoral()).whileTrue(control.intake);
 
-        cojoystick.b()
-                .whileTrue(new InstantCommand(()->this.shooter.setDutyCycle(-.08),shooter))
-                .onFalse(new InstantCommand(()->this.shooter.setDutyCycle(0),shooter));
+        cojoystick.b().whileTrue(new InstantCommand(() -> this.shooter.setDutyCycle(-.08), shooter)).onFalse(new InstantCommand(() -> this.shooter.setDutyCycle(0), shooter));
 
-        cojoystick.back()
-                .onTrue(new InstantCommand(escalator::zero, escalator));
+        cojoystick.back().onTrue(new InstantCommand(escalator::zero, escalator));
 
-        cojoystick.povDown()
-                .whileTrue(this.escalator.goDown());
+        cojoystick.povDown().whileTrue(this.escalator.goDown());
 
-        cojoystick.povUp()
-                .whileTrue(this.escalator.goUp());
-        
-        cojoystick.povLeft()
-                .whileTrue(new InstantCommand(()->this.flapSystem.setFlapperDutyCycle(0.25),flapSystem))
-                .onFalse(new InstantCommand(()->this.flapSystem.stopFlapper(),flapSystem));
-             
-        cojoystick.povRight()
-                .whileTrue(new InstantCommand(()->this.flapSystem.setFlapperDutyCycle(-0.25),flapSystem))
-                .onFalse(new InstantCommand(()->this.flapSystem.stopFlapper(),flapSystem));
+        cojoystick.povUp().whileTrue(this.escalator.goUp());
+
+        cojoystick.povLeft().whileTrue(new InstantCommand(() -> this.flapSystem.setFlapperDutyCycle(0.25), flapSystem)).onFalse(new InstantCommand(() -> this.flapSystem.stopFlapper(), flapSystem));
+
+        cojoystick.povRight().whileTrue(new InstantCommand(() -> this.flapSystem.setFlapperDutyCycle(-0.25), flapSystem)).onFalse(new InstantCommand(() -> this.flapSystem.stopFlapper(), flapSystem));
 
         // cojoystick.povRight().onTrue(new RunCommand(() -> this.flapSystem.setFlapperDutyCycle(-0.5), flapSystem).withTimeout(0.5).finallyDo(flapSystem::stopFlapper));
 
-        joystick.L1()
-                .whileTrue(new InstantCommand(()->this.flapSystem.setHangDutyCycle(0.7),flapSystem))
-                .onFalse(new InstantCommand(()->this.flapSystem.stopHang(),flapSystem));
+        joystick.L1().whileTrue(new InstantCommand(() -> this.flapSystem.setHangDutyCycle(0.7), flapSystem)).onFalse(new InstantCommand(() -> this.flapSystem.stopHang(), flapSystem));
 
     }
 

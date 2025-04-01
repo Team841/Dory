@@ -1,12 +1,9 @@
 package com.team841.dory.drive;
 
-import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.Unit;
-import edu.wpi.first.wpilibj2.command.Command;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -54,22 +51,19 @@ public class Drivetrain extends SubsystemBase {
 
     public PIDController controller = new PIDController(4, 0, 0.2);
     public ProfiledPIDController vxController = new ProfiledPIDController(
-            24.531, 0, 0.8503,
-            new TrapezoidProfile.Constraints(
+            24.531, 0, 0.8503, new TrapezoidProfile.Constraints(
                     4.25, 3) // max velocity, max acceleration
     );
 
     public ProfiledPIDController vyController = new ProfiledPIDController(
-            24.531, 0, 0.8503,
-            new TrapezoidProfile.Constraints(
+            24.531, 0, 0.8503, new TrapezoidProfile.Constraints(
                     4.25, 3) // max velocity, max acceleration
     );
 
     public int count = 0;
 
     PathConstraints constraints = new PathConstraints(
-            4.8, 1.8,
-            Units.degreesToRadians(540), Units.degreesToRadians(720));
+            4.8, 1.8, Units.degreesToRadians(540), Units.degreesToRadians(720));
 
     public Drivetrain(DriveIO io) {
         this.io = io;
@@ -89,16 +83,16 @@ public class Drivetrain extends SubsystemBase {
         Logger.processInputs("Drivetrain", inputs);
         Logger.recordOutput("Drive/latencyPeriodicSec", Timer.getTimestamp() - timestamp);
 
-        if (RC.robotType == RC.RunType.DEV){
+        if (RC.robotType == RC.RunType.DEV) {
 //            Logger.recordOutput("Drive/reefAnglePolar", getAngleToReefPolar());
-            if (count == 10){
+            if (count == 10) {
                 Logger.recordOutput("Drive/scoringPose", getPoseToScore(getAngleToReefPolar()));
                 count = 0;
             } else {
                 count++;
             }
 
-            for (var pose : Field.ScoringPositions.values()){
+            for (var pose : Field.ScoringPositions.values()) {
                 Logger.recordOutput("Pos/" + pose.toString(), pose.getPoseRed());
             }
 
@@ -155,52 +149,54 @@ public class Drivetrain extends SubsystemBase {
         return Math.atan2(robotVector.getY(), robotVector.getX()) * 57.2957795131;
     }
 
-    public double getAngleToPosePolar(Pose2d targetPose){
+    public double getAngleToPosePolar(Pose2d targetPose) {
         Translation2d robotVector = inputs.Pose.getTranslation().minus(targetPose.getTranslation());
         return Math.atan2(robotVector.getY(), robotVector.getX());
     }
 
-    public Field.ScoringPositions getScoringPosition(double angle){
+    public Field.ScoringPositions getScoringPosition(double angle) {
 //        double angle = getAngleToReefPolar();
-        if (angle >= 0 && angle < 30){
+        if (angle >= 0 && angle < 30) {
             return Field.ScoringPositions.H;
-        } else if (angle >= 30 && angle < 60){
+        } else if (angle >= 30 && angle < 60) {
             return Field.ScoringPositions.I;
-        } else if (angle >= 60 && angle < 90){
+        } else if (angle >= 60 && angle < 90) {
             return Field.ScoringPositions.J;
-        } else if (angle >= 90 && angle < 120){
+        } else if (angle >= 90 && angle < 120) {
             return Field.ScoringPositions.K;
-        } else if (angle >= 120 && angle < 150){
+        } else if (angle >= 120 && angle < 150) {
             return Field.ScoringPositions.L;
-        } else if (angle >= 150 && angle < 180){
+        } else if (angle >= 150 && angle < 180) {
             return Field.ScoringPositions.A;
         } else if (angle >= -180 && angle < -150) {
             return Field.ScoringPositions.B;
-        } else if (angle >= -150 && angle < -120){
+        } else if (angle >= -150 && angle < -120) {
             return Field.ScoringPositions.C;
-        } else if (angle >= -120 && angle < -90){
+        } else if (angle >= -120 && angle < -90) {
             return Field.ScoringPositions.D;
-        } else if (angle >= -90 && angle < -60){
+        } else if (angle >= -90 && angle < -60) {
             return Field.ScoringPositions.E;
-        } else if (angle >= -60 && angle < -30){
+        } else if (angle >= -60 && angle < -30) {
             return Field.ScoringPositions.F;
         } else {
             return Field.ScoringPositions.G;
         }
     }
 
-    public boolean getScoringPositionIsRight(){
+    public boolean getScoringPositionIsRight() {
         Field.ScoringPositions pos = getScoringPosition(this.getAngleToReefPolar());
-        switch (pos){
-            case A, C, E, G, I, K -> {return false;}
+        switch (pos) {
+            case A, C, E, G, I, K -> {
+                return false;
+            }
             default -> {
                 return true;
             }
         }
     }
 
-    public Pose2d getPoseToScore(double angle){
-        if (RC.isRedAlliance.get()){
+    public Pose2d getPoseToScore(double angle) {
+        if (RC.isRedAlliance.get()) {
             return getScoringPosition(angle).getPoseRed();
         } else {
             return getScoringPosition(angle).getPoseBlue();
@@ -219,17 +215,12 @@ public class Drivetrain extends SubsystemBase {
                     io::seedFieldRelative, // Consumer for seeding pose against auto
                     () -> inputs.Speeds, // Supplier of current robot speeds
                     // Consumer of ChassisSpeeds and feedforwards to drive the robot
-                    (speeds, feedforwards) ->
-                            io.setControl(
-                                    m_pathApplyRobotSpeeds
-                                            .withSpeeds(speeds)
-                                            .withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons())
-                                            .withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())),
-                    new PPHolonomicDriveController(
-                            // PID constants for translation
-                            new PIDConstants(0.083314, 0, 0),
-                            // PID constants for rotation
-                            new PIDConstants(0.015768, 0, 0)), config,
+                    (speeds, feedforwards) -> io.setControl(
+                            m_pathApplyRobotSpeeds.withSpeeds(speeds).withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons()).withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())), new PPHolonomicDriveController(
+                                    // PID constants for translation
+                                    new PIDConstants(0.083314, 0, 0),
+                                    // PID constants for rotation
+                                    new PIDConstants(0.015768, 0, 0)), config,
                     // Assume the path needs to be flipped for Red vs Blue, this is normally the case
                     () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, this // Subsystem for requirements
             );

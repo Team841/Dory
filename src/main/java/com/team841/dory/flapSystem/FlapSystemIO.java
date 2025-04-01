@@ -3,16 +3,14 @@ package com.team841.dory.flapSystem;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import edu.wpi.first.units.measure.*;
-import com.ctre.phoenix6.signals.MeasurementHealthValue;
 
-import java.io.ObjectInputFilter.Status;
 
 import org.littletonrobotics.junction.AutoLog;
 
 public interface FlapSystemIO {
 
     @AutoLog
-    public static class FlapSystemIOInputs{
+    public static class FlapSystemIOInputs {
 //        public MeasurementHealthValue CANrangeHealth;
 //        public Time CANrangeMeasurementTime;
 //        public double CANrangeSignalStrength;
@@ -42,15 +40,21 @@ public interface FlapSystemIO {
     }
 
     public void updateInputs(FlapSystemIOInputs inputs);
-    
+
 
     public StatusCode setControlIntake(DutyCycleOut control);
+
     public StatusCode setControlFlapper(DutyCycleOut control);
+
     public StatusCode setControlHang(DutyCycleOut control);
+
     public StatusCode setControlHang2(DutyCycleOut control);
 
     public void stopIntake();
+
     public void stopFlapper();
+
     public void stopHang();
+
     public void stopHang2();
 }
