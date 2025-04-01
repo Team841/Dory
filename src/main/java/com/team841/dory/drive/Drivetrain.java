@@ -5,6 +5,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj2.command.Command;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -53,15 +54,15 @@ public class Drivetrain extends SubsystemBase {
 
     public PIDController controller = new PIDController(4, 0, 0.2);
     public ProfiledPIDController vxController = new ProfiledPIDController(
-        24.531, 0, 0.8503,
+            24.531, 0, 0.8503,
             new TrapezoidProfile.Constraints(
-                    4.7, 3.75) // max velocity, max acceleration
+                    4.25, 3) // max velocity, max acceleration
     );
 
     public ProfiledPIDController vyController = new ProfiledPIDController(
-        24.531, 0, 0.8503,
+            24.531, 0, 0.8503,
             new TrapezoidProfile.Constraints(
-                    4.7, 3.75) // max velocity, max acceleration
+                    4.25, 3) // max velocity, max acceleration
     );
 
     public int count = 0;
@@ -74,8 +75,8 @@ public class Drivetrain extends SubsystemBase {
         this.io = io;
         this.controller.setTolerance(0.5);
 
-        this.vxController.setTolerance(0.5);
-        this.vyController.setTolerance(0.5);
+        this.vxController.setTolerance(Units.inchesToMeters(1));
+        this.vyController.setTolerance(Units.inchesToMeters(1));
 
         configureAutoBuilder();
     }
@@ -91,7 +92,7 @@ public class Drivetrain extends SubsystemBase {
         if (RC.robotType == RC.RunType.DEV){
 //            Logger.recordOutput("Drive/reefAnglePolar", getAngleToReefPolar());
             if (count == 10){
-                Logger.recordOutput("Drive/scoringPose", getScoringPosition(getAngleToReefPolar()).getPoseRed());
+                Logger.recordOutput("Drive/scoringPose", getPoseToScore(getAngleToReefPolar()));
                 count = 0;
             } else {
                 count++;

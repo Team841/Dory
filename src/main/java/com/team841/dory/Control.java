@@ -7,13 +7,14 @@ import com.team841.dory.drive.Commands.Snapping;
 import com.team841.dory.drive.Drivetrain;
 import com.team841.dory.escalator.Escalator;
 import com.team841.dory.escalator.MoveCommand;
+import com.team841.dory.escalator.Escalator.Position;
 import com.team841.dory.flapSystem.FlapSystem;
 import com.team841.dory.shooter.Shooter;
 import edu.wpi.first.wpilibj2.command.*;
 
 public class Control {
 
-    public static double scoreTimeout = 0.3;
+    public static double scoreTimeout = 0.5;
 
     private final Drivetrain drivetrain;
     private final Escalator escalator;
@@ -68,16 +69,16 @@ public class Control {
                 .onlyIf(this.shooter::escalatorClear));
 
         NamedCommands.registerCommand("AutoL4", new SequentialCommandGroup(
-                new ParallelCommandGroup(
-                        new AutoSnap(this.drivetrain),
-                        new MoveCommand(this.escalator, Escalator.Position.L4, this.shooter::shooterHasCoral, this.shooter::escalatorClear)),
+                new AutoSnap(this.drivetrain),
+                new MoveCommand(this.escalator, Escalator.Position.L4, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
                 this.shooter.runShooterScore(Escalator.Position.L4, scoreTimeout),
                 new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)))
                 .onlyIf(this.shooter::escalatorClear)
         );
+        NamedCommands.registerCommand("GoDown", new InstantCommand(() -> this.escalator.setPosition(Position.HomeAndIntake, false), escalator));
         NamedCommands.registerCommand("Intake", Intake());
-        NamedCommands.registerCommand("PassiveRaise", new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.Hold, false)));
-        NamedCommands.registerCommand("FlapDown", new InstantCommand(() -> this.flapSystem.setFlapperDutyCycle(0.25)).withTimeout(0.75).finallyDo(flapSystem::stopFlapper));
+        NamedCommands.registerCommand("PassiveRaise", new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.Hold, true)));
+        NamedCommands.registerCommand("FlapDown", new RunCommand(() -> this.flapSystem.setFlapperDutyCycle(-0.5), flapSystem).withTimeout(1).finallyDo(flapSystem::stopFlapper));
 
 //        this.snapScoreLeftL4 =
 //                new SequentialCommandGroup(
@@ -156,7 +157,7 @@ public class Control {
         this.noSnapAutoScoreL2 =
                 new SequentialCommandGroup(
                         new MoveCommand(this.escalator, Escalator.Position.L2, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
-                        this.shooter.runShooterScore(Escalator.Position.L2, scoreTimeout),
+                        this.shooter.runShooterScore(Escalator.Position.L3, scoreTimeout),
                         new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)))
                         .onlyIf(this.shooter::escalatorClear);
 
@@ -179,7 +180,7 @@ public class Control {
                 ),
                 new SequentialCommandGroup(
 //                        new MoveCommand(this.escalator, Escalator.Position.HomeAndIntake, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
-                        this.escalator.passiveHoldDown().withTimeout(0.1),
+                        this.escalator.passiveHoldDown().withTimeout(0.2),
                         new ParallelRaceGroup(
                                 this.shooter.runShooterIntake(),
                                 this.flapSystem.runIntake()

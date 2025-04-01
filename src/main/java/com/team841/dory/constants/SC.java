@@ -14,7 +14,7 @@ public class SC {
                 new Slot0Configs()
                         .withKP(9.5)
                         .withKD(1.5)
-                        .withKS(9.85)
+                        .withKS(9.85-3)
                         .withKA(0.35)
                         .withKG(23.15)
                         .withGravityType(GravityTypeValue.Elevator_Static)
@@ -24,7 +24,7 @@ public class SC {
                 new Slot1Configs()
                         .withKP(10.5)
                         .withKD(1.4)
-                        .withKS(9.85)
+                        .withKS(9.85-1.5)
                         .withKA(0.19)
                         .withKG(25.75)
                         .withGravityType(GravityTypeValue.Elevator_Static)
@@ -44,9 +44,9 @@ public class SC {
                                         .withFeedbackSensorSource(FeedbackSensorSourceValue.RotorSensor))
                         .withMotionMagic(
                                 new MotionMagicConfigs()
-                                        .withMotionMagicAcceleration(55)
-                                        .withMotionMagicCruiseVelocity(80)
-                                        .withMotionMagicJerk(800))
+                                        .withMotionMagicAcceleration(90)
+                                        .withMotionMagicCruiseVelocity(120)
+                                        .withMotionMagicJerk(1200))
                         .withMotorOutput(
                                 new MotorOutputConfigs()
                                         .withNeutralMode(NeutralModeValue.Brake))
@@ -107,6 +107,7 @@ public class SC {
         public static int intakeMotor = 14;
         public static int canrange = 3;
         public static int hangMotor = 12;
+        public static int hangMotor2 = 16;
 
         public static TalonFXConfiguration configs =
                 new TalonFXConfiguration()

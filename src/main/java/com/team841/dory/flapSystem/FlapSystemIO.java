@@ -34,6 +34,11 @@ public interface FlapSystemIO {
         public AngularAcceleration HangAcceleration;
         public Angle HangPosition;
         public double HangDutyCycleOut;
+
+        public AngularVelocity Hang2Velocity;
+        public AngularAcceleration Hang2Acceleration;
+        public Angle Hang2Position;
+        public double Hang2DutyCycleOut;
     }
 
     public void updateInputs(FlapSystemIOInputs inputs);
@@ -42,8 +47,10 @@ public interface FlapSystemIO {
     public StatusCode setControlIntake(DutyCycleOut control);
     public StatusCode setControlFlapper(DutyCycleOut control);
     public StatusCode setControlHang(DutyCycleOut control);
+    public StatusCode setControlHang2(DutyCycleOut control);
 
     public void stopIntake();
     public void stopFlapper();
     public void stopHang();
+    public void stopHang2();
 }
