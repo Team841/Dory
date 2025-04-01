@@ -3,7 +3,6 @@ package com.team841.dory;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.team841.dory.drive.Commands.AutoSnap;
-import com.team841.dory.drive.Commands.Snapping;
 import com.team841.dory.drive.Drivetrain;
 import com.team841.dory.escalator.Escalator;
 import com.team841.dory.escalator.MoveCommand;
@@ -57,23 +56,13 @@ public class Control {
         }
 
         NamedCommands.registerCommand("L2", new SequentialCommandGroup(
-                new MoveCommand(this.escalator, Escalator.Position.L2, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
-                this.shooter.runShooterScore(Escalator.Position.L2, scoreTimeout),
-                new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)))
-                .onlyIf(this.shooter::escalatorClear));
+                new MoveCommand(this.escalator, Escalator.Position.L2, this.shooter::shooterHasCoral, this.shooter::escalatorClear), this.shooter.runShooterScore(Escalator.Position.L2, scoreTimeout), new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false))).onlyIf(this.shooter::escalatorClear));
         NamedCommands.registerCommand("L4", new SequentialCommandGroup(
-                new MoveCommand(this.escalator, Escalator.Position.L4, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
-                this.shooter.runShooterScore(Escalator.Position.L4, scoreTimeout),
-                new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)))
-                .onlyIf(this.shooter::escalatorClear));
+                new MoveCommand(this.escalator, Escalator.Position.L4, this.shooter::shooterHasCoral, this.shooter::escalatorClear), this.shooter.runShooterScore(Escalator.Position.L4, scoreTimeout), new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false))).onlyIf(this.shooter::escalatorClear));
 
         NamedCommands.registerCommand("AutoL4", new SequentialCommandGroup(
                 new ParallelCommandGroup(
-                        new AutoSnap(this.drivetrain),
-                        new MoveCommand(this.escalator, Escalator.Position.L4, this.shooter::shooterHasCoral, this.shooter::escalatorClear)),
-                this.shooter.runShooterScore(Escalator.Position.L4, scoreTimeout),
-                new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)))
-                .onlyIf(this.shooter::escalatorClear)
+                        new AutoSnap(this.drivetrain), new MoveCommand(this.escalator, Escalator.Position.L4, this.shooter::shooterHasCoral, this.shooter::escalatorClear)), this.shooter.runShooterScore(Escalator.Position.L4, scoreTimeout), new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false))).onlyIf(this.shooter::escalatorClear)
         );
         NamedCommands.registerCommand("Intake", Intake());
         NamedCommands.registerCommand("PassiveRaise", new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.Hold, false)));
@@ -117,48 +106,21 @@ public class Control {
 //                        this.shooter.runShooterScore(Escalator.Position.L2, scoreTimeout),
 //                        new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)));
 
-        this.snapScoreL4 =
-                new SequentialCommandGroup(
-                        new AutoSnap(this.drivetrain),
-                        new MoveCommand(this.escalator, Escalator.Position.L4, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
-                        this.shooter.runShooterScore(Escalator.Position.L4, scoreTimeout),
-                        new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)))
-                        .onlyIf(this.shooter::escalatorClear);
+        this.snapScoreL4 = new SequentialCommandGroup(
+                new AutoSnap(this.drivetrain), new MoveCommand(this.escalator, Escalator.Position.L4, this.shooter::shooterHasCoral, this.shooter::escalatorClear), this.shooter.runShooterScore(Escalator.Position.L4, scoreTimeout), new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false))).onlyIf(this.shooter::escalatorClear);
 
-        this.snapScoreL3 =
-                new SequentialCommandGroup(
-                        new AutoSnap(this.drivetrain),
-                        new MoveCommand(this.escalator, Escalator.Position.L3, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
-                        this.shooter.runShooterScore(Escalator.Position.L3, scoreTimeout),
-                        new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)))
-                        .onlyIf(this.shooter::escalatorClear);
+        this.snapScoreL3 = new SequentialCommandGroup(
+                new AutoSnap(this.drivetrain), new MoveCommand(this.escalator, Escalator.Position.L3, this.shooter::shooterHasCoral, this.shooter::escalatorClear), this.shooter.runShooterScore(Escalator.Position.L3, scoreTimeout), new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false))).onlyIf(this.shooter::escalatorClear);
 
-        this.snapScoreL2 =
-                new SequentialCommandGroup(
-                        new AutoSnap(this.drivetrain),
-                        new MoveCommand(this.escalator, Escalator.Position.L2, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
-                        this.shooter.runShooterScore(Escalator.Position.L2, scoreTimeout),
-                        new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)))
-                        .onlyIf(this.shooter::escalatorClear);
+        this.snapScoreL2 = new SequentialCommandGroup(
+                new AutoSnap(this.drivetrain), new MoveCommand(this.escalator, Escalator.Position.L2, this.shooter::shooterHasCoral, this.shooter::escalatorClear), this.shooter.runShooterScore(Escalator.Position.L2, scoreTimeout), new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false))).onlyIf(this.shooter::escalatorClear);
 
-        this.noSnapAutoScoreL4 =
-                new SequentialCommandGroup(
-                        new MoveCommand(this.escalator, Escalator.Position.L4, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
-                        this.shooter.runShooterScore(Escalator.Position.L4, scoreTimeout),
-                        new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)))
-                        .onlyIf(this.shooter::escalatorClear);
-        this.noSnapAutoScoreL3 =
-                new SequentialCommandGroup(
-                        new MoveCommand(this.escalator, Escalator.Position.L3, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
-                        this.shooter.runShooterScore(Escalator.Position.L3, scoreTimeout),
-                        new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)))
-                        .onlyIf(this.shooter::escalatorClear);
-        this.noSnapAutoScoreL2 =
-                new SequentialCommandGroup(
-                        new MoveCommand(this.escalator, Escalator.Position.L2, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
-                        this.shooter.runShooterScore(Escalator.Position.L2, scoreTimeout),
-                        new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)))
-                        .onlyIf(this.shooter::escalatorClear);
+        this.noSnapAutoScoreL4 = new SequentialCommandGroup(
+                new MoveCommand(this.escalator, Escalator.Position.L4, this.shooter::shooterHasCoral, this.shooter::escalatorClear), this.shooter.runShooterScore(Escalator.Position.L4, scoreTimeout), new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false))).onlyIf(this.shooter::escalatorClear);
+        this.noSnapAutoScoreL3 = new SequentialCommandGroup(
+                new MoveCommand(this.escalator, Escalator.Position.L3, this.shooter::shooterHasCoral, this.shooter::escalatorClear), this.shooter.runShooterScore(Escalator.Position.L3, scoreTimeout), new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false))).onlyIf(this.shooter::escalatorClear);
+        this.noSnapAutoScoreL2 = new SequentialCommandGroup(
+                new MoveCommand(this.escalator, Escalator.Position.L2, this.shooter::shooterHasCoral, this.shooter::escalatorClear), this.shooter.runShooterScore(Escalator.Position.L2, scoreTimeout), new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false))).onlyIf(this.shooter::escalatorClear);
 
         this.intake = Intake();
 
@@ -174,19 +136,14 @@ public class Control {
     public Command Intake() {
         return new ConditionalCommand(
                 new ParallelRaceGroup(
-                        this.shooter.runShooterIntake(),
-                        this.flapSystem.runIntake()
-                ),
-                new SequentialCommandGroup(
-//                        new MoveCommand(this.escalator, Escalator.Position.HomeAndIntake, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
-                        this.escalator.passiveHoldDown().withTimeout(0.1),
-                        new ParallelRaceGroup(
-                                this.shooter.runShooterIntake(),
-                                this.flapSystem.runIntake()
+                        this.shooter.runShooterIntake(), this.flapSystem.runIntake()
+                ), new SequentialCommandGroup(
+                        //                        new MoveCommand(this.escalator, Escalator.Position.HomeAndIntake, this.shooter::shooterHasCoral, this.shooter::escalatorClear),
+                        this.escalator.passiveHoldDown().withTimeout(0.1), new ParallelRaceGroup(
+                                this.shooter.runShooterIntake(), this.flapSystem.runIntake()
                         )
 
-                ).onlyIf(this.shooter::escalatorClear),
-                () -> this.escalator.atPosition(Escalator.Position.HomeAndIntake)
+                ).onlyIf(this.shooter::escalatorClear), () -> this.escalator.atPosition(Escalator.Position.HomeAndIntake)
         );
     }
 }

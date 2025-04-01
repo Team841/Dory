@@ -7,13 +7,10 @@ import com.team841.dory.constants.TunerConstants;
 import com.team841.dory.drive.Drivetrain;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import org.littletonrobotics.junction.Logger;
-import org.opencv.core.Mat;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -43,10 +40,8 @@ public class AutoSnap extends Command {
 
     @Override
     public void initialize() {
-        ChassisSpeeds fieldRelativeSpeeds =
-                ChassisSpeeds.fromRobotRelativeSpeeds(
-                        this.drivetrain.getChassisSpeeds(),
-                        this.drivetrain.getPose().getRotation());
+        ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(
+                this.drivetrain.getChassisSpeeds(), this.drivetrain.getPose().getRotation());
         this.target = drivetrain.getPoseToScore(this.drivetrain.getAngleToReefPolar());
         Translation2d translation2d = this.drivetrain.getPose().getTranslation();
 //        Translation2d error = this.target.minus(this.drivetrain.getPose()).getTranslation();
@@ -61,10 +56,8 @@ public class AutoSnap extends Command {
     }
 
     private void runAutoSnap() {
-        ChassisSpeeds fieldRelativeSpeeds =
-                ChassisSpeeds.fromRobotRelativeSpeeds(
-                        this.drivetrain.getChassisSpeeds(),
-                        this.drivetrain.getPose().getRotation());
+        ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(
+                this.drivetrain.getChassisSpeeds(), this.drivetrain.getPose().getRotation());
         Translation2d translation2d = this.drivetrain.getPose().getTranslation();
 //        Translation2d error = this.target.minus(this.drivetrain.getPose()).getTranslation();
 //        this.vx.reset(translation2d.getX(), fieldRelativeSpeeds.vxMetersPerSecond);
@@ -83,12 +76,9 @@ public class AutoSnap extends Command {
         outputY *= RC.isRedAlliance.get() ? 1 : -1;
 
 //        if (!RC.isRedAlliance.get()){
-            this.drivetrain.setControl(
-                    this.driveHeading
-                            .withVelocityY(outputY)
-                            .withVelocityX(outputX)
-                            .withTargetDirection(this.target.getRotation())
-            );
+        this.drivetrain.setControl(
+                this.driveHeading.withVelocityY(outputY).withVelocityX(outputX).withTargetDirection(this.target.getRotation())
+        );
 //        } else {
 //            this.drivetrain.setControl(
 //                    this.driveHeading

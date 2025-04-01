@@ -3,7 +3,6 @@ package com.team841.dory.flapSystem;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.team841.dory.constants.RC;
-import com.team841.dory.shooter.Shooter;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -30,41 +29,44 @@ public class FlapSystem extends SubsystemBase {
         io.updateInputs(inputs);
         Logger.processInputs("FlapSystem", inputs);
 
-        if (RC.robotType == RC.RunType.DEV){}
+        if (RC.robotType == RC.RunType.DEV) {
+        }
         Logger.recordOutput("FlapSystem/latencyPeriodicSec", Timer.getTimestamp() - timestamp);
     }
 
-    public void setIntakeDutyCycle(double output){
+    public void setIntakeDutyCycle(double output) {
         this.latestStatusCode = io.setControlIntake(dutyCycle.withOutput(output));
     }
-    public void setFlapperDutyCycle(double output){
+
+    public void setFlapperDutyCycle(double output) {
         this.latestStatusCode = io.setControlFlapper(dutyCycle.withOutput(output));
     }
-    public void setHangDutyCycle(double output){
+
+    public void setHangDutyCycle(double output) {
         this.latestStatusCode = io.setControlHang(dutyCycle.withOutput(output));
     }
 
-    public void stopIntake(){
+    public void stopIntake() {
         io.stopIntake();
     }
-    public void stopFlapper(){
+
+    public void stopFlapper() {
         io.stopFlapper();
     }
-    public void stopHang(){
+
+    public void stopHang() {
         io.stopHang();
     }
 
-    public Command runIntake(){
+    public Command runIntake() {
         return new RunCommand(
                 () -> {
                     this.setIntakeDutyCycle(0.2);
                 }
-        )
-                .withName("runShooterIntakeCommand")
-                .finallyDo(this::stopIntake);
+        ).withName("runShooterIntakeCommand").finallyDo(this::stopIntake);
     }
 
-    public boolean deviceStatusOK(){
+    public boolean deviceStatusOK() {
         return latestStatusCode.isOK();
     }
 }

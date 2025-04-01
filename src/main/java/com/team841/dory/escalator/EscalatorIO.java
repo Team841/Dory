@@ -5,11 +5,10 @@ import org.littletonrobotics.junction.AutoLog;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.ControlRequest;
-import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.signals.ControlModeValue;
 
 public interface EscalatorIO {
-   
+
     @AutoLog
     public static class EscalatorIOInputs {
         public Angle leftMotorPosition;
@@ -33,6 +32,6 @@ public interface EscalatorIO {
     public void resetPositions(double position);
 
     public void resetPositions(double leftPosition, double rightPosition);
-    
+
     public StatusCode[] setControl(ControlRequest control);
 }

@@ -2,10 +2,8 @@ package com.team841.dory;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.pathplanner.lib.commands.PathfindingCommand;
-import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.team841.dory.constants.RC;
 
-import com.team841.dory.lib.ADStar.LocalADStarAK;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 

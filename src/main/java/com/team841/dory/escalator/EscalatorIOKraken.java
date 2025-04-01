@@ -5,7 +5,6 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ControlModeValue;
 import com.team841.dory.constants.RC;
@@ -17,13 +16,13 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 
 public class EscalatorIOKraken implements EscalatorIO {
-    
+
     TalonFX leftMotor = new TalonFX(SC.Escalator.left, RC.canivoreCANBus);
     TalonFX rightMotor = new TalonFX(SC.Escalator.right, RC.canivoreCANBus);
 
     private final StatusSignal<Angle> rightPosition;
     private final StatusSignal<Angle> leftPosition;
-    
+
     private final StatusSignal<AngularVelocity> rightVelocity;
     private final StatusSignal<AngularVelocity> leftVelocity;
 
@@ -40,7 +39,7 @@ public class EscalatorIOKraken implements EscalatorIO {
     Follower leftFollower = new Follower(SC.Escalator.right, true);
 
     public EscalatorIOKraken() {
-        this.leftMotor.getConfigurator().apply(SC.Escalator.leftConfigs);    
+        this.leftMotor.getConfigurator().apply(SC.Escalator.leftConfigs);
         this.rightMotor.getConfigurator().apply(SC.Escalator.rightConfigs);
 
         resetPositions();
@@ -62,12 +61,7 @@ public class EscalatorIOKraken implements EscalatorIO {
 
         this.controlMode = this.rightMotor.getControlMode();
 
-        BaseStatusSignal.setUpdateFrequencyForAll(100,
-            this.rightPosition, this.leftPosition,
-            this.rightVelocity, this.leftVelocity,
-            this.rightAcceleration, this.leftAcceleration,
-            this.rightTorqueCurrent, this.leftTorqueCurrent,
-                this.rightMotorDutyCycleOut, this.leftMotorDutyCycleOut
+        BaseStatusSignal.setUpdateFrequencyForAll(100, this.rightPosition, this.leftPosition, this.rightVelocity, this.leftVelocity, this.rightAcceleration, this.leftAcceleration, this.rightTorqueCurrent, this.leftTorqueCurrent, this.rightMotorDutyCycleOut, this.leftMotorDutyCycleOut
         );
 
         this.leftMotor.setControl(leftFollower);
@@ -75,11 +69,7 @@ public class EscalatorIOKraken implements EscalatorIO {
 
     @Override
     public void updateInputs(EscalatorIOInputs inputs) {
-        BaseStatusSignal.refreshAll(this.rightPosition, this.leftPosition,
-                this.rightVelocity, this.leftVelocity,
-                this.rightAcceleration, this.leftAcceleration,
-                this.rightTorqueCurrent, this.leftTorqueCurrent,
-                this.rightMotorDutyCycleOut, this.leftMotorDutyCycleOut);
+        BaseStatusSignal.refreshAll(this.rightPosition, this.leftPosition, this.rightVelocity, this.leftVelocity, this.rightAcceleration, this.leftAcceleration, this.rightTorqueCurrent, this.leftTorqueCurrent, this.rightMotorDutyCycleOut, this.leftMotorDutyCycleOut);
 
         inputs.leftMotorPosition = this.leftPosition.getValue();
         inputs.leftMotorVelocity = this.leftVelocity.getValue();
@@ -94,7 +84,7 @@ public class EscalatorIOKraken implements EscalatorIO {
         inputs.leftMotorDutyCycleOut = this.leftMotorDutyCycleOut.getValue();
         inputs.rightMotorDutyCycleOut = this.rightMotorDutyCycleOut.getValue();
 
-        inputs.controlMode = this.controlMode.getValue();        
+        inputs.controlMode = this.controlMode.getValue();
     }
 
     @Override
@@ -104,7 +94,7 @@ public class EscalatorIOKraken implements EscalatorIO {
 
     @Override
     public void resetPositions(double position) {
-        this.resetPositions(position, position); 
+        this.resetPositions(position, position);
     }
 
     @Override
@@ -115,6 +105,6 @@ public class EscalatorIOKraken implements EscalatorIO {
 
     @Override
     public StatusCode[] setControl(ControlRequest control) {
-        return new StatusCode[] {this.rightMotor.setControl(control), this.leftMotor.setControl(leftFollower)};
+        return new StatusCode[]{this.rightMotor.setControl(control), this.leftMotor.setControl(leftFollower)};
     }
 }
