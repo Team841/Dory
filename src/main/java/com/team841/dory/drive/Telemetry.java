@@ -72,6 +72,7 @@ public class Telemetry {
         driveSpeeds.set(state.Speeds);
         driveModuleStates.set(state.ModuleStates);
         driveModuleTargets.set(state.ModuleTargets);
+
         driveModulePositions.set(state.ModulePositions);
         driveTimestamp.set(state.Timestamp);
         driveOdometryFrequency.set(1.0 / state.OdometryPeriod);
@@ -85,6 +86,21 @@ public class Telemetry {
             m_moduleStatesArray[i * 2 + 1] = state.ModuleStates[i].speedMetersPerSecond;
             m_moduleTargetsArray[i * 2 + 0] = state.ModuleTargets[i].angle.getRadians();
             m_moduleTargetsArray[i * 2 + 1] = state.ModuleTargets[i].speedMetersPerSecond;
+        }
+
+        if (((state.ModuleStates[2].angle.getDegrees() % 360 + 360) % 360) > 180){
+            Logger.recordOutput("DriveState/AngleState", ((state.ModuleStates[2].angle.getDegrees() % 360 + 360) % 360) - 180);
+
+        } else {
+            Logger.recordOutput("DriveState/AngleState", ((state.ModuleStates[2].angle.getDegrees() % 360 + 360) % 360));
+        }
+
+        if (((state.ModuleTargets[2].angle.getDegrees() % 360 + 360) % 360) > 180){
+
+            Logger.recordOutput("DriveState/AngleTarget", ((state.ModuleTargets[2].angle.getDegrees() % 360 + 360) % 360)-180);
+
+        } else {
+            Logger.recordOutput("DriveState/AngleTarget", ((state.ModuleTargets[2].angle.getDegrees() % 360 + 360) % 360));
         }
 
         Logger.recordOutput("DriveState/Pose", m_poseArray);
