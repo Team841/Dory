@@ -26,6 +26,7 @@ import com.team841.dory.shooter.ShooterIOKraken;
 import com.team841.dory.vision.Vision;
 import com.team841.dory.vision.VisionIO;
 import com.team841.dory.vision.VisionIOLimelights;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -65,7 +66,7 @@ public class RobotContainer {
     public final Consumer<VisionFieldPoseEstimate> visionEstimateConsumer = new Consumer<>() {
         @Override
         public void accept(VisionFieldPoseEstimate visionFieldPoseEstimate) {
-            drivetrain.addVisionMeasurement(visionFieldPoseEstimate);
+//            drivetrain.addVisionMeasurement(visionFieldPoseEstimate);
                  return;
         }
     };
@@ -119,6 +120,7 @@ public class RobotContainer {
         configureBindings();
 
         autoChooser = AutoBuilder.buildAutoChooser();
+        autoChooser.addOption("Choreo Left Crazy", control.LeftSideCrazyAuto());
         SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
@@ -166,6 +168,7 @@ public class RobotContainer {
 
         joystick.L1().whileTrue(new InstantCommand(() -> this.flapSystem.setHangDutyCycle(0.7), flapSystem)).onFalse(new InstantCommand(() -> this.flapSystem.stopHang(), flapSystem));
 
+        joystick.R2().toggleOnTrue(new InstantCommand(() -> drivetrain.setPose(Pose2d.kZero)));
     }
 
     public Command getAutonomousCommand() {

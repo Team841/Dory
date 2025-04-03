@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.Utils;
+import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -85,4 +86,8 @@ public class DriveIOReal extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> im
         }
     }
 
+    @Override
+    public void pointModulesAtAngle() {
+        this.setControl(new SwerveRequest.PointWheelsAt().withModuleDirection(Rotation2d.kZero));
+    }
 }
