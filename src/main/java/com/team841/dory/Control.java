@@ -3,8 +3,6 @@ package com.team841.dory;
 import choreo.Choreo;
 import choreo.trajectory.SwerveSample;
 import choreo.trajectory.Trajectory;
-import com.ctre.phoenix6.swerve.SwerveModule;
-import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.team841.dory.constants.RC;
@@ -17,20 +15,15 @@ import com.team841.dory.escalator.Escalator.Position;
 import com.team841.dory.flapSystem.FlapSystem;
 import com.team841.dory.shooter.Shooter;
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.units.*;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.*;
 import org.littletonrobotics.junction.Logger;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -85,7 +78,7 @@ public class Control {
                 new MoveCommand(this.escalator, Escalator.Position.L4, this.shooter::shooterHasCoral, this.shooter::escalatorClear), this.shooter.runShooterScore(Escalator.Position.L4, scoreTimeout), new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false))).onlyIf(this.shooter::escalatorClear));
 
         NamedCommands.registerCommand("AutoL4", new SequentialCommandGroup(
-                new AutoSnap(this.drivetrain), new MoveCommand(this.escalator, Escalator.Position.L4, this.shooter::shooterHasCoral, this.shooter::escalatorClear), this.shooter.runShooterScore(Escalator.Position.L4, scoreTimeout), new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)).withTimeout(1)).onlyIf(this.shooter::escalatorClear)
+                AutoSnapInline(), new MoveCommand(this.escalator, Escalator.Position.L4, this.shooter::shooterHasCoral, this.shooter::escalatorClear), this.shooter.runShooterScore(Escalator.Position.L4, scoreTimeout), new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)).withTimeout(1)).onlyIf(this.shooter::escalatorClear)
         );
         NamedCommands.registerCommand("GoDown", new InstantCommand(() -> this.escalator.setPosition(Position.HomeAndIntake, false), escalator));
         NamedCommands.registerCommand("Intake", Intake());
@@ -222,14 +215,14 @@ public class Control {
     public Command AutoSnapInline(){
         ProfiledPIDController vx = drivetrain.vxController;
         ProfiledPIDController vy = drivetrain.vyController;
-        Pose2d target;
+        AtomicReference<Pose2d> target;
 
         return Commands.runOnce(
                 () -> {
                     ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(
                             this.drivetrain.getChassisSpeeds(), this.drivetrain.getPose().getRotation());
-                    target = drivetrain.getPoseToScore(this.drivetrain.getAngleToReefPolar());
-                    Logger.recordOutput("AutoSnap/PoseTarget", target);
+                    target.set(drivetrain.getPoseToScore(this.drivetrain.getAngleToReefPolar()));
+                    Logger.recordOutput("AutoSnap/PoseTarget", target.get());
                     Translation2d translation2d = this.drivetrain.getPose().getTranslation();
 //        Translation2d error = this.target.minus(this.drivetrain.getPose()).getTranslation();
                     vx.reset(translation2d.getX(), fieldRelativeSpeeds.vxMetersPerSecond);
@@ -237,7 +230,7 @@ public class Control {
                 }
         ).andThen(
                 Commands.run(
-                        () -> this.drivetrain.setControl(drivetrain.driveHeading.withTargetDirection(target.getRotation()))
+                        () -> this.drivetrain.setControl(drivetrain.driveHeading.withTargetDirection(target.get().getRotation()))
                 ).until(
                         this.drivetrain.driveHeading.HeadingController::atSetpoint
                 ).andThen(
@@ -247,8 +240,8 @@ public class Control {
                                            this.drivetrain.getChassisSpeeds(), this.drivetrain.getPose().getRotation());
                                    Translation2d translation2d = this.drivetrain.getPose().getTranslation();
 
-                                   double outputX = vx.calculate(translation2d.getX(), target.getX()) + vx.getSetpoint().velocity;
-                                   double outputY = vy.calculate(translation2d.getY(), target.getY()) + vy.getSetpoint().velocity;
+                                   double outputX = vx.calculate(translation2d.getX(), target.get().getX()) + vx.getSetpoint().velocity;
+                                   double outputY = vy.calculate(translation2d.getY(), target.get().getY()) + vy.getSetpoint().velocity;
 
                                    outputX *= 0.7;
                                    outputY *= 0.7;
@@ -258,7 +251,7 @@ public class Control {
                                    Logger.recordOutput("AutoSnap/vxAtGoal", vx.atGoal());
                                    Logger.recordOutput("AutoSnap/vyAtGoal", vy.atGoal());
 
-                                   this.drivetrain.setControl(this.drivetrain.driveHeading.withVelocityY(outputY).withVelocityX(outputX).withTargetDirection(target.getRotation())
+                                   this.drivetrain.setControl(this.drivetrain.driveHeading.withVelocityY(outputY).withVelocityX(outputX).withTargetDirection(target.get().getRotation())
                                    );
                                }
                        ).until(
