@@ -300,4 +300,9 @@ public class Drivetrain extends SubsystemBase {
     public void alignModule(){
         io.pointModulesAtAngle();
     }
+
+    public void setSpeed(ChassisSpeeds speeds){
+        this.setControl(this.m_choreoFieldCentricSpeeds.withSpeeds(speeds));
+    }
+
 }
