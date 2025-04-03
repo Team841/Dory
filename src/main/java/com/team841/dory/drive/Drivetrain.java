@@ -87,8 +87,8 @@ public class Drivetrain extends SubsystemBase {
         this.vyController.setTolerance(Units.inchesToMeters(1));
 
         this.headingController.enableContinuousInput(-Math.PI, Math.PI);
-        this.xController.setTolerance(Units.inchesToMeters(1));
-        this.vyController.setTolerance(Units.inchesToMeters(1));
+//        this.xController.setTolerance(Units.inchesToMeters(1));
+//        this.vyController.setTolerance(Units.inchesToMeters(1));
 //        configureAutoBuilder();
 
         driveHeading.HeadingController.setPID(34.459, 0, 2.5039);
