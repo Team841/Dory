@@ -190,6 +190,7 @@ public class Control {
                 traj.getTotalTime()
         ));
     }
+
     public Command LeftSideCrazyAuto() {
         return Commands.sequence(
                 Commands.race(followPath(z_c.get())),

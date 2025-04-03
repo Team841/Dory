@@ -43,7 +43,7 @@ public class Drivetrain extends SubsystemBase {
 
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds().withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
     public final SwerveRequest.ApplyRobotSpeeds m_robotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
-    public final SwerveRequest.ApplyFieldSpeeds m_choreoFieldCentricSpeeds = new SwerveRequest.ApplyFieldSpeeds() .withDriveRequestType(SwerveModule.DriveRequestType.Velocity).withSteerRequestType(SwerveModule.SteerRequestType.Position);
+    public final SwerveRequest.ApplyFieldSpeeds m_choreoFieldCentricSpeeds = new SwerveRequest.ApplyFieldSpeeds().withDriveRequestType(SwerveModule.DriveRequestType.Velocity).withSteerRequestType(SwerveModule.SteerRequestType.Position);
 
     public final SwerveRequest.FieldCentricFacingAngle driveHeading = new SwerveRequest.FieldCentricFacingAngle()// Add a 10% deadband
             .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
@@ -264,10 +264,6 @@ public class Drivetrain extends SubsystemBase {
 
         // Apply the generated speeds
         this.setControl(this.m_choreoFieldCentricSpeeds.withSpeeds(speeds).withWheelForceFeedforwardsX(sample.moduleForcesX()).withWheelForceFeedforwardsY(sample.moduleForcesY()));
-    }
-
-    public void setSpeed(ChassisSpeeds speeds){
-        this.setControl(this.m_choreoFieldCentricSpeeds.withSpeeds(speeds));
     }
 
     public void setControl(SwerveRequest request) {
