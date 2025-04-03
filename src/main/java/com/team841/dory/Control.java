@@ -215,7 +215,7 @@ public class Control {
     public Command AutoSnapInline(){
         ProfiledPIDController vx = drivetrain.vxController;
         ProfiledPIDController vy = drivetrain.vyController;
-        AtomicReference<Pose2d> target;
+        AtomicReference<Pose2d> target = new AtomicReference<>();
 
         return Commands.runOnce(
                 () -> {
