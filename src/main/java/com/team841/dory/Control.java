@@ -83,7 +83,7 @@ public class Control {
         NamedCommands.registerCommand("GoDown", new InstantCommand(() -> this.escalator.setPosition(Position.HomeAndIntake, false), escalator));
         NamedCommands.registerCommand("Intake", Intake());
         NamedCommands.registerCommand("PassiveRaise", new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.Hold, true)));
-        NamedCommands.registerCommand("FlapDown", new RunCommand(() -> this.flapSystem.setFlapperDutyCycle(-0.5), flapSystem).withTimeout(1).finallyDo(flapSystem::stopFlapper));
+        NamedCommands.registerCommand("FlapDown", Commands.none());//new RunCommand(() -> this.flapSystem.setFlapperDutyCycle(-0.5), flapSystem).withTimeout(1).finallyDo(flapSystem::stopFlapper));
 
 //        this.snapScoreLeftL4 =
 //                new SequentialCommandGroup(
