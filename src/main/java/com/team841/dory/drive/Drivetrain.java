@@ -239,9 +239,9 @@ public class Drivetrain extends SubsystemBase {
                     (speeds, feedforwards) -> io.setControl(
                             m_pathApplyRobotSpeeds.withSpeeds(speeds).withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons()).withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())), new PPHolonomicDriveController(
                                     // PID constants for translation
-                                    new PIDConstants(0.083314*1.3, 0, 0),
+                                    new PIDConstants(10, 0, 0),
                                     // PID constants for rotation
-                                    new PIDConstants(0.015768*1.3, 0, 0)), config,
+                                    new PIDConstants(10, 0, 0)), config,
                     // Assume the path needs to be flipped for Red vs Blue, this is normally the case
                     () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, this // Subsystem for requirements
             );
