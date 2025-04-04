@@ -78,7 +78,7 @@ public class Control {
                 new MoveCommand(this.escalator, Escalator.Position.L4, this.shooter::shooterHasCoral, this.shooter::escalatorClear), this.shooter.runShooterScore(Escalator.Position.L4, scoreTimeout), new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false))).onlyIf(this.shooter::escalatorClear));
 
         NamedCommands.registerCommand("AutoL4", new SequentialCommandGroup(
-                new ParallelRaceGroup(AutoSnapInline(), new MoveCommand(this.escalator, Escalator.Position.L4, this.shooter::shooterHasCoral, this.shooter::escalatorClear)), this.shooter.runShooterScore(Escalator.Position.L4, scoreTimeout), new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)).withTimeout(1)).onlyIf(this.shooter::escalatorClear)
+                new ParallelCommandGroup(AutoSnapInline(), new MoveCommand(this.escalator, Escalator.Position.L4, this.shooter::shooterHasCoral, this.shooter::escalatorClear)), this.shooter.runShooterScore(Escalator.Position.L4, scoreTimeout), new InstantCommand(() -> this.escalator.setPosition(Escalator.Position.HomeAndIntake, false)).withTimeout(1)).onlyIf(this.shooter::escalatorClear)
         );
         NamedCommands.registerCommand("GoDown", new InstantCommand(() -> this.escalator.setPosition(Position.HomeAndIntake, false), escalator));
         NamedCommands.registerCommand("Intake", Intake());
