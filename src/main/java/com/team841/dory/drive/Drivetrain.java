@@ -58,12 +58,12 @@ public class Drivetrain extends SubsystemBase {
 
     public PIDController controller = new PIDController(4, 0, 0.2);
     public ProfiledPIDController vxController = new ProfiledPIDController(
-            11, 0.01, 0.1, new TrapezoidProfile.Constraints(
+            10, 0.01, 0.1, new TrapezoidProfile.Constraints(
                     4.25, 1.9) // max velocity, max acceleration
     );
 
     public ProfiledPIDController vyController = new ProfiledPIDController(
-            11, 0.01, 0.1, new TrapezoidProfile.Constraints(
+            10, 0.01, 0.1, new TrapezoidProfile.Constraints(
                     4.25, 1.9) // max velocity, max acceleration
     );
 
@@ -83,8 +83,8 @@ public class Drivetrain extends SubsystemBase {
         this.io = io;
         this.controller.setTolerance(0.5);
 
-        this.vxController.setTolerance(Units.inchesToMeters(1));
-        this.vyController.setTolerance(Units.inchesToMeters(1));
+        this.vxController.setTolerance(Units.inchesToMeters(0.5));
+        this.vyController.setTolerance(Units.inchesToMeters(0.5));
 
         this.headingController.enableContinuousInput(-Math.PI, Math.PI);
 //        this.xController.setTolerance(Units.inchesToMeters(1));
