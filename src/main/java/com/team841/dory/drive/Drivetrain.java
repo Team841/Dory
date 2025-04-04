@@ -64,7 +64,7 @@ public class Drivetrain extends SubsystemBase {
 
     public ProfiledPIDController vyController = new ProfiledPIDController(
             10, 0, 0, new TrapezoidProfile.Constraints(
-                    4.25, 1.9) // max velocity, max acceleration
+                    4. 25, 1.9) // max velocity, max acceleration
     );
 
 //    public SimpleMotorFeedforward
