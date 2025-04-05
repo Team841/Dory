@@ -16,15 +16,12 @@ import static edu.wpi.first.units.Units.*;
 
 public class AutoSnap extends Command {
 
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
-
     Drivetrain drivetrain;
     ProfiledPIDController vx;
     ProfiledPIDController vy;
-    Pose2d target = new Pose2d(1, 1, new Rotation2d(Math.PI/2));
+    Pose2d target;
 
-    private final SwerveRequest.FieldCentricFacingAngle driveHeading = new SwerveRequest.FieldCentricFacingAngle()// Add a 10% deadband
+    private final SwerveRequest.FieldCentricFacingAngle driveHeading = new SwerveRequest.FieldCentricFacingAngle()
             .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
 
     public AutoSnap(Drivetrain drivetrain) {
@@ -40,12 +37,14 @@ public class AutoSnap extends Command {
     public void initialize() {
         ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(
                 this.drivetrain.getChassisSpeeds(), this.drivetrain.getPose().getRotation());
-//        this.target = drivetrain.getPoseToScore(this.drivetrain.getAngleToReefPolar());
+        target = drivetrain.getPoseToScore(this.drivetrain.getAngleToReefPolar());
         Logger.recordOutput("AutoSnap/PoseTarget", this.target);
         Translation2d translation2d = this.drivetrain.getPose().getTranslation();
-//        Translation2d error = this.target.minus(this.drivetrain.getPose()).getTranslation();
+
+        // Reset the PID controllers with the current position and velocity.
         this.vx.reset(translation2d.getX(), fieldRelativeSpeeds.vxMetersPerSecond);
         this.vy.reset(translation2d.getY(), fieldRelativeSpeeds.vyMetersPerSecond);
+
         runAutoSnap();
     }
 
@@ -53,46 +52,6 @@ public class AutoSnap extends Command {
     public void execute() {
         runAutoSnap();
     }
-
-    private void runAutoSnap() {
-        ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(
-                this.drivetrain.getChassisSpeeds(), this.drivetrain.getPose().getRotation());
-        Translation2d translation2d = this.drivetrain.getPose().getTranslation();
-//        Translation2d error = this.target.minus(this.drivetrain.getPose()).getTranslation();
-//        this.vx.reset(translation2d.getX(), fieldRelativeSpeeds.vxMetersPerSecond);
-//        this.vy.reset(translation2d.getY(), fieldRelativeSpeeds.vyMetersPerSecond);
-
-//        double outputX = this.vx.calculate(0, error.getX());
-//        double outputY = this.vy.calculate(0, error.getY());
-
-        double outputX = this.vx.calculate(translation2d.getX(), this.target.getX()) + this.vx.getSetpoint().velocity;
-        double outputY = this.vy.calculate(translation2d.getY(), this.target.getY()) + this.vy.getSetpoint().velocity;
-
-        outputX *= 0.7;
-        outputY *= 0.7;
-
-        Logger.recordOutput("AutoSnap/outputX", outputX);
-        Logger.recordOutput("AutoSnap/outputY", outputY);
-        Logger.recordOutput("AutoSnap/vxAtGoal", this.vx.atGoal());
-        Logger.recordOutput("AutoSnap/vyAtGoal", this.vy.atGoal());
-
-        // outputX *= RC.isRedAlliance.get() ? 1 : -1;
-        // outputY *= RC.isRedAlliance.get() ? 1 : -1;
-
-//        if (!RC.isRedAlliance.get()){
-        this.drivetrain.setControl(
-                this.driveHeading.withVelocityY(outputY).withVelocityX(outputX).withTargetDirection(this.target.getRotation())
-        );
-//        } else {
-//            this.drivetrain.setControl(
-//                    this.driveHeading
-//                            .withVelocityY(-outputY)
-//                            .withVelocityX(outputX)
-//                            .withTargetDirection(this.target.getRotation())
-//            );
-//        }
-    }
-
 
     @Override
     public void end(boolean interrupted) {
@@ -105,19 +64,29 @@ public class AutoSnap extends Command {
     }
 
 
-//    public static Transform2d transform2dFromRotation(Rotation2d rotation) {
-//        return new Transform2d(Translation2d.kZero, rotation);
-//    }
-//
-//    public static Transform2d transform2dFromTranslation(Translation2d translation) {
-//        return new Transform2d(translation, Rotation2d.kZero);
-//    }
-//
-//    public static Pose2d pose2dFromRotation(Rotation2d rotation) {
-//        return new Pose2d(Translation2d.kZero, rotation);
-//    }
-//
-//    public static Pose2d pose2dFromTranslation(Translation2d translation) {
-//        return new Pose2d(translation, Rotation2d.kZero);
-//    }
+    private void runAutoSnap() {
+        Translation2d translation2d = this.drivetrain.getPose().getTranslation();
+
+        // Add the current setpoint velocity to the new velocity so that it is smoother.
+        double outputX = this.vx.calculate(translation2d.getX(), this.target.getX()) + this.vx.getSetpoint().velocity;
+        double outputY = this.vy.calculate(translation2d.getY(), this.target.getY()) + this.vy.getSetpoint().velocity;
+
+        // If it is not scaled, then each controller can output speeds that when added up to the final vector
+        // will exceed the maximum real speed of the robot.
+        outputX *= 0.7;
+        outputY *= 0.7;
+
+        Logger.recordOutput("AutoSnap/outputX", outputX);
+        Logger.recordOutput("AutoSnap/outputY", outputY);
+        Logger.recordOutput("AutoSnap/vxAtGoal", this.vx.atGoal());
+        Logger.recordOutput("AutoSnap/vyAtGoal", this.vy.atGoal());
+
+
+        this.drivetrain.setControl(
+                this.driveHeading
+                        .withVelocityY(outputY)
+                        .withVelocityX(outputX)
+                        .withTargetDirection(this.target.getRotation())
+        );
+    }
 }

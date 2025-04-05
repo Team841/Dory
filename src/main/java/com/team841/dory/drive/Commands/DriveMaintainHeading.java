@@ -16,8 +16,8 @@ import java.util.function.DoubleSupplier;
 
 public class DriveMaintainHeading extends Command {
 
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
     Drivetrain drivetrain;
     DoubleSupplier controlXSupplier, controlYSupplier, controlAngularVelocitySupplier;
@@ -29,7 +29,11 @@ public class DriveMaintainHeading extends Command {
     BooleanSupplier normalDrive;
 
     public DriveMaintainHeading(
-                                Drivetrain drivetrain, DoubleSupplier velocityX, DoubleSupplier velocityY, DoubleSupplier angularVelocity, BooleanSupplier normalDrive) {
+            Drivetrain drivetrain,
+            DoubleSupplier velocityX,
+            DoubleSupplier velocityY,
+            DoubleSupplier angularVelocity,
+            BooleanSupplier normalDrive) {
         this.drivetrain = drivetrain;
         this.controlXSupplier = velocityX;
         this.controlYSupplier = velocityY;
@@ -43,11 +47,18 @@ public class DriveMaintainHeading extends Command {
         setName("DriveMaintainHeading");
     }
 
-    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric().withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-            .withDriveRequestType(SwerveModule.DriveRequestType.Velocity).withSteerRequestType(SwerveModule.SteerRequestType.Position);
+    private final SwerveRequest.FieldCentric drive =
+            new SwerveRequest.FieldCentric()
+                    .withDeadband(MaxSpeed * 0.1)
+                    .withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+                    .withDriveRequestType(SwerveModule.DriveRequestType.Velocity)
+                    .withSteerRequestType(SwerveModule.SteerRequestType.Position);
 
-    private final SwerveRequest.FieldCentricFacingAngle driveHeading = new SwerveRequest.FieldCentricFacingAngle().withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-            .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
+    private final SwerveRequest.FieldCentricFacingAngle driveHeading =
+            new SwerveRequest.FieldCentricFacingAngle()
+                    .withDeadband(MaxSpeed * 0.1)
+                    .withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+                    .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
 
     @Override
     public void initialize() {
@@ -56,12 +67,18 @@ public class DriveMaintainHeading extends Command {
 
     @Override
     public void execute() {
+
+        // Controller value output is between -1 to 1, we need to scale to max speed
+        // The current speed of the robot in teleop is directly proportional to the joystick input.
         this.controlX = this.controlXSupplier.getAsDouble();
         this.controlY = this.controlYSupplier.getAsDouble();
         this.controlAngularVelocity = this.controlAngularVelocitySupplier.getAsDouble();
         double velocityX = controlX * MaxSpeed;
         double velocityY = controlY * MaxSpeed;
         double angularVelocity = controlAngularVelocity * MaxAngularRate;
+
+        // Switch the sign of the velocity depending on which alliance color you are because forward is away from you
+        // always
         double throttleFieldFrame = RC.isRedAlliance.get() ? -velocityX : velocityX;
         double strafeFieldFrame = RC.isRedAlliance.get() ? -velocityY : velocityY;
 //        if (!normalDrive.getAsBoolean()) {
