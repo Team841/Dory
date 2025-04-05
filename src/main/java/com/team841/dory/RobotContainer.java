@@ -169,6 +169,7 @@ public class RobotContainer {
         joystick.L1().whileTrue(new InstantCommand(() -> this.flapSystem.setHangDutyCycle(1), flapSystem)).onFalse(new InstantCommand(() -> this.flapSystem.stopHang(), flapSystem));
 
         joystick.R2().toggleOnTrue(new InstantCommand(() -> drivetrain.setPose(Pose2d.kZero)));
+        cojoystick.a().whileTrue(new InstantCommand(() -> this.flapSystem.setHangDutyCycle(1), flapSystem)).onFalse(new InstantCommand(() -> this.flapSystem.stopHang(), flapSystem));
     }
 
     public Command getAutonomousCommand() {
