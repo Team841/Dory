@@ -26,6 +26,7 @@ import com.team841.dory.shooter.ShooterIOKraken;
 import com.team841.dory.vision.Vision;
 import com.team841.dory.vision.VisionIO;
 import com.team841.dory.vision.VisionIOLimelights;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -66,7 +67,7 @@ public class RobotContainer {
         @Override
         public void accept(VisionFieldPoseEstimate visionFieldPoseEstimate) {
             drivetrain.addVisionMeasurement(visionFieldPoseEstimate);
-            //     return;
+                 return;
         }
     };
 
@@ -119,6 +120,7 @@ public class RobotContainer {
         configureBindings();
 
         autoChooser = AutoBuilder.buildAutoChooser();
+        autoChooser.addOption("Choreo Left Crazy", control.LeftSideCrazyAuto());
         SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
@@ -164,8 +166,9 @@ public class RobotContainer {
 
         // cojoystick.povRight().onTrue(new RunCommand(() -> this.flapSystem.setFlapperDutyCycle(-0.5), flapSystem).withTimeout(0.5).finallyDo(flapSystem::stopFlapper));
 
-        joystick.L1().whileTrue(new InstantCommand(() -> this.flapSystem.setHangDutyCycle(0.7), flapSystem)).onFalse(new InstantCommand(() -> this.flapSystem.stopHang(), flapSystem));
+        joystick.L1().whileTrue(new InstantCommand(() -> this.flapSystem.setHangDutyCycle(1), flapSystem)).onFalse(new InstantCommand(() -> this.flapSystem.stopHang(), flapSystem));
 
+        joystick.R2().toggleOnTrue(new InstantCommand(() -> drivetrain.setPose(Pose2d.kZero)));
     }
 
     public Command getAutonomousCommand() {

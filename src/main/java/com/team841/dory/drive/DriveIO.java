@@ -49,4 +49,6 @@ public interface DriveIO {
     void addVisionMeasurement(VisionFieldPoseEstimate visionFieldPoseEstimate);
 
     void setOperatorPerspectiveForward(Rotation2d fieldDirection);
+
+    void pointModulesAtAngle();
 }

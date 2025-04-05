@@ -72,7 +72,7 @@ public class Robot extends LoggedRobot {
         //     continue;
         // }
 
-        PathfindingCommand.warmupCommand().schedule();
+//        PathfindingCommand.warmupCommand().schedule();
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.team841.dory.constants.TunerConstants;
 import com.team841.dory.drive.Drivetrain;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,7 +22,7 @@ public class AutoSnap extends Command {
     Drivetrain drivetrain;
     ProfiledPIDController vx;
     ProfiledPIDController vy;
-    Pose2d target;
+    Pose2d target = new Pose2d(1, 1, new Rotation2d(Math.PI/2));
 
     private final SwerveRequest.FieldCentricFacingAngle driveHeading = new SwerveRequest.FieldCentricFacingAngle()// Add a 10% deadband
             .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
@@ -30,9 +31,6 @@ public class AutoSnap extends Command {
         this.vx = drivetrain.vxController;
         this.vy = drivetrain.vyController;
         this.drivetrain = drivetrain;
-        driveHeading.HeadingController.setPID(34.459, 0, 2.5039);
-        driveHeading.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
-        driveHeading.HeadingController.setTolerance(0.1, 0.1);
 
         addRequirements(this.drivetrain);
         setName("AutoSnap");
@@ -42,7 +40,7 @@ public class AutoSnap extends Command {
     public void initialize() {
         ChassisSpeeds fieldRelativeSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(
                 this.drivetrain.getChassisSpeeds(), this.drivetrain.getPose().getRotation());
-        this.target = drivetrain.getPoseToScore(this.drivetrain.getAngleToReefPolar());
+//        this.target = drivetrain.getPoseToScore(this.drivetrain.getAngleToReefPolar());
         Logger.recordOutput("AutoSnap/PoseTarget", this.target);
         Translation2d translation2d = this.drivetrain.getPose().getTranslation();
 //        Translation2d error = this.target.minus(this.drivetrain.getPose()).getTranslation();
@@ -69,6 +67,9 @@ public class AutoSnap extends Command {
 
         double outputX = this.vx.calculate(translation2d.getX(), this.target.getX()) + this.vx.getSetpoint().velocity;
         double outputY = this.vy.calculate(translation2d.getY(), this.target.getY()) + this.vy.getSetpoint().velocity;
+
+        outputX *= 0.7;
+        outputY *= 0.7;
 
         Logger.recordOutput("AutoSnap/outputX", outputX);
         Logger.recordOutput("AutoSnap/outputY", outputY);

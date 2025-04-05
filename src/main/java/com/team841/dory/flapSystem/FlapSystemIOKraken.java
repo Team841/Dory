@@ -3,6 +3,7 @@ package com.team841.dory.flapSystem;
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.StatusSignal;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.CANrange;
@@ -49,7 +50,7 @@ public class FlapSystemIOKraken implements FlapSystemIO {
     public FlapSystemIOKraken() {
         this.intakeMotor.getConfigurator().apply(SC.flapSystem.configs);
         this.intakeMotor.setNeutralMode(NeutralModeValue.Brake);
-        this.flapMotor.getConfigurator().apply(SC.flapSystem.configs);
+        this.flapMotor.getConfigurator().apply(SC.flapSystem.configs.withCurrentLimits(new CurrentLimitsConfigs().withSupplyCurrentLimit(5).withSupplyCurrentLimitEnable(true)));
         this.flapMotor.setNeutralMode(NeutralModeValue.Brake);
         this.canrange.getConfigurator().apply(SC.flapSystem.CanrangeConfigs);
         this.hangMotor.getConfigurator().apply(SC.flapSystem.configs);

@@ -1,7 +1,10 @@
 package com.team841.dory.drive;
 
+import choreo.trajectory.SwerveSample;
+import com.ctre.phoenix6.swerve.SwerveModule;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import org.littletonrobotics.junction.AutoLogOutput;
@@ -38,8 +41,12 @@ public class Drivetrain extends SubsystemBase {
 
     Telemetry telemetry = new Telemetry(TunerConstants.kSpeedAt12Volts.in(MetersPerSecond));
 
-    private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
+    private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds().withDriveRequestType(SwerveModule.DriveRequestType.Velocity);
     public final SwerveRequest.ApplyRobotSpeeds m_robotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
+    private final SwerveRequest.ApplyFieldSpeeds m_choreoFieldCentricSpeeds = new SwerveRequest.ApplyFieldSpeeds().withDriveRequestType(SwerveModule.DriveRequestType.Velocity).withSteerRequestType(SwerveModule.SteerRequestType.Position);
+
+    public final SwerveRequest.FieldCentricFacingAngle driveHeading = new SwerveRequest.FieldCentricFacingAngle()// Add a 10% deadband
+            .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
 
     @AutoLogOutput
     private boolean m_hasAppliedOperatorPerspective = false;
@@ -51,28 +58,42 @@ public class Drivetrain extends SubsystemBase {
 
     public PIDController controller = new PIDController(4, 0, 0.2);
     public ProfiledPIDController vxController = new ProfiledPIDController(
-            24.531, 0, 0.8503, new TrapezoidProfile.Constraints(
-                    4.25, 3) // max velocity, max acceleration
+            10, 0.01, 0.1, new TrapezoidProfile.Constraints(
+                    4.25, 1.9) // max velocity, max acceleration
     );
 
     public ProfiledPIDController vyController = new ProfiledPIDController(
-            24.531, 0, 0.8503, new TrapezoidProfile.Constraints(
-                    4.25, 3) // max velocity, max acceleration
+            10, 0.01, 0.1, new TrapezoidProfile.Constraints(
+                    4.25, 1.9) // max velocity, max acceleration
     );
+
+//    public SimpleMotorFeedforward
 
     public int count = 0;
 
     PathConstraints constraints = new PathConstraints(
             4.8, 1.8, Units.degreesToRadians(540), Units.degreesToRadians(720));
 
+
+    private final PIDController xController = new PIDController(6, 0.0, 0.0);
+    private final  PIDController yController = new PIDController(6, 0.0, 0.0);
+    private final PIDController headingController = new PIDController(5, 0.0, 0.0);
+
     public Drivetrain(DriveIO io) {
         this.io = io;
         this.controller.setTolerance(0.5);
 
-        this.vxController.setTolerance(Units.inchesToMeters(1));
-        this.vyController.setTolerance(Units.inchesToMeters(1));
+        this.vxController.setTolerance(Units.inchesToMeters(0.5));
+        this.vyController.setTolerance(Units.inchesToMeters(0.5));
 
-        configureAutoBuilder();
+        this.headingController.enableContinuousInput(-Math.PI, Math.PI);
+//        this.xController.setTolerance(Units.inchesToMeters(1));
+//        this.vyController.setTolerance(Units.inchesToMeters(1));
+//        configureAutoBuilder();
+
+        driveHeading.HeadingController.setPID(34.459, 0, 2.5039);
+        driveHeading.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
+        driveHeading.HeadingController.setTolerance(0.1, 0.1);
     }
 
     @Override
@@ -218,9 +239,9 @@ public class Drivetrain extends SubsystemBase {
                     (speeds, feedforwards) -> io.setControl(
                             m_pathApplyRobotSpeeds.withSpeeds(speeds).withWheelForceFeedforwardsX(feedforwards.robotRelativeForcesXNewtons()).withWheelForceFeedforwardsY(feedforwards.robotRelativeForcesYNewtons())), new PPHolonomicDriveController(
                                     // PID constants for translation
-                                    new PIDConstants(0.083314, 0, 0),
+                                    new PIDConstants(6.75, 0, 0),
                                     // PID constants for rotation
-                                    new PIDConstants(0.015768, 0, 0)), config,
+                                    new PIDConstants(5, 0, 0)), config,
                     // Assume the path needs to be flipped for Red vs Blue, this is normally the case
                     () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red, this // Subsystem for requirements
             );
@@ -228,6 +249,21 @@ public class Drivetrain extends SubsystemBase {
             DriverStation.reportError(
                     "Failed to load PathPlanner config and configure AutoBuilder", ex.getStackTrace());
         }
+    }
+
+    public void followTrajectory(SwerveSample sample) {
+        // Get the current pose of the robot
+        Pose2d pose = getPose();
+
+        // Generate the next speeds for the robot
+        ChassisSpeeds speeds = new ChassisSpeeds(
+                (sample.vx + xController.calculate(pose.getX(), sample.x)),
+                (sample.vy + yController.calculate(pose.getY(), sample.y)),
+                (sample.omega + headingController.calculate(pose.getRotation().getRadians(), sample.heading))
+        );
+
+        // Apply the generated speeds
+        this.setControl(this.m_choreoFieldCentricSpeeds.withSpeeds(speeds).withWheelForceFeedforwardsX(sample.moduleForcesX()).withWheelForceFeedforwardsY(sample.moduleForcesY()));
     }
 
     public void setControl(SwerveRequest request) {
@@ -255,6 +291,18 @@ public class Drivetrain extends SubsystemBase {
 
     public ChassisSpeeds getChassisSpeeds() {
         return inputs.Speeds;
+    }
+
+    public void setPose(Pose2d pose){
+        io.seedFieldRelative(pose);
+    }
+
+    public void alignModule(){
+        io.pointModulesAtAngle();
+    }
+
+    public void setSpeed(ChassisSpeeds speeds){
+        this.setControl(this.m_choreoFieldCentricSpeeds.withSpeeds(speeds));
     }
 
 }
