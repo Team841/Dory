@@ -293,7 +293,7 @@ public class Drivetrain extends SubsystemBase {
         return inputs.Speeds;
     }
 
-    public void setPose(Pose2d pose){
+    public void setPose(Pose2d pose) {
         io.seedFieldRelative(pose);
     }
 
