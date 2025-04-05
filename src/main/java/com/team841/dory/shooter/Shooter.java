@@ -99,7 +99,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public enum ShooterSpeeds {
-        Intake(0.15), Stopped(0), ShootL2AndL3(0.4), ShootL4(0.9), ShooterL1(0.25);
+        Intake(0.15), Stopped(0), ShootL2AndL3(0.4), ShootL4(0.8), ShooterL1(0.25);
 
         private final double dutyCycle;
 
