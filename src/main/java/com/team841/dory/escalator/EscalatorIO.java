@@ -7,6 +7,9 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.signals.ControlModeValue;
 
+/**
+ * IO interface for the elevator, following the Advantage Kit format.
+ */
 public interface EscalatorIO {
 
     @AutoLog
