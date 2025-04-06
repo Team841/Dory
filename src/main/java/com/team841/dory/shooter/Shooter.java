@@ -57,7 +57,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public boolean escalatorClear() {
-        return (inputs.frontCANrangeDistance.magnitude() < 0.05 && inputs.backCANrangeDistance.magnitude() > 0.05) || (inputs.frontCANrangeDistance.magnitude() > 0.05 && inputs.backCANrangeDistance.magnitude() > 0.05);
+        return (inputs.frontCANrangeDistance.magnitude() < 0.02 && inputs.backCANrangeDistance.magnitude() > 0.02) || (inputs.frontCANrangeDistance.magnitude() > 0.02 && inputs.backCANrangeDistance.magnitude() > 0.02);
     }
 
 //    @AutoLogOutput
@@ -99,7 +99,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public enum ShooterSpeeds {
-        Intake(0.08), Stopped(0), ShootL2AndL3(0.2), ShootL4(0.75), ShooterL1(0.25);
+        Intake(0.15), Stopped(0), ShootL2AndL3(0.4), ShootL4(0.8), ShooterL1(0.25);
 
         private final double dutyCycle;
 

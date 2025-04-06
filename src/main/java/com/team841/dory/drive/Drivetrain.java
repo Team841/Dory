@@ -58,12 +58,12 @@ public class Drivetrain extends SubsystemBase {
 
     public PIDController controller = new PIDController(4, 0, 0.2);
     public ProfiledPIDController vxController = new ProfiledPIDController(
-            10, 0.01, 0.1, new TrapezoidProfile.Constraints(
+            10.5, 0.01, 0.1, new TrapezoidProfile.Constraints(
                     4.25, 1.9) // max velocity, max acceleration
     );
 
     public ProfiledPIDController vyController = new ProfiledPIDController(
-            10, 0.01, 0.1, new TrapezoidProfile.Constraints(
+            10.5, 0.01, 0.1, new TrapezoidProfile.Constraints(
                     4.25, 1.9) // max velocity, max acceleration
     );
 
@@ -293,7 +293,7 @@ public class Drivetrain extends SubsystemBase {
         return inputs.Speeds;
     }
 
-    public void setPose(Pose2d pose){
+    public void setPose(Pose2d pose) {
         io.seedFieldRelative(pose);
     }
 
