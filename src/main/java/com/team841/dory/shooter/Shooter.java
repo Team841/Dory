@@ -57,7 +57,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public boolean escalatorClear() {
-        return (inputs.frontCANrangeDistance.magnitude() < 0.05 && inputs.backCANrangeDistance.magnitude() > 0.05) || (inputs.frontCANrangeDistance.magnitude() > 0.05 && inputs.backCANrangeDistance.magnitude() > 0.05);
+        return (inputs.frontCANrangeDistance.magnitude() < 0.02 && inputs.backCANrangeDistance.magnitude() > 0.02) || (inputs.frontCANrangeDistance.magnitude() > 0.02 && inputs.backCANrangeDistance.magnitude() > 0.02);
     }
 
 //    @AutoLogOutput
