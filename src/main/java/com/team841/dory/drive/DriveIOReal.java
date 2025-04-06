@@ -21,6 +21,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
+/**
+ * Wraps ctre Swerve Drivetrain instance. DriveIOReal extends SwerveDrivetrain and acts as AdvantageKit interface to
+ * ctre swerve
+ */
 public class DriveIOReal extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> implements DriveIO {
 
     AtomicReference<SwerveDriveState> telemetryCache_ = new AtomicReference<>();

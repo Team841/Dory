@@ -1,13 +1,9 @@
 package com.team841.dory.drive;
 
+import com.team254.vision.VisionFieldPoseEstimate;
+
 import choreo.trajectory.SwerveSample;
 import com.ctre.phoenix6.swerve.SwerveModule;
-import com.pathplanner.lib.path.PathConstraints;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.math.util.Units;
-import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -15,11 +11,13 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
-import com.team254.vision.VisionFieldPoseEstimate;
 import com.team841.dory.constants.Field;
 import com.team841.dory.constants.RC;
 import com.team841.dory.constants.TunerConstants;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -29,11 +27,14 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import static edu.wpi.first.units.Units.*;
 
 import java.util.function.Supplier;
 
-import static edu.wpi.first.units.Units.*;
-
+/**
+ * Drivetrain class that extends wpilib SubsystemBase. Conceptually borrowed from 254, IO holds the class that extends
+ * SubsystemBase while drivetrain acts as the interface for the rest of the code.
+ */
 public class Drivetrain extends SubsystemBase {
     DriveIO io;
 
@@ -53,8 +54,9 @@ public class Drivetrain extends SubsystemBase {
                     .withDriveRequestType(SwerveModule.DriveRequestType.Velocity)
                     .withSteerRequestType(SwerveModule.SteerRequestType.Position);
     public final SwerveRequest.FieldCentricFacingAngle driveHeading = new SwerveRequest.FieldCentricFacingAngle()
-            .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);]
+            .withDriveRequestType(SwerveModule.DriveRequestType.OpenLoopVoltage);
 
+    // Controllers for AutoAlign
     public PIDController controller = new PIDController(4, 0, 0.2);
     public ProfiledPIDController vxController = new ProfiledPIDController(
             10.5, 0.01, 0.1, new TrapezoidProfile.Constraints(
@@ -65,9 +67,7 @@ public class Drivetrain extends SubsystemBase {
                     4.25, 1.9) // max velocity, max acceleration
     );
 
-    PathConstraints constraints = new PathConstraints(
-            4.8, 1.8, Units.degreesToRadians(540), Units.degreesToRadians(720));
-
+    // Controllers for Choreo Autos
     private final PIDController xController = new PIDController(6, 0.0, 0.0);
     private final  PIDController yController = new PIDController(6, 0.0, 0.0);
     private final PIDController headingController = new PIDController(5, 0.0, 0.0);
@@ -80,9 +80,6 @@ public class Drivetrain extends SubsystemBase {
         this.vyController.setTolerance(Units.inchesToMeters(0.5));
 
         this.headingController.enableContinuousInput(-Math.PI, Math.PI);
-//        this.xController.setTolerance(Units.inchesToMeters(1));
-//        this.vyController.setTolerance(Units.inchesToMeters(1));
-//        configureAutoBuilder();
 
         driveHeading.HeadingController.setPID(34.459, 0, 2.5039);
         driveHeading.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
