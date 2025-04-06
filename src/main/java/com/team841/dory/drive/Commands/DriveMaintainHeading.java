@@ -1,30 +1,33 @@
 package com.team841.dory.drive.Commands;
 
-import static edu.wpi.first.units.Units.*;
-
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+
 import com.team841.dory.constants.RC;
 import com.team841.dory.constants.TunerConstants;
 import com.team841.dory.drive.Drivetrain;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import static edu.wpi.first.units.Units.*;
+
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
+/**
+ * Drive command that maintains the robot facing angle when there is no turn control during teleop mode.
+ * This forces the drivetrain to keep its angle and prevents it from slowly drifting.
+ */
 public class DriveMaintainHeading extends Command {
 
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+    private final double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    private final double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
     Drivetrain drivetrain;
     DoubleSupplier controlXSupplier, controlYSupplier, controlAngularVelocitySupplier;
     Optional<Rotation2d> mHeadingSetpoint;
     Double controlX, controlY, controlAngularVelocity;
-    double kSteerJoystickDeadband = 0.1;
-    double mJoystickLastTouched = -1;
 
     BooleanSupplier normalDrive;
 

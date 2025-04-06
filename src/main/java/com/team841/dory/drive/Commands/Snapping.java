@@ -8,6 +8,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
+/**
+ * Legacy snapping code that aligns based of Tx instead of pose-pose
+ */
 public class Snapping extends Command {
 
     public Snapping(Drivetrain drivetrain) {
@@ -40,9 +43,13 @@ public class Snapping extends Command {
                 : this.drivetrain.controller.calculate(LimelightHelpers.getTX(RC.Vision.LimelightGammaName),
                 setpoint);
         SmartDashboard.putNumber("NOT Clamped Output", speed);
+
+        // Clamps the speed so that the output of the controller
+        // It normalizes the speeds between -1 to 1
         speed = speed >= 0 ? Math.max(0, Math.min(speed, 8.5)) : -Math.max(0, Math.min(-speed, 8.5));
         speed /= 8.5;
-        SmartDashboard.putNumber("Clamped Ouput", speed);
+
+        SmartDashboard.putNumber("Clamped Output", speed);
         this.drivetrain.setControl(this.drivetrain.m_robotSpeeds
                 .withSpeeds(new ChassisSpeeds(0, speed, 0)));
     }

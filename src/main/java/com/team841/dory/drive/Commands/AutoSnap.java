@@ -2,23 +2,21 @@ package com.team841.dory.drive.Commands;
 
 import com.ctre.phoenix6.swerve.SwerveModule;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.team841.dory.constants.TunerConstants;
+
 import com.team841.dory.drive.Drivetrain;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
-import org.littletonrobotics.junction.Logger;
 
-import static edu.wpi.first.units.Units.*;
+import org.littletonrobotics.junction.Logger;
 
 public class AutoSnap extends Command {
 
     Drivetrain drivetrain;
-    ProfiledPIDController vx;
-    ProfiledPIDController vy;
+    ProfiledPIDController vx, vy;
     Pose2d target;
 
     private final SwerveRequest.FieldCentricFacingAngle driveHeading = new SwerveRequest.FieldCentricFacingAngle()

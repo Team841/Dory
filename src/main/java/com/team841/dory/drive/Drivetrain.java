@@ -2,8 +2,10 @@ package com.team841.dory.drive;
 
 import com.team254.vision.VisionFieldPoseEstimate;
 
-import choreo.trajectory.SwerveSample;
+import java.util.function.Supplier;
+
 import com.ctre.phoenix6.swerve.SwerveModule;
+
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -11,6 +13,8 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import choreo.trajectory.SwerveSample;
+
 import com.team841.dory.constants.Field;
 import com.team841.dory.constants.RC;
 import com.team841.dory.constants.TunerConstants;
@@ -28,8 +32,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static edu.wpi.first.units.Units.*;
-
-import java.util.function.Supplier;
 
 /**
  * Drivetrain class that extends wpilib SubsystemBase. Conceptually borrowed from 254, IO holds the class that extends
