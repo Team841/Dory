@@ -45,7 +45,7 @@ public class Robot extends LoggedRobot {
 
         switch (RC.getMode()) {
             case REAL:
-                Logger.addDataReceiver(new WPILOGWriter("/media/sda2/")); // Log to a USB stick ("/U/logs")
+                Logger.addDataReceiver(new WPILOGWriter("/media/sda2/"));
                 Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
                 break;
             case SIM:
@@ -60,6 +60,7 @@ public class Robot extends LoggedRobot {
                 break;
         }
 
+        // Prevent signal logger from auto-starting if connected to FMS
         SignalLogger.enableAutoLogging(false);
 
         Logger.start();

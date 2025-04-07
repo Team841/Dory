@@ -13,6 +13,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 import org.littletonrobotics.junction.Logger;
 
+/**
+ * Drive train Pose to Pose autoalign command. The new command is in Control.java and has better logic.
+ */
+@Deprecated
 public class AutoSnap extends Command {
 
     Drivetrain drivetrain;
