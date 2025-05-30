@@ -17,7 +17,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Z_c"
+                  "pathName": "3_Ps.0"
                 }
               }
             ]
@@ -38,7 +38,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Z_3c"
+            "pathName": "3_Ps2 .0"
           }
         },
         {
@@ -50,7 +50,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Z_3k"
+            "pathName": "3_Ps3.0"
           }
         },
         {
@@ -68,7 +68,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Z_k3"
+            "pathName": "3_Ps4.0"
           }
         },
         {
@@ -80,37 +80,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Z_3l"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.25
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "AutoL4"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Z_l3"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Z_3a"
+            "pathName": "3_Ps5.0"
           }
         },
         {

@@ -5,27 +5,15 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "FlapDown"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "1-shot"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.375
+            "pathName": "3_Ps.0"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "L4"
+            "name": "L3"
           }
         }
       ]
