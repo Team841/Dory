@@ -15,6 +15,10 @@ import org.littletonrobotics.junction.LogTable;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.inputs.LoggableInputs;
 
+/**
+ * This is downloaded from the AdvantageKit repository and is an ADStar implementation that works with advantage kit
+ * intended for PathPlanner pathfinding.
+ */
 public class LocalADStarAK implements Pathfinder {
     private final ADStarIO io = new ADStarIO();
 

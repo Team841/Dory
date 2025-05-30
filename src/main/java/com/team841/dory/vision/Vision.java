@@ -24,6 +24,9 @@ import java.util.function.Consumer;
 
 import org.littletonrobotics.junction.Logger;
 
+/**
+ * Vision subsystem class. The entire logic is 254 2024's robot code. Their code was adapted to fit our robot code
+ */
 public class Vision extends SubsystemBase {
     private final VisionIO io;
 
@@ -33,15 +36,22 @@ public class Vision extends SubsystemBase {
 
     private final Consumer<VisionFieldPoseEstimate> visionEstimateConsumer;
 
-    private final ConcurrentTimeInterpolatableBuffer<Pose2d> robotPose = ConcurrentTimeInterpolatableBuffer.createBuffer(LOOKBACK_TIME);
-    private final AtomicReference<ChassisSpeeds> measuredRobotRelativeChassisSpeeds = new AtomicReference<>(new ChassisSpeeds());
+    private final ConcurrentTimeInterpolatableBuffer<Pose2d> robotPose =
+            ConcurrentTimeInterpolatableBuffer.createBuffer(LOOKBACK_TIME);
+    private final AtomicReference<ChassisSpeeds> measuredRobotRelativeChassisSpeeds =
+            new AtomicReference<>(new ChassisSpeeds());
 
-    private final AtomicReference<ChassisSpeeds> measuredFieldRelativeChassisSpeeds = new AtomicReference<>(new ChassisSpeeds());
-    private final AtomicReference<ChassisSpeeds> desiredFieldRelativeChassisSpeeds = new AtomicReference<>(new ChassisSpeeds());
-    private final AtomicReference<ChassisSpeeds> fusedFieldRelativeChassisSpeeds = new AtomicReference<>(new ChassisSpeeds());
+    private final AtomicReference<ChassisSpeeds> measuredFieldRelativeChassisSpeeds =
+            new AtomicReference<>(new ChassisSpeeds());
+    private final AtomicReference<ChassisSpeeds> desiredFieldRelativeChassisSpeeds =
+            new AtomicReference<>(new ChassisSpeeds());
+    private final AtomicReference<ChassisSpeeds> fusedFieldRelativeChassisSpeeds =
+            new AtomicReference<>(new ChassisSpeeds());
 
     private double lastUsedMegatagTimestamp = 0;
-    private ConcurrentTimeInterpolatableBuffer<Double> driveYawAngularVelocity = ConcurrentTimeInterpolatableBuffer.createDoubleBuffer(LOOKBACK_TIME);
+
+    private ConcurrentTimeInterpolatableBuffer<Double> driveYawAngularVelocity =
+            ConcurrentTimeInterpolatableBuffer.createDoubleBuffer(LOOKBACK_TIME);
 
     //    NetworkTableInstance inst = NetworkTableInstance.getDefault();
     //    NetworkTable networkTablePoses = inst.getTable("Drivetrain Poses");
@@ -71,24 +81,37 @@ public class Vision extends SubsystemBase {
         this.measuredRobotRelativeChassisSpeeds.set(visionData.measuredRobotRelativeChassisSpeeds);
         this.robotPose.addSample(timestamp, visionData.robotPose);
         this.inputs.gyroAngle = getLatestFieldToRobot().getValue().getRotation();
-        this.inputs.gyroAngularVelocity = Units.radiansToDegrees(getLatestRobotRelativeChassisSpeed().omegaRadiansPerSecond);
+        this.inputs.gyroAngularVelocity =
+                Units.radiansToDegrees(getLatestRobotRelativeChassisSpeed().omegaRadiansPerSecond);
         io.updateInputs(this.inputs);
         Logger.processInputs("Vision", this.inputs);
 
         if (inputs.charlieSeesTarget) {
             updateVision(
-                    inputs.charlieSeesTarget, inputs.charlieFiducialObservations, inputs.charlieMegatagPoseEstimate, inputs.charlieMegatag2PoseEstimates, "Vision/Charlie");
+                    inputs.charlieSeesTarget,
+                    inputs.charlieFiducialObservations,
+                    inputs.charlieMegatagPoseEstimate,
+                    inputs.charlieMegatag2PoseEstimates,
+                    "Vision/Charlie");
         }
         if (inputs.gammaSeesTarget) {
             updateVision(
-                    inputs.gammaSeesTarget, inputs.gammaFiducialObservations, inputs.gammaMegatagPoseEstimate, inputs.gammaMegatag2PoseEstimates, "Vision/Gamma");
+                    inputs.gammaSeesTarget,
+                    inputs.gammaFiducialObservations,
+                    inputs.gammaMegatagPoseEstimate,
+                    inputs.gammaMegatag2PoseEstimates,
+                    "Vision/Gamma");
         }
 
         Logger.recordOutput("Vision/latencyPeriodicSec", Timer.getTimestamp() - timestamp);
     }
 
     public void updateVision(
-                             boolean cameraSeesTarget, FiducialObservation[] cameraFiducialObservations, MegatagPoseEstimate cameraMegatagPoseEstimate, MegatagPoseEstimate cameraMegatag2PoseEstimate, String logPreface) {
+                             boolean cameraSeesTarget,
+                             FiducialObservation[] cameraFiducialObservations,
+                             MegatagPoseEstimate cameraMegatagPoseEstimate,
+                             MegatagPoseEstimate cameraMegatag2PoseEstimate,
+                             String logPreface) {
 
         if (cameraMegatagPoseEstimate != null) {
             var updateTimestamp = cameraMegatagPoseEstimate.timestampSeconds;
@@ -97,20 +120,24 @@ public class Vision extends SubsystemBase {
 
             if (!alreadyProcessedTimestamp && cameraSeesTarget) {
 
-                Optional<VisionFieldPoseEstimate> megatagEstimate = processMegatagPoseEstimate(cameraMegatagPoseEstimate);
-                Optional<VisionFieldPoseEstimate> megatag2Estimate = processMegatag2PoseEstimate(cameraMegatag2PoseEstimate, logPreface);
+                Optional<VisionFieldPoseEstimate> megatagEstimate =
+                        processMegatagPoseEstimate(cameraMegatagPoseEstimate);
+                Optional<VisionFieldPoseEstimate> megatag2Estimate =
+                        processMegatag2PoseEstimate(cameraMegatag2PoseEstimate, logPreface);
 
                 boolean used_megatag = false;
 
                 if (megatagEstimate.isPresent()) {
                     if (shouldUseMegatag(cameraMegatagPoseEstimate, cameraFiducialObservations, logPreface)) {
                         Logger.recordOutput(
-                                logPreface + "MegatagEstimate", megatagEstimate.get().getVisionRobotPoseMeters());
+                                logPreface +
+                                        "MegatagEstimate", megatagEstimate.get().getVisionRobotPoseMeters());
                         updateMegatagEstimate(megatagEstimate.get());
                         used_megatag = true;
                     } else {
                         Logger.recordOutput(
-                                logPreface + "MegatagEstimateRejected", megatagEstimate.get().getVisionRobotPoseMeters());
+                                logPreface +
+                                        "MegatagEstimateRejected", megatagEstimate.get().getVisionRobotPoseMeters());
                     }
                 }
 
@@ -122,7 +149,9 @@ public class Vision extends SubsystemBase {
                     } else {
                         if (megatagEstimate.isPresent()) {
                             Logger.recordOutput(
-                                    logPreface + "Megatag2EstimateRejected", megatag2Estimate.get().getVisionRobotPoseMeters());
+                                    logPreface +
+                                            "Megatag2EstimateRejected",
+                                    megatag2Estimate.get().getVisionRobotPoseMeters());
                         }
                     }
                 }
@@ -141,7 +170,8 @@ public class Vision extends SubsystemBase {
         var fieldToRobotEstimate = poseEstimate.fieldToCamera;
 
         // distance from current pose to vision estimated pose
-        double poseDifference = fieldToRobotEstimate.getTranslation().getDistance(loggedFieldToRobot.get().getTranslation());
+        double poseDifference =
+                fieldToRobotEstimate.getTranslation().getDistance(loggedFieldToRobot.get().getTranslation());
 
         if (poseEstimate.fiducialIds.length > 0) {
             double xyStds = 1.0;
@@ -170,7 +200,8 @@ public class Vision extends SubsystemBase {
     }
 
     private Optional<VisionFieldPoseEstimate> processMegatag2PoseEstimate(
-                                                                          MegatagPoseEstimate poseEstimate, String logPreface) {
+                                                                          MegatagPoseEstimate poseEstimate,
+                                                                          String logPreface) {
         var loggedFieldToRobot = getFieldToRobot(poseEstimate.timestampSeconds);
         if (loggedFieldToRobot.isEmpty()) {
             return Optional.empty();
@@ -179,7 +210,8 @@ public class Vision extends SubsystemBase {
         var fieldToRobotEstimate = poseEstimate.fieldToCamera;
 
         // distance from current pose to vision estimated pose
-        double poseDifference = fieldToRobotEstimate.getTranslation().getDistance(loggedFieldToRobot.get().getTranslation());
+        double poseDifference =
+                fieldToRobotEstimate.getTranslation().getDistance(loggedFieldToRobot.get().getTranslation());
 
         double xyStds;
         if (poseEstimate.fiducialIds.length > 0) {
@@ -215,7 +247,9 @@ public class Vision extends SubsystemBase {
     }
 
     private boolean shouldUseMegatag(
-                                     MegatagPoseEstimate poseEstimate, FiducialObservation[] fiducials, String logPreface) {
+                                     MegatagPoseEstimate poseEstimate,
+                                     FiducialObservation[] fiducials,
+                                     String logPreface) {
         final double kMinAreaForMegatagEnabled = 0.4;
         final double kMinAreaForMegatagDisabled = 0.05;
 
@@ -278,7 +312,8 @@ public class Vision extends SubsystemBase {
         final double kLargePitchRollYawEventTimeWindowS = 0.1;
         final double kLargeYawThreshold = Units.degreesToRadians(100.0);
 
-        var maxYawVel = getMaxAbsDriveYawAngularVelocityInRange(timestamp - kLargePitchRollYawEventTimeWindowS, timestamp);
+        var maxYawVel =
+                getMaxAbsDriveYawAngularVelocityInRange(timestamp - kLargePitchRollYawEventTimeWindowS, timestamp);
         if (maxYawVel.isPresent() && Math.abs(maxYawVel.get()) > kLargeYawThreshold) {
             Logger.recordOutput(preface + "PinholeYawAngular", false);
             return false;
@@ -297,7 +332,9 @@ public class Vision extends SubsystemBase {
     }
 
     private Optional<Double> getMaxAbsValueInRange(
-                                                   ConcurrentTimeInterpolatableBuffer<Double> buffer, double minTime, double maxTime) {
+                                                   ConcurrentTimeInterpolatableBuffer<Double> buffer,
+                                                   double minTime,
+                                                   double maxTime) {
         var submap = buffer.getInternalBuffer().subMap(minTime, maxTime).values();
         var max = submap.stream().max(Double::compare);
         var min = submap.stream().min(Double::compare);

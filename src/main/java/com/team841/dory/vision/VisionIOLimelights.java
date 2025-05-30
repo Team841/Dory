@@ -2,12 +2,16 @@ package com.team841.dory.vision;
 
 import com.team254.vision.FiducialObservation;
 import com.team254.vision.MegatagPoseEstimate;
+
 import com.team841.dory.constants.RC;
 import com.team841.dory.lib.limelight.LimelightHelpers;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
+/**
+ * Hardware IO implementation, logs the data needed.
+ */
 public class VisionIOLimelights implements VisionIO {
     NetworkTable CharlieTable = NetworkTableInstance.getDefault().getTable(RC.Vision.LimelightCharlieName);
     NetworkTable GammaTable = NetworkTableInstance.getDefault().getTable(RC.Vision.LimelightGammaName);
@@ -28,9 +32,11 @@ public class VisionIOLimelights implements VisionIO {
         LimelightHelpers.SetIMUMode(RC.Vision.LimelightGammaName, 1);
         LimelightHelpers.SetIMUMode(RC.Vision.LimelightCharlieName, 1);
         LimelightHelpers.SetRobotOrientation(
-                RC.Vision.LimelightGammaName, gyroAngle.getDegrees(), gyroAngularVelocity, 0, 0, 0, 0);
+                RC.Vision.LimelightGammaName,
+                gyroAngle.getDegrees(), gyroAngularVelocity, 0, 0, 0, 0);
         LimelightHelpers.SetRobotOrientation(
-                RC.Vision.LimelightCharlieName, gyroAngle.getDegrees(), gyroAngularVelocity, 0, 0, 0, 0);
+                RC.Vision.LimelightCharlieName,
+                gyroAngle.getDegrees(), gyroAngularVelocity, 0, 0, 0, 0);
 
 //        } catch (Exception e) {
 //            return;

@@ -2,13 +2,19 @@ package com.team841.dory.flapSystem;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+
 import com.team841.dory.constants.RC;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
 import org.littletonrobotics.junction.Logger;
 
+/**
+ * Flap System represents the mechanical intake flap system. Hang is also included here.
+ */
 public class FlapSystem extends SubsystemBase {
 
     FlapSystemIO io;
@@ -46,10 +52,6 @@ public class FlapSystem extends SubsystemBase {
         this.latestStatusCode = io.setControlHang(dutyCycle.withOutput(output));
     }
 
-    public void setHangDutyCycle2(double output) {
-        this.latestStatusCode = io.setControlHang2(dutyCycle.withOutput(output));
-    }
-
     public void stopIntake() {
         io.stopIntake();
     }
@@ -62,16 +64,13 @@ public class FlapSystem extends SubsystemBase {
         io.stopHang();
     }
 
-    public void stopHang2() {
-        io.stopHang2();
-    }
-
     public Command runIntake() {
         return new RunCommand(
                 () -> {
                     this.setIntakeDutyCycle(0.2);
                 }
-        ).withName("runShooterIntakeCommand").finallyDo(this::stopIntake);
+        ).withName("runShooterIntakeCommand")
+                .finallyDo(this::stopIntake);
     }
 
     public boolean deviceStatusOK() {

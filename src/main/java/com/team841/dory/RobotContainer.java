@@ -5,7 +5,9 @@ import static edu.wpi.first.units.Units.*;
 import java.util.function.Consumer;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+
 import com.team254.vision.VisionFieldPoseEstimate;
+
 import com.team841.dory.constants.RC;
 import com.team841.dory.constants.TunerConstants;
 import com.team841.dory.drive.DriveIO;
@@ -13,7 +15,6 @@ import com.team841.dory.drive.DriveIOReal;
 import com.team841.dory.drive.DriveIOSim;
 import com.team841.dory.drive.Drivetrain;
 import com.team841.dory.drive.Commands.DriveMaintainHeading;
-
 import com.team841.dory.escalator.Escalator;
 import com.team841.dory.escalator.EscalatorIO;
 import com.team841.dory.escalator.EscalatorIOKraken;
@@ -26,6 +27,7 @@ import com.team841.dory.shooter.ShooterIOKraken;
 import com.team841.dory.vision.Vision;
 import com.team841.dory.vision.VisionIO;
 import com.team841.dory.vision.VisionIOLimelights;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -63,6 +65,7 @@ public class RobotContainer {
 
     private final SendableChooser<Command> autoChooser;
 
+    // Consumer to feed the vision estimate into the drivetrain, this allows for vision to be turned off easily.
     public final Consumer<VisionFieldPoseEstimate> visionEstimateConsumer = new Consumer<>() {
         @Override
         public void accept(VisionFieldPoseEstimate visionFieldPoseEstimate) {
@@ -75,7 +78,12 @@ public class RobotContainer {
     public RobotContainer() {
         switch (RC.robotType) {
             case SIM -> {
-                this.driveIO = new DriveIOSim(TunerConstants.DrivetrainConstants, TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
+                this.driveIO = new DriveIOSim(
+                        TunerConstants.DrivetrainConstants,
+                        TunerConstants.FrontLeft,
+                        TunerConstants.FrontRight,
+                        TunerConstants.BackLeft,
+                        TunerConstants.BackRight);
                 this.drivetrain = new Drivetrain(driveIO);
 
                 this.visionIO = new VisionIOLimelights();
@@ -93,7 +101,12 @@ public class RobotContainer {
                 this.control = new Control(this.drivetrain, this.escalator, this.shooter, this.flapSystem);
             }
             default -> {
-                this.driveIO = new DriveIOReal(TunerConstants.DrivetrainConstants, TunerConstants.FrontLeft, TunerConstants.FrontRight, TunerConstants.BackLeft, TunerConstants.BackRight);
+                this.driveIO = new DriveIOReal(
+                        TunerConstants.DrivetrainConstants,
+                        TunerConstants.FrontLeft,
+                        TunerConstants.FrontRight,
+                        TunerConstants.BackLeft,
+                        TunerConstants.BackRight);
                 this.drivetrain = new Drivetrain(driveIO);
 
                 this.visionIO = new VisionIOLimelights();
@@ -113,20 +126,22 @@ public class RobotContainer {
         }
 
         this.driveMaintainHeading = new DriveMaintainHeading(
-                drivetrain, () -> -joystick.getLeftY(), () -> -joystick.getLeftX(), () -> -joystick.getRightX(), () -> joystick.L2().getAsBoolean());
+                drivetrain,
+                () -> -joystick.getLeftY(),
+                () -> -joystick.getLeftX(),
+                () -> -joystick.getRightX(),
+                () -> joystick.L2().getAsBoolean());
 
         this.escalatorDefaultCommand = this.escalator.passiveHoldDown();
 
         configureBindings();
 
         autoChooser = AutoBuilder.buildAutoChooser();
-        autoChooser.addOption("Choreo Left Crazy", control.LeftSideCrazyAuto());
         SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
     private void configureBindings() {
         drivetrain.setDefaultCommand(driveMaintainHeading);
-//        escalator.setDefaultCommand(escalatorDefaultCommand);
 
         joystick.touchpad().onTrue(new InstantCommand(drivetrain::seedFieldCentric));
 
@@ -152,7 +167,9 @@ public class RobotContainer {
 
         cojoystick.x().and(() -> !this.shooter.shooterHasCoral()).whileTrue(control.intake);
 
-        cojoystick.b().whileTrue(new InstantCommand(() -> this.shooter.setDutyCycle(-.08), shooter)).onFalse(new InstantCommand(() -> this.shooter.setDutyCycle(0), shooter));
+        cojoystick.b().whileTrue(
+                new InstantCommand(() -> this.shooter.setDutyCycle(-.08), shooter))
+                .onFalse(new InstantCommand(() -> this.shooter.setDutyCycle(0), shooter));
 
         cojoystick.start().whileTrue(new InstantCommand(() -> this.shooter.setDutyCycle(.40), shooter)).onFalse(new InstantCommand(() -> this.shooter.setDutyCycle(0), shooter));        cojoystick.b().whileTrue(new InstantCommand(() -> this.shooter.setDutyCycle(-.08), shooter)).onFalse(new InstantCommand(() -> this.shooter.setDutyCycle(0), shooter));
 
@@ -162,16 +179,23 @@ public class RobotContainer {
 
         cojoystick.povUp().whileTrue(this.escalator.goUp());
 
-        cojoystick.povLeft().whileTrue(new InstantCommand(() -> this.flapSystem.setFlapperDutyCycle(0.25), flapSystem)).onFalse(new InstantCommand(() -> this.flapSystem.stopFlapper(), flapSystem));
+        cojoystick.povLeft().whileTrue(
+                new InstantCommand(() -> this.flapSystem.setFlapperDutyCycle(0.25), flapSystem))
+                .onFalse(new InstantCommand(() -> this.flapSystem.stopFlapper(), flapSystem));
 
-        cojoystick.povRight().whileTrue(new InstantCommand(() -> this.flapSystem.setFlapperDutyCycle(-0.25), flapSystem)).onFalse(new InstantCommand(() -> this.flapSystem.stopFlapper(), flapSystem));
+        cojoystick.povRight().whileTrue(
+                new InstantCommand(() -> this.flapSystem.setFlapperDutyCycle(-0.25), flapSystem))
+                .onFalse(new InstantCommand(() -> this.flapSystem.stopFlapper(), flapSystem));
 
         // cojoystick.povRight().onTrue(new RunCommand(() -> this.flapSystem.setFlapperDutyCycle(-0.5), flapSystem).withTimeout(0.5).finallyDo(flapSystem::stopFlapper));
 
-        joystick.L1().whileTrue(new InstantCommand(() -> this.flapSystem.setHangDutyCycle(1), flapSystem)).onFalse(new InstantCommand(() -> this.flapSystem.stopHang(), flapSystem));
+        joystick.L1().whileTrue(
+                new InstantCommand(() -> this.flapSystem.setHangDutyCycle(1), flapSystem))
+                .onFalse(new InstantCommand(() -> this.flapSystem.stopHang(), flapSystem));
 
         joystick.R2().toggleOnTrue(new InstantCommand(() -> drivetrain.setPose(Pose2d.kZero)));
-        cojoystick.a().whileTrue(new InstantCommand(() -> this.flapSystem.setHangDutyCycle(1), flapSystem)).onFalse(new InstantCommand(() -> this.flapSystem.stopHang(), flapSystem));
+        cojoystick.a().whileTrue(new InstantCommand(() -> this.flapSystem.setHangDutyCycle(1), flapSystem))
+                .onFalse(new InstantCommand(() -> this.flapSystem.stopHang(), flapSystem));
     }
 
     public Command getAutonomousCommand() {

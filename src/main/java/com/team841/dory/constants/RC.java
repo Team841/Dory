@@ -7,8 +7,11 @@ import java.util.function.Supplier;
 
 import com.ctre.phoenix6.CANBus;
 
+/**
+ * RC: Robot Constants, this is for general constants.
+ */
 public class RC {
-    public static final RunType robotType = RunType.DEV;
+    public static final RunType robotType = RunType.COMP;
 
     public static final CANBus canivoreCANBus = TunerConstants.kCANBus;
 

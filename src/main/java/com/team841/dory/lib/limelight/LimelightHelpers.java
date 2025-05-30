@@ -1500,7 +1500,7 @@ public class LimelightHelpers {
      * output/temperature.
      *
      * @param limelightName Name/identifier of the Limelight
-     * @param throttle      Defaults to 0. Your Limelgiht will process one frame after skipping <throttle>
+     * @param throttle      Defaults to 0. Your Limelgiht will process one frame after skipping throttle
      *                      frames.
      */
     public static void SetThrottle(String limelightName, int throttle) {

@@ -7,6 +7,9 @@ import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 
+/**
+ * Drivetrain simulation that creates a sim thread that uses ctre swerve drive simulation classes
+ */
 public class DriveIOSim extends DriveIOReal {
 
     private static final double kSimLoopPeriod = 0.005; // 5 ms

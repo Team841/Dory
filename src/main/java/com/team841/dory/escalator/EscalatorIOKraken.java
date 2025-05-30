@@ -7,6 +7,7 @@ import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.ControlModeValue;
+
 import com.team841.dory.constants.RC;
 import com.team841.dory.constants.SC;
 
@@ -15,11 +16,16 @@ import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 
+/**
+ * Physical IO implementation for the elevator.
+ */
 public class EscalatorIOKraken implements EscalatorIO {
 
     TalonFX leftMotor = new TalonFX(SC.Escalator.left, RC.canivoreCANBus);
     TalonFX rightMotor = new TalonFX(SC.Escalator.right, RC.canivoreCANBus);
 
+    // We use status signals to get the values that we want to log.
+    // We don't really need velocity and acceleration because we can calculate it when needed? It would reduce loop times.
     private final StatusSignal<Angle> rightPosition;
     private final StatusSignal<Angle> leftPosition;
 
@@ -61,7 +67,13 @@ public class EscalatorIOKraken implements EscalatorIO {
 
         this.controlMode = this.rightMotor.getControlMode();
 
-        BaseStatusSignal.setUpdateFrequencyForAll(100, this.rightPosition, this.leftPosition, this.rightVelocity, this.leftVelocity, this.rightAcceleration, this.leftAcceleration, this.rightTorqueCurrent, this.leftTorqueCurrent, this.rightMotorDutyCycleOut, this.leftMotorDutyCycleOut
+        // Set how often the status signals should update.
+        BaseStatusSignal.setUpdateFrequencyForAll(100,
+                this.rightPosition, this.leftPosition,
+                this.rightVelocity, this.leftVelocity,
+                this.rightAcceleration, this.leftAcceleration,
+                this.rightTorqueCurrent, this.leftTorqueCurrent,
+                this.rightMotorDutyCycleOut, this.leftMotorDutyCycleOut
         );
 
         this.leftMotor.setControl(leftFollower);
@@ -69,7 +81,13 @@ public class EscalatorIOKraken implements EscalatorIO {
 
     @Override
     public void updateInputs(EscalatorIOInputs inputs) {
-        BaseStatusSignal.refreshAll(this.rightPosition, this.leftPosition, this.rightVelocity, this.leftVelocity, this.rightAcceleration, this.leftAcceleration, this.rightTorqueCurrent, this.leftTorqueCurrent, this.rightMotorDutyCycleOut, this.leftMotorDutyCycleOut);
+        // Update the status signals, so that we can log the latest values.`
+        BaseStatusSignal.refreshAll(
+                this.rightPosition, this.leftPosition,
+                this.rightVelocity, this.leftVelocity,
+                this.rightAcceleration, this.leftAcceleration,
+                this.rightTorqueCurrent, this.leftTorqueCurrent,
+                this.rightMotorDutyCycleOut, this.leftMotorDutyCycleOut);
 
         inputs.leftMotorPosition = this.leftPosition.getValue();
         inputs.leftMotorVelocity = this.leftVelocity.getValue();
