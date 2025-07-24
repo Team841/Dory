@@ -77,4 +77,8 @@ public class FlapSystem extends SubsystemBase {
     public boolean deviceStatusOK() {
         return latestStatusCode.isOK();
     }
+
+    public boolean flapHasCoral() {
+        return inputs.CANrangeDistance.magnitude() < 0.05;
+    }
 }

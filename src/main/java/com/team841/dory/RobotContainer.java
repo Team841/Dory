@@ -20,6 +20,9 @@ import com.team841.dory.escalator.EscalatorIOKraken;
 import com.team841.dory.flapSystem.FlapSystem;
 import com.team841.dory.flapSystem.FlapSystemIO;
 import com.team841.dory.flapSystem.FlapSystemIOKraken;
+import com.team841.dory.lights.LED;
+import com.team841.dory.lights.LEDIO;
+import com.team841.dory.lights.LEDIOSpark;
 import com.team841.dory.shooter.Shooter;
 import com.team841.dory.shooter.ShooterIO;
 import com.team841.dory.shooter.ShooterIOKraken;
@@ -27,6 +30,7 @@ import com.team841.dory.vision.Vision;
 import com.team841.dory.vision.VisionIO;
 import com.team841.dory.vision.VisionIOLimelights;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -55,6 +59,9 @@ public class RobotContainer {
 
     public final FlapSystemIO flapSystemIO;
     public final FlapSystem flapSystem;
+
+    public final LEDIO ledIO;
+    public final LED led;
 
     public final Control control;
 
@@ -90,6 +97,9 @@ public class RobotContainer {
                 this.flapSystemIO = new FlapSystemIOKraken();
                 this.flapSystem = new FlapSystem(flapSystemIO);
 
+                this.ledIO = new LEDIOSpark();
+                this.led = new LED(ledIO, shooter, flapSystem);
+
                 this.control = new Control(this.drivetrain, this.escalator, this.shooter, this.flapSystem);
             }
             default -> {
@@ -107,6 +117,9 @@ public class RobotContainer {
 
                 this.flapSystemIO = new FlapSystemIOKraken();
                 this.flapSystem = new FlapSystem(flapSystemIO);
+
+                this.ledIO = new LEDIOSpark();
+                this.led = new LED(ledIO, shooter, flapSystem);
 
                 this.control = new Control(this.drivetrain, this.escalator, this.shooter, this.flapSystem);
             }
