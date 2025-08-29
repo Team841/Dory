@@ -167,7 +167,9 @@ public class RobotContainer {
 
         cojoystick.b().whileTrue(new InstantCommand(() -> this.shooter.setDutyCycle(-.08), shooter)).onFalse(new InstantCommand(() -> this.shooter.setDutyCycle(0), shooter));
 
-        cojoystick.start().whileTrue(new InstantCommand(() -> this.shooter.setDutyCycle(.40), shooter)).onFalse(new InstantCommand(() -> this.shooter.setDutyCycle(0), shooter));        cojoystick.b().whileTrue(new InstantCommand(() -> this.shooter.setDutyCycle(-.08), shooter)).onFalse(new InstantCommand(() -> this.shooter.setDutyCycle(0), shooter));
+        cojoystick.start().whileTrue(new InstantCommand(() -> this.shooter.setDutyCycle(.40), shooter)).onFalse(new InstantCommand(() -> this.shooter.setDutyCycle(0), shooter));        
+        
+        cojoystick.b().whileTrue(new InstantCommand(() -> this.shooter.setDutyCycle(-.08), shooter)).onFalse(new InstantCommand(() -> this.shooter.setDutyCycle(0), shooter));
 
         cojoystick.back().onTrue(new InstantCommand(escalator::zero, escalator));
 

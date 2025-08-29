@@ -1,13 +1,10 @@
 package com.team841.dory.lights;
 
 import com.team841.dory.Robot;
-import com.team841.dory.RobotContainer;
-import com.team841.dory.Main;
 import com.team841.dory.shooter.Shooter;
 import com.team841.dory.flapSystem.FlapSystem;
 
 import edu.wpi.first.wpilibj.LEDPattern;
-import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -19,10 +16,6 @@ import java.nio.channels.Pipe;
 
 import org.littletonrobotics.junction.Logger;
 
-/* stuff i'm experimenting with:
-   && robotBase.isEnabled() && robotBase.isAutonomous() == false 
-*/
-
 public class LED extends SubsystemBase {
 
     private final LEDIO io;
@@ -30,12 +23,9 @@ public class LED extends SubsystemBase {
 
     private Shooter shooter;
     private FlapSystem flapSystem;
-    private TimedRobot timedRobot;
-    private Robot robot;
+    private Timer timer;
 
-    private int msTime;
     private int endgameMsFlash;
-
     private int endgameTime;
 
     /** Creates a new LED. */
@@ -43,9 +33,10 @@ public class LED extends SubsystemBase {
        this.io = io;
        this.shooter = shooter;
        this.flapSystem = flapSystem;
-       this.msTime = 0;
        this.endgameMsFlash = 0;
        this.endgameTime = 20;
+       this.timer = new Timer();
+       this.timer.start();
     }
 
     @Override
@@ -58,29 +49,21 @@ public class LED extends SubsystemBase {
         }
 
         if (DriverStation.getMatchTime() < this.endgameTime && this.endgameMsFlash < 100 && DriverStation.isEnabled() && DriverStation.isAutonomous() == false) {
-            if (this.msTime < 5) {
+            if (this.timer.hasElapsed(0.2)) {
                 io.setColor("blue");
-                this.msTime++;
-            } else {
+                this.timer.restart();
+            } else if (this.timer.hasElapsed(0.1)) {
                 io.setColor("off");
-                this.msTime++;
-                if (this.msTime > 8) {
-                    this.msTime = 0;
-                }
             }
             this.endgameMsFlash++;
         } else if (shooter.shooterHasCoral()) {
             io.setColor("green");
         } else if (shooter.escalatorClear() == false){
-            if (this.msTime < 5) {
+            if (this.timer.hasElapsed(0.2)) {
                 io.setColor("red");
-                this.msTime++;
-            } else {
+                this.timer.restart();
+            } else if (this.timer.hasElapsed(0.1)) {
                 io.setColor("off");
-                this.msTime++;
-                if (this.msTime > 8) {
-                    this.msTime = 0;
-                }
             }
         } else {
             if (DriverStation.getMatchTime() < this.endgameTime && DriverStation.isEnabled() && DriverStation.isAutonomous() == false) {
