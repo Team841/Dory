@@ -21,6 +21,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
+/**
+ * Wraps ctre Swerve Drivetrain instance. DriveIOReal extends SwerveDrivetrain and acts as AdvantageKit interface to
+ * ctre swerve
+ */
 public class DriveIOReal extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> implements DriveIO {
 
     AtomicReference<SwerveDriveState> telemetryCache_ = new AtomicReference<>();
@@ -45,7 +49,8 @@ public class DriveIOReal extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> im
     public void logModules(SwerveDriveState state) {
         final String[] moduleNames = {"Drive/FL", "Drive/FR", "Drive/BL", "Drive/BR"};
         for (int i = 0; i < 4; i++) {
-            Logger.recordOutput(moduleNames[i] + " Absolute Encoder Angle", getModule(i).getEncoder().getAbsolutePosition().getValueAsDouble() * 360);
+            Logger.recordOutput(moduleNames[i] + " Absolute Encoder Angle",
+                    getModule(i).getEncoder().getAbsolutePosition().getValueAsDouble() * 360);
             Logger.recordOutput(moduleNames[i] + " Steering Angle", state.ModuleStates[i].angle);
             Logger.recordOutput(moduleNames[i] + " Target Steering Angle", state.ModuleTargets[i].angle);
             Logger.recordOutput(moduleNames[i] + " Drive Velocity", state.ModuleStates[i].speedMetersPerSecond);
@@ -79,10 +84,16 @@ public class DriveIOReal extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder> im
     @Override
     public void addVisionMeasurement(VisionFieldPoseEstimate visionFieldPoseEstimate) {
         if (visionFieldPoseEstimate.getVisionMeasurementStdDevs() == null) {
-            super.addVisionMeasurement(visionFieldPoseEstimate.getVisionRobotPoseMeters(), Utils.fpgaToCurrentTime(visionFieldPoseEstimate.getTimestampSeconds()));
+            super.addVisionMeasurement(
+                    visionFieldPoseEstimate.getVisionRobotPoseMeters(),
+                    Utils.fpgaToCurrentTime(visionFieldPoseEstimate.getTimestampSeconds())
+            );
         } else {
             super.addVisionMeasurement(
-                    visionFieldPoseEstimate.getVisionRobotPoseMeters(), Utils.fpgaToCurrentTime(visionFieldPoseEstimate.getTimestampSeconds()), visionFieldPoseEstimate.getVisionMeasurementStdDevs());
+                    visionFieldPoseEstimate.getVisionRobotPoseMeters(),
+                    Utils.fpgaToCurrentTime(visionFieldPoseEstimate.getTimestampSeconds()),
+                    visionFieldPoseEstimate.getVisionMeasurementStdDevs()
+            );
         }
     }
 

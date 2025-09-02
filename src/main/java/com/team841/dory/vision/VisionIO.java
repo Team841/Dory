@@ -2,9 +2,14 @@ package com.team841.dory.vision;
 
 import com.team254.vision.FiducialObservation;
 import com.team254.vision.MegatagPoseEstimate;
+
 import edu.wpi.first.math.geometry.Rotation2d;
+
 import org.littletonrobotics.junction.AutoLog;
 
+/**
+ * IO interface for the vision system, following the Advantage Kit format.
+ */
 public interface VisionIO {
     @AutoLog
     class VisionIOInputs {

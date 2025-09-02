@@ -4,9 +4,11 @@ import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import edu.wpi.first.units.measure.*;
 
-
 import org.littletonrobotics.junction.AutoLog;
 
+/**
+ * IO interface for the flap system, including intake, flap, hang.
+ */
 public interface FlapSystemIO {
 
     @AutoLog
@@ -41,20 +43,15 @@ public interface FlapSystemIO {
 
     public void updateInputs(FlapSystemIOInputs inputs);
 
-
     public StatusCode setControlIntake(DutyCycleOut control);
 
     public StatusCode setControlFlapper(DutyCycleOut control);
 
     public StatusCode setControlHang(DutyCycleOut control);
 
-    public StatusCode setControlHang2(DutyCycleOut control);
-
     public void stopIntake();
 
     public void stopFlapper();
 
     public void stopHang();
-
-    public void stopHang2();
 }

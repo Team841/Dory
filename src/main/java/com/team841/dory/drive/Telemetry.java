@@ -21,6 +21,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 
+/**
+ * Default CTRE generated Telemetry class that is adapted to work with AdvantageKit
+ */
 public class Telemetry {
     private final double MaxSpeed;
 

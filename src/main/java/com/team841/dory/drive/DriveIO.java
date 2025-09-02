@@ -11,6 +11,9 @@ import org.littletonrobotics.junction.AutoLog;
 
 import java.util.function.Supplier;
 
+/**
+ * IO interface for drivetrain following Advantage Kit format, we only log SwerveDrivetrain.SwerveDriveState class
+ */
 public interface DriveIO {
 
     @AutoLog
