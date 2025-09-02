@@ -20,7 +20,7 @@ import edu.wpi.first.units.measure.*;
 public class FlapSystemIOKraken implements FlapSystemIO {
     public TalonFX intakeMotor = new TalonFX(SC.flapSystem.intakeMotor, "rio");
     public TalonFX flapMotor = new TalonFX(SC.flapSystem.flapMotor, "rio");
-    public CANrange canrange = new CANrange(SC.flapSystem.canrange, "rio");
+    public CANrange canrange = new CANrange(SC.flapSystem.intakeCanRangeId, "rio");
     public TalonFX hangMotor = new TalonFX(SC.flapSystem.hangMotor, "rio");
     public TalonFX hangMotor2 = new TalonFX(SC.flapSystem.hangMotor2, "rio");
 

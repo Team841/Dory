@@ -106,7 +106,7 @@ public class SC {
     public static class flapSystem {
         public static int flapMotor = 9;
         public static int intakeMotor = 14;
-        public static int canrange = 3;
+        public static int intakeCanRangeId = 3;
         public static int hangMotor = 12;
         public static int hangMotor2 = 16;
 
